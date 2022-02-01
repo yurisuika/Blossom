@@ -2,11 +2,7 @@ package com.yurisuika.blossom.block;
 
 import java.util.Random;
 
-import com.yurisuika.blossom.tag.BlossomBlockTags;
-import net.minecraft.block.AbstractBlock.Settings;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -58,7 +54,7 @@ public class BlossomLeavesBlock extends LeavesBlock {
 
         BlockState blockState = world.getBlockState(pos.down());
 
-        if (/*random.nextInt(10) == 0 && */blockState.isIn(BlossomBlockTags.AIR)) {
+        if (blockState.isAir()) {
             world.setBlockState(pos, this.floweringBlock.getDefaultState()
                     .with(DISTANCE, state.get(DISTANCE))
                     .with(PERSISTENT, state.get(PERSISTENT))
