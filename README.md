@@ -32,7 +32,7 @@ While you can compile from source, you can always download the latest releases r
 
 #### Latest Builds
 
-Stable releases of Endemic ready to be consumed by the public!
+Stable releases of Blossom ready to be consumed by the public!
 
 ##### 1.18 - [*`1.0.0`*](https://github.com/yurisuika/Blossom/releases/download/1.0.0/blossom-1.18.1-1.0.0.jar)
 
