@@ -20,7 +20,7 @@ public class Blossom implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger("Blossom");
 
-	public static final Block FLOWERING_OAK_LEAVES =  new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
+	public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
 
 	@Override
 	public void onInitialize() {

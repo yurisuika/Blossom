@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Fertilizable;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
@@ -32,7 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
 
-public class FloweringLeavesBlock extends Block implements Fertilizable {
+public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     private final Block shearedBlock;
 
     public static final int MAX_DISTANCE = 7;
@@ -53,7 +54,8 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
     }
 
     public boolean hasRandomTicks(BlockState state) {
-        return (Integer)state.get(DISTANCE) == 7 && !(Boolean)state.get(PERSISTENT);
+        int i = this.getAge(state);
+        return ((Integer)state.get(DISTANCE) == 7 && !(Boolean)state.get(PERSISTENT)) || i < 3;
     }
 
     public IntProperty getAgeProperty() {
@@ -191,8 +193,6 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
     public static void dropApple(World world, BlockPos pos) {
         dropStack(world, pos, new ItemStack(Items.APPLE, 3));
     }
-
-
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getStackInHand(hand);
