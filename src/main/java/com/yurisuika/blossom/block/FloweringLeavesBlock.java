@@ -1,11 +1,8 @@
 package com.yurisuika.blossom.block;
 
-
 import java.util.Random;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Fertilizable;
-import net.minecraft.block.LeavesBlock;
+
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
@@ -17,7 +14,6 @@ import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -33,20 +29,20 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
 
-public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
+public class FloweringLeavesBlock extends Block implements Fertilizable {
     private final Block shearedBlock;
 
     public static final int MAX_DISTANCE = 7;
     public static final IntProperty DISTANCE;
     public static final BooleanProperty PERSISTENT;
     private static final int field_31112 = 1;
-    public static final int MAX_AGE = 3;
+    public static final int MAX_AGE = 7;
     public static final IntProperty AGE;
 
     public FloweringLeavesBlock(Block shearedBlock, Settings settings) {
         super(settings);
         this.shearedBlock = shearedBlock;
-        this.setDefaultState((BlockState)((BlockState)((BlockState)this.stateManager.getDefaultState()).with(DISTANCE, 7)).with(PERSISTENT, false).with(this.getAgeProperty(), 0));
+        this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(AGE, 0));
     }
 
     public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
@@ -54,8 +50,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public boolean hasRandomTicks(BlockState state) {
-        int i = this.getAge(state);
-        return ((Integer)state.get(DISTANCE) == 7 && !(Boolean)state.get(PERSISTENT)) || i < 3;
+        return (state.get(DISTANCE) == 7 && !(Boolean)state.get(PERSISTENT)) || (!this.isMature(state) && state.get(DISTANCE) <= 7  && !(Boolean)state.get(PERSISTENT));
     }
 
     public IntProperty getAgeProperty() {
@@ -63,31 +58,31 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public int getMaxAge() {
-        return 3;
+        return 7;
     }
 
-    protected int getAge(BlockState state) {
-        return (Integer)state.get(this.getAgeProperty());
+    public int getAge(BlockState state) {
+        return state.get(this.getAgeProperty());
     }
 
-    public BlockState withAge(int age) {
-        return (BlockState)this.getDefaultState().with(this.getAgeProperty(), age);
+    public BlockState withAge(BlockState state, int age) {
+        return state.with(this.getAgeProperty(), age);
     }
 
     public boolean isMature(BlockState state) {
-        return (Integer)state.get(this.getAgeProperty()) >= this.getMaxAge();
+        return state.get(this.getAgeProperty()) >= this.getMaxAge();
     }
 
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (!(Boolean)state.get(PERSISTENT) && (Integer)state.get(DISTANCE) == 7) {
+        if (!(Boolean)state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
             dropStacks(state, world, pos);
             world.removeBlock(pos, false);
         }
 
-        if (world.getBaseLightLevel(pos, 0) >= 9) {
+        else if (!this.isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {
-                world.setBlockState(pos, this.withAge(i + 1), 2);
+                world.setBlockState(pos, state.with(AGE, i + 1), 2);
             }
         }
     }
@@ -103,7 +98,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             i = j;
         }
 
-        world.setBlockState(pos, this.withAge(i), 2);
+        world.setBlockState(pos, state.with(AGE, i), 2);
     }
 
     protected int getGrowthAmount(World world) {
@@ -116,7 +111,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         int i = getDistanceFromLog(neighborState) + 1;
-        if (i != 1 || (Integer)state.get(DISTANCE) != i) {
+        if (i != 1 || state.get(DISTANCE) != i) {
             world.createAndScheduleBlockTick(pos, this, 1);
         }
 
@@ -138,14 +133,16 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             }
         }
 
-        return (BlockState)state.with(DISTANCE, i);
+        return state.with(DISTANCE, i);
     }
 
     private static int getDistanceFromLog(BlockState state) {
         if (state.isIn(BlockTags.LOGS)) {
             return 0;
+        } else if (state.isIn(BlockTags.LEAVES)) {
+            return state.get(DISTANCE);
         } else {
-            return state.getBlock() instanceof net.minecraft.block.LeavesBlock ? (Integer)state.get(DISTANCE) : 7;
+            return 7;
         }
     }
 
@@ -165,17 +162,11 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     protected void appendProperties(Builder<Block, BlockState> builder) {
-        builder.add(new Property[]{DISTANCE, PERSISTENT, AGE});
+        builder.add(DISTANCE, PERSISTENT, AGE);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return updateDistanceFromLogs((BlockState)this.getDefaultState().with(PERSISTENT, true), ctx.getWorld(), ctx.getBlockPos());
-    }
-
-    static {
-        DISTANCE = Properties.DISTANCE_1_7;
-        PERSISTENT = Properties.PERSISTENT;
-        AGE = Properties.AGE_7;
+        return updateDistanceFromLogs(this.getDefaultState().with(PERSISTENT, true).with(AGE, 0), ctx.getWorld(), ctx.getBlockPos());
     }
 
     public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
@@ -196,9 +187,9 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getStackInHand(hand);
-        int i = (Integer)state.get(AGE);
+        int i = state.get(AGE);
         boolean bl = false;
-        if (i == 3) {
+        if (i == 7) {
             Item item = itemStack.getItem();
             if (itemStack.isOf(Items.SHEARS)) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
@@ -223,4 +214,11 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             return ActionResult.PASS;
         }
     }
+
+    static {
+        DISTANCE = Properties.DISTANCE_1_7;
+        PERSISTENT = Properties.PERSISTENT;
+        AGE = Properties.AGE_7;
+    }
+
 }

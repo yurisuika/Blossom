@@ -4,7 +4,9 @@
   "package": "com.yurisuika.blossom.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "block.LeavesBlockMixin"
+    "block.LeavesBlockMixin",
+    "entity.passive.BeeEntityGrowCropsGoalInvoker",
+    "entity.passive.BeeEntityGrowCropsGoalMixin"
   ],
   "client": [
   ],

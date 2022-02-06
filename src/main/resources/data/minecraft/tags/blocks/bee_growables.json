@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:oak_leaves",
+    "blossom:flowering_oak_leaves"
+  ]
+}

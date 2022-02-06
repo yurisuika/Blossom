@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +26,7 @@ public class Blossom implements ModInitializer {
 		LOGGER.info("Loading Blossom!");
 
 		Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings().group(ItemGroup.DECORATIONS)));
+		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings()));
 
 		BlossomRegistry.registerFlammables();
 		BlossomRegistry.registerCompostables();

@@ -2,3 +2,8 @@ accessWidener v1 named
 
 accessible    method    net/minecraft/block/Blocks    canSpawnOnLeaves    (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Ljava/lang/Boolean;
 accessible    method    net/minecraft/block/Blocks    never    (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
+accessible    method    net/minecraft/entity/ai/TargetPredicate    <init>    (Z)V
+accessible    class     net/minecraft/entity/passive/BeeEntity$GrowCropsGoal
+accessible    field     net/minecraft/entity/Entity    random    Ljava/util/Random;
+accessible    method    net/minecraft/entity/ai/goal/Goal    getTickCount    (I)I
+accessible    method    net/minecraft/entity/passive/BeeEntity    addCropCounter    ()V
