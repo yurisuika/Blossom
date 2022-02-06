@@ -1,7 +1,5 @@
 package com.yurisuika.blossom.mixin.block;
 
-import com.yurisuika.blossom.block.FloweringLeavesBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.tag.BlockTags;
