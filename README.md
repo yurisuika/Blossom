@@ -2,7 +2,7 @@
 
 # <p align="center">BLOSSOM</p>
 
-Blossom is a Fabric mod for Minecraft that makes oak leaves blossom and bear fruit! No longer do you have to destroy your tree to get those apples, now you can simply shear them off when they are grown! Bees will also pollinate the leaves, or you can fertilize them with bone meal!
+Blossom is a Fabric mod for Minecraft that makes oak leaves blossom and bear fruit! No longer do you have to destroy your tree to get those apples, now you can simply shear them off when they are grown! Flowering oak leaves will bloom from any oak leaves when pollinated by bees. Watch as bees nurture your apples from bud to pome! You can help speed up their growth with bone meal, if you so choose.
 
 ---
 
@@ -45,10 +45,6 @@ For Fabric 1.18.1!
 #### Dependencies
 
 Blossom requires *[Fabric API](https://www.modrinth.com/mod/fabric-api)* as a dependency!
-
-#### Credits
-
-Blossom's *[config](https://github.com/TeamMidnightDust/MidnightLib)* is thanks to Minenash and MidnightDust!
 
 #### Servers
 
