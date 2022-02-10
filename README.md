@@ -34,7 +34,7 @@ While you can compile from source, you can always download the latest releases r
 
 Stable releases of Blossom ready to be consumed by the public!
 
-##### 1.18 - [*`1.0.1`*](https://github.com/yurisuika/Blossom/releases/download/1.0.1/blossom-1.18.1-1.0.1.jar)
+##### 1.18 - [*`1.0.2`*](https://github.com/yurisuika/Blossom/releases/download/1.0.2/blossom-1.18.1-1.0.2.jar)
 
 For Fabric 1.18.1!
 
