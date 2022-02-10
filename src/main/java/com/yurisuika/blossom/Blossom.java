@@ -29,8 +29,6 @@ public class Blossom implements ModInitializer {
 
 		BlossomRegistry.registerFlammables();
 		BlossomRegistry.registerCompostables();
-		BlossomRegistry.registerRenderLayers();
-		BlossomRegistry.registerColorProviders();
 	}
 
 }
