@@ -1,7 +1,7 @@
 {
   "homepage": "https://github.com/yurisuika/Blossom",
   "1.18.1": {
-    "1.0.2": "Added server compatibility! Changed Flowering Leaves Block item age!",
+    "1.0.2": "Added server compatibility! Changed Flowering Oak Leaves item age!",
     "1.0.1": "Compatibility with any shears using the respective Fabric tool tag!"
     "1.0.0": "Initial release!"
   },
