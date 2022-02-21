@@ -41,7 +41,8 @@ public class BeeEntityGrowCropsGoalMixin {
                             bl = true;
                             intProperty = floweringLeavesBlock.getAgeProperty();
                         }
-                    } else if (block instanceof LeavesBlock leavesBlock) {
+                    }
+                    else if (block instanceof LeavesBlock leavesBlock) {
                         if (leavesBlock == Blocks.OAK_LEAVES) {
                             bl = true;
                         }
@@ -54,7 +55,7 @@ public class BeeEntityGrowCropsGoalMixin {
                                     .with(PERSISTENT, blockState.get(PERSISTENT))
                             );
                         }
-                        else {
+                        else if (block instanceof FloweringLeavesBlock) {
                             entity.world.setBlockState(blockPos, blockState.with(intProperty, blockState.get(intProperty) + 1));
                         }
                         entity.addCropCounter();

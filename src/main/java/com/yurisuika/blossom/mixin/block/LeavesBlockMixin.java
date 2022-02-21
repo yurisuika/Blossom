@@ -1,5 +1,6 @@
 package com.yurisuika.blossom.mixin.block;
 
+import com.yurisuika.blossom.block.FloweringLeavesBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.tag.BlockTags;
@@ -17,8 +18,8 @@ public class LeavesBlockMixin {
     private static void injectDistance(BlockState state, CallbackInfoReturnable<Integer> info) {
         if (state.isIn(BlockTags.LOGS)) {
             info.setReturnValue(0);
-        } else if (state.isIn(BlockTags.LEAVES)) {
-            info.setReturnValue(state.get(DISTANCE));
+        } else if (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) {
+            info.setReturnValue((Integer)state.get(DISTANCE));
         } else {
             info.setReturnValue(7);
         }

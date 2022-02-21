@@ -140,10 +140,8 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
     private static int getDistanceFromLog(BlockState state) {
         if (state.isIn(BlockTags.LOGS)) {
             return 0;
-        } else if (state.isIn(BlockTags.LEAVES)) {
-            return state.get(DISTANCE);
         } else {
-            return 7;
+            return (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) ? state.get(DISTANCE) : 7;
         }
     }
 
