@@ -1,15 +1,14 @@
 package com.yurisuika.blossom.mixin.entity.passive;
 
 import net.minecraft.entity.passive.BeeEntity;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(BeeEntity.GrowCropsGoal.class)
-public interface BeeEntityGrowCropsGoalInvoker {
+@Mixin(BeeEntity.PollinateGoal.class)
+public interface BeeEntityPollinateGoalInvoker {
 
     @Invoker("<init>")
-    static BeeEntity.GrowCropsGoal invokeGrowCropsGoal(BeeEntity entityType) {
+    static BeeEntity.PollinateGoal invokePollinateGoal(BeeEntity entityType) {
         throw new IllegalStateException();
     }
 

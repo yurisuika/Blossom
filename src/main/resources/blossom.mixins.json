@@ -6,7 +6,11 @@
   "mixins": [
     "block.LeavesBlockMixin",
     "entity.passive.BeeEntityGrowCropsGoalInvoker",
-    "entity.passive.BeeEntityGrowCropsGoalMixin"
+    "entity.passive.BeeEntityGrowCropsGoalMixin",
+    "entity.passive.BeeEntityInvoker",
+    "entity.passive.BeeEntityMixin",
+    "entity.passive.BeeEntityPollinateGoalInvoker",
+    "entity.passive.BeeEntityPollinateGoalMixin"
   ],
   "client": [
   ],

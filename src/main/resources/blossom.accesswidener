@@ -7,3 +7,5 @@ accessible    class     net/minecraft/entity/passive/BeeEntity$GrowCropsGoal
 accessible    field     net/minecraft/entity/Entity    random    Ljava/util/Random;
 accessible    method    net/minecraft/entity/ai/goal/Goal    getTickCount    (I)I
 accessible    method    net/minecraft/entity/passive/BeeEntity    addCropCounter    ()V
+accessible    class    net/minecraft/entity/passive/BeeEntity$PollinateGoal
+accessible    method    net/minecraft/entity/passive/BeeEntity$PollinateGoal    findFlower    (Ljava/util/function/Predicate;D)Ljava/util/Optional;

@@ -19,7 +19,7 @@ public class LeavesBlockMixin {
         if (state.isIn(BlockTags.LOGS)) {
             info.setReturnValue(0);
         } else if (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) {
-            info.setReturnValue((Integer)state.get(DISTANCE));
+            info.setReturnValue(state.get(DISTANCE));
         } else {
             info.setReturnValue(7);
         }
