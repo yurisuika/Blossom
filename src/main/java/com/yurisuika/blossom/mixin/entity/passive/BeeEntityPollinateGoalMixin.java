@@ -39,7 +39,7 @@ public abstract class BeeEntityPollinateGoalMixin {
             } else return predicate.isOf(Blocks.OAK_LEAVES) || predicate.isOf(Blossom.FLOWERING_OAK_LEAVES);
         };
 
-        cir.setReturnValue(BeeEntityPollinateGoalInvoker.invokePollinateGoal(entity).findFlower(flowerPredicate, 5.0D));
+        cir.setReturnValue(((BeeEntity.PollinateGoal)(Object)this).findFlower(flowerPredicate, 5.0D));
 
     }
 

@@ -27,7 +27,7 @@ public class BeeEntityMixin {
 
     @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
     private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(BeeEntityInvoker.invokeInit(entity, here).world.canSetBlock(pos) && (BeeEntityInvoker.invokeInit(entity, here).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || BeeEntityInvoker.invokeInit(entity, here).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || BeeEntityInvoker.invokeInit(entity, here).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES));
+        cir.setReturnValue(((BeeEntity)(Object)this).world.canSetBlock(pos) && (((BeeEntity)(Object)this).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES));
     }
 
 }

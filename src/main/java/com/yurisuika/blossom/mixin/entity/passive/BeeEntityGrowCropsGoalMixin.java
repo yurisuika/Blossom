@@ -27,7 +27,7 @@ public class BeeEntityGrowCropsGoalMixin {
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     private void injectTick(CallbackInfo ci) {
-        if (entity.random.nextInt(BeeEntityGrowCropsGoalInvoker.invokeGrowCropsGoal(entity).getTickCount(30)) == 0) {
+        if (entity.random.nextInt(((BeeEntity.GrowCropsGoal)(Object)this).getTickCount(30)) == 0) {
             for(int i = 1; i <= 2; ++i) {
                 BlockPos blockPos = entity.getBlockPos().down(i);
 

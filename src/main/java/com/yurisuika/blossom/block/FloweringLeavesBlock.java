@@ -2,7 +2,6 @@ package com.yurisuika.blossom.block;
 
 import java.util.Random;
 
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -190,7 +189,7 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
         boolean bl = false;
         if (i == 7) {
             Item item = itemStack.getItem();
-            if (FabricToolTags.SHEARS.contains(itemStack.getItem())) {
+            if (item instanceof ShearsItem) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 dropApple(world, pos);
                 itemStack.damage(1, player, (playerx) -> {
