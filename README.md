@@ -28,7 +28,6 @@ Don't want to bother building from source? Get the releases *[right here](https:
 
 You can find Blossom on both *[CurseForge](https://www.curseforge.com/minecraft/mc-mods/blossom)* and *[Modrinth](https://modrinth.com/mod/blossom)*!
 
-
 #### Community
 
 The one and only! Join the *[SuikaCraft Discord](https://discord.gg/0zdNEkQle7Qg9C1H)* for the latest discussion on our server, resource pack, mods, or just to chat!
