@@ -206,7 +206,7 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
             if (!world.isClient() && bl) {
                 player.incrementStat(Stats.USED.getOrCreateStat(item));
             }
-        return ActionResult.SUCCESS;
+            return ActionResult.SUCCESS;
 
         } else {
             return ActionResult.PASS;

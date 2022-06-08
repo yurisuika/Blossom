@@ -12,7 +12,8 @@
   ],
   "contact": {
     "homepage": "https://suikacraft.com",
-    "sources": "https://github.com/yurisuika/Blossom"
+    "sources": "https://github.com/yurisuika/Blossom",
+    "issues": "https://github.com/yurisuika/Blossom/issues"
   },
 
   "license": "GNU General Public License 3.0",
@@ -34,7 +35,7 @@
   "accessWidener" : "blossom.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.11.6",
+    "fabricloader": ">=0.12.0",
     "fabric": "*",
     "minecraft": "1.18.x",
     "java": ">=17"

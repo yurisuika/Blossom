@@ -9,14 +9,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Blossom implements ModInitializer {
 
 	public static final String MOD_ID = "blossom";
 
-	public static final Logger LOGGER = LogManager.getLogger("Blossom");
+	public static final Logger LOGGER = LoggerFactory.getLogger("blossom");
 
 	public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
 
