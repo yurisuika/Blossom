@@ -25,7 +25,7 @@
       "com.yurisuika.blossom.Blossom"
     ],
     "client": [
-      "com.yurisuika.blossom.BlossomClient"
+      "com.yurisuika.blossom.Blossom"
     ]
   },
   "mixins": [

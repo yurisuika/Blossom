@@ -32,12 +32,13 @@ import net.minecraft.world.event.GameEvent;
 public class FloweringLeavesBlock extends Block implements Fertilizable {
     private final Block shearedBlock;
 
+    public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
+    public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
+    public static final IntProperty AGE = Properties.AGE_7;
+
     public static final int MAX_DISTANCE = 7;
-    public static final IntProperty DISTANCE;
-    public static final BooleanProperty PERSISTENT;
     private static final int field_31112 = 1;
     public static final int MAX_AGE = 7;
-    public static final IntProperty AGE;
 
     public FloweringLeavesBlock(Block shearedBlock, Settings settings) {
         super(settings);
@@ -211,12 +212,6 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
         } else {
             return ActionResult.PASS;
         }
-    }
-
-    static {
-        DISTANCE = Properties.DISTANCE_1_7;
-        PERSISTENT = Properties.PERSISTENT;
-        AGE = Properties.AGE_7;
     }
 
 }
