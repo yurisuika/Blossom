@@ -1,0 +1,18 @@
+modLoader="javafml"
+loaderVersion="40,)"
+license="GNU General Public License 3.0"
+[[mods]]
+modId="blossom"
+version="${file.jarVersion}"
+displayName="Blossom"
+logoFile="blossom.png"
+authors="yurisuika"
+description='''
+Fruit blossoms from trees!
+'''
+[[dependencies.raised]]
+    modId="forge"
+    mandatory=true
+    versionRange="[40,)"
+    ordering="AFTER"
+    side="CLIENT"
