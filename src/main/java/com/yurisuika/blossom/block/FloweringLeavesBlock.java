@@ -2,6 +2,8 @@ package com.yurisuika.blossom.block;
 
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -28,20 +30,22 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
 
-public class FloweringLeavesBlock extends Block implements Fertilizable {
+public class FloweringLeavesBlock extends Block implements Waterloggable, Fertilizable {
     private final Block shearedBlock;
 
+    public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
+    public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
+    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
+    public static final IntProperty AGE = Properties.AGE_7;
+
     public static final int MAX_DISTANCE = 7;
-    public static final IntProperty DISTANCE;
-    public static final BooleanProperty PERSISTENT;
     private static final int field_31112 = 1;
     public static final int MAX_AGE = 7;
-    public static final IntProperty AGE;
 
     public FloweringLeavesBlock(Block shearedBlock, Settings settings) {
         super(settings);
         this.shearedBlock = shearedBlock;
-        this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(AGE, 0));
+        this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(WATERLOGGED, false).with(AGE, 0));
     }
 
     public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
@@ -109,6 +113,10 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (state.get(WATERLOGGED)) {
+            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        }
+
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.get(DISTANCE) != i) {
             world.createAndScheduleBlockTick(pos, this, 1);
@@ -143,6 +151,10 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
         }
     }
 
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+    }
+
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (world.hasRain(pos.up())) {
             if (random.nextInt(15) == 1) {
@@ -159,11 +171,11 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
     }
 
     protected void appendProperties(Builder<Block, BlockState> builder) {
-        builder.add(DISTANCE, PERSISTENT, AGE);
+        builder.add(DISTANCE, PERSISTENT, WATERLOGGED, AGE);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return updateDistanceFromLogs(this.getDefaultState().with(PERSISTENT, true).with(AGE, 0), ctx.getWorld(), ctx.getBlockPos());
+        return updateDistanceFromLogs(this.getDefaultState().with(PERSISTENT, true).with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(AGE, 0), ctx.getWorld(), ctx.getBlockPos());
     }
 
     public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
@@ -199,6 +211,7 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
                 world.setBlockState(pos, this.shearedBlock.getDefaultState()
                         .with(DISTANCE, state.get(DISTANCE))
                         .with(PERSISTENT, state.get(PERSISTENT))
+                        .with(PERSISTENT, state.get(WATERLOGGED))
                 );
             }
 
@@ -210,12 +223,6 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
         } else {
             return ActionResult.PASS;
         }
-    }
-
-    static {
-        DISTANCE = Properties.DISTANCE_1_7;
-        PERSISTENT = Properties.PERSISTENT;
-        AGE = Properties.AGE_7;
     }
 
 }

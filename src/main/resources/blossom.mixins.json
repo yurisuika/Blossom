@@ -5,9 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "block.LeavesBlockMixin",
-    "entity.passive.BeeEntityGrowCropsGoalMixin",
-    "entity.passive.BeeEntityMixin",
-    "entity.passive.BeeEntityPollinateGoalMixin"
+    "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
+    "entity.passive.BeeEntityMixin$InitMixin",
+    "entity.passive.BeeEntityMixin$PollinateGoalMixin",
   ],
   "client": [
   ],
