@@ -10,7 +10,7 @@ authors="yurisuika"
 description='''
 Fruit blossoms from trees!
 '''
-[[dependencies.raised]]
+[[dependencies.blossom]]
     modId="forge"
     mandatory=true
     versionRange="[43,)"
