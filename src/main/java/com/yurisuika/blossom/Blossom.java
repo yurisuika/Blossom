@@ -43,7 +43,7 @@ public class Blossom {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Blossom.MOD_ID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Blossom.MOD_ID);
 
-	public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES).requiresCorrectToolForDrops()){
+	public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES).requiresCorrectToolForDrops()) {
 		@Override
 		public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
 			return true;
@@ -74,7 +74,6 @@ public class Blossom {
 						if (level != null && pos != null) {
 							return BiomeColors.getAverageFoliageColor(level, pos);
 						}
-
 						return FoliageColor.get(0.5, 1.0);
 					}, Blossom.FLOWERING_OAK_LEAVES.get()
 			);
@@ -83,7 +82,6 @@ public class Blossom {
 		public static void colorItems(final ColorHandlerEvent.Item color) {
 			color.getItemColors().register((stack, tintIndex) -> {
 						if (tintIndex > 0) return -1;
-
 						BlockColors colors = Minecraft.getInstance().getBlockColors();
 						return colors.getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex);
 					}, Blossom.FLOWERING_OAK_LEAVES.get()
@@ -103,8 +101,7 @@ public class Blossom {
 		}
 	}
 
-	public Blossom()
-	{
+	public Blossom() {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		MinecraftForge.EVENT_BUS.register(this);
 
