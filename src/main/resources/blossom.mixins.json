@@ -1,7 +1,8 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.yurisuika.blossom.mixin",
+  "package": "dev.yurisuika.blossom.mixin",
+  "refmap": "blossom.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "block.LeavesBlockMixin",

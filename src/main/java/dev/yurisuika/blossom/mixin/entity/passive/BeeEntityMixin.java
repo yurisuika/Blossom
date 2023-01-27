@@ -1,7 +1,7 @@
-package com.yurisuika.blossom.mixin.entity.passive;
+package dev.yurisuika.blossom.mixin.entity.passive;
 
-import com.yurisuika.blossom.Blossom;
-import com.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.Blossom;
+import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.EntityType;
@@ -59,7 +59,6 @@ public class BeeEntityMixin {
             if (entity.random.nextInt(((BeeEntity.GrowCropsGoal)(Object)this).getTickCount(30)) == 0) {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
-
                     BlockState blockState = entity.world.getBlockState(blockPos);
                     Block block = blockState.getBlock();
                     boolean bl = false;
