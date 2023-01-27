@@ -1,7 +1,7 @@
-package com.yurisuika.blossom;
+package dev.yurisuika.blossom;
 
 import com.mojang.logging.LogUtils;
-import com.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.BiomeColors;

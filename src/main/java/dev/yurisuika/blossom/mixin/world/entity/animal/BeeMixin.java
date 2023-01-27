@@ -1,7 +1,7 @@
-package com.yurisuika.blossom.mixin.world.entity.animal;
+package dev.yurisuika.blossom.mixin.world.entity.animal;
 
-import com.yurisuika.blossom.Blossom;
-import com.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.Blossom;
+import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
@@ -63,7 +63,6 @@ public class BeeMixin {
             if (entity.random.nextInt(((Bee.BeeGrowCropGoal)(Object)this).adjustedTickDelay(30)) == 0) {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.blockPosition().below(i);
-
                     BlockState blockState = entity.level.getBlockState(blockPos);
                     Block block = blockState.getBlock();
                     boolean flag = false;

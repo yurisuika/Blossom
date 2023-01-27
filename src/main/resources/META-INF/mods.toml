@@ -1,18 +1,22 @@
-modLoader="javafml"
-loaderVersion="43,)"
-license="GNU Lesser General Public License v3.0"
+modLoader = "javafml"
+loaderVersion = "44,)"
+license = "GNU Lesser General Public License v3.0"
+
 [[mods]]
-modId="blossom"
-version="${file.jarVersion}"
-displayName="Blossom"
-logoFile="blossom.png"
-authors="yurisuika"
-description='''
+modId = "blossom"
+version= " ${file.jarVersion}"
+displayName = "Blossom"
+displayURL = "https://github.com/yurisuika/Blossom"
+issueTrackerURL = "https://github.com/yurisuika/Blossom/issues"
+logoFile = "assets/blossom/icon.png"
+authors = "yurisuika"
+description = '''
 Fruit blossoms from trees!
 '''
+
 [[dependencies.blossom]]
-    modId="forge"
-    mandatory=true
-    versionRange="[43,)"
-    ordering="AFTER"
-    side="CLIENT"
+modId = "forge"
+mandatory = true
+versionRange = "[44,)"
+ordering = "AFTER"
+side = "CLIENT"
