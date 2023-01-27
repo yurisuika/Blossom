@@ -11,7 +11,7 @@
   "contributors": [
   ],
   "contact": {
-    "homepage": "https://suikacraft.com",
+    "homepage": "https://yurisuika.dev",
     "sources": "https://github.com/yurisuika/Blossom",
     "issues": "https://github.com/yurisuika/Blossom/issues"
   },
@@ -22,10 +22,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.yurisuika.blossom.Blossom"
+      "dev.yurisuika.blossom.Blossom"
     ],
     "client": [
-      "com.yurisuika.blossom.Blossom"
+      "dev.yurisuika.blossom.Blossom"
     ]
   },
   "mixins": [

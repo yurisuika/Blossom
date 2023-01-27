@@ -1,4 +1,4 @@
-package com.yurisuika.blossom.block;
+package dev.yurisuika.blossom.block;
 
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;

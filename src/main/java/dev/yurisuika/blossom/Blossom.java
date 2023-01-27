@@ -1,6 +1,6 @@
-package com.yurisuika.blossom;
+package dev.yurisuika.blossom;
 
-import com.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
