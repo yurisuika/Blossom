@@ -1,6 +1,6 @@
-package com.yurisuika.blossom.mixin.world.level.block;
+package dev.yurisuika.blossom.mixin.world.level.block;
 
-import com.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
