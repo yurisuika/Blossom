@@ -8,7 +8,7 @@ version= " ${file.jarVersion}"
 displayName = "Blossom"
 displayURL = "https://github.com/yurisuika/Blossom"
 issueTrackerURL = "https://github.com/yurisuika/Blossom/issues"
-logoFile = "assets/blossom/icon.png"
+logoFile = "icon.png"
 authors = "yurisuika"
 description = '''
 Fruit blossoms from trees!
