@@ -17,8 +17,8 @@ public interface BeeEntityInvoker {
         throw new AssertionError();
     }
 
-    @Mixin(BeeEntity.PollinateGoal.class)
-    interface BeeEntity$PollinateGoalInvoker {
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$PollinateGoal")
+    interface PollinateGoalInvoker {
 
         @Invoker("findFlower")
         static Optional<BlockPos> invokeFindFlower(Predicate<BlockState> predicate, double searchDistance) {

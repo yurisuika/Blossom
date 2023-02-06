@@ -42,7 +42,7 @@ public class BeeEntityMixin {
         cir.setReturnValue(((BeeEntity)(Object)this).world.canSetBlock(pos) && (((BeeEntity)(Object)this).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES.get()));
     }
 
-    @Mixin(BeeEntity.GrowCropsGoal.class)
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
     public static class GrowCropsGoalMixin {
 
         private BeeEntity entity;
@@ -93,7 +93,7 @@ public class BeeEntityMixin {
 
     }
 
-    @Mixin(BeeEntity.PollinateGoal.class)
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$PollinateGoal")
     public abstract static class PollinateGoalMixin {
 
         private BeeEntity entity;
@@ -114,7 +114,7 @@ public class BeeEntityMixin {
                     }
                 } else return predicate.isOf(Blocks.OAK_LEAVES) || predicate.isOf(Blossom.FLOWERING_OAK_LEAVES.get());
             };
-            cir.setReturnValue(BeeEntity$PollinateGoalInvoker.invokeFindFlower(flowerPredicate, 5.0D));
+            cir.setReturnValue(BeeEntityInvoker.PollinateGoalInvoker.invokeFindFlower(flowerPredicate, 5.0D));
         }
 
         /**
