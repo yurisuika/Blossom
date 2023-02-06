@@ -10,8 +10,6 @@ import java.util.Random;
 public interface EntityAccessor {
 
     @Accessor
-    static Random getRandom() {
-        throw new AssertionError();
-    }
+    Random getRandom();
 
 }
