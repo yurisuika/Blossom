@@ -2,6 +2,8 @@ package dev.yurisuika.blossom.mixin.entity.passive;
 
 import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
+import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.EntityType;
@@ -56,7 +58,7 @@ public class BeeEntityMixin {
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
         private void injectTick(CallbackInfo ci) {
-            if (entity.random.nextInt(((BeeEntity.GrowCropsGoal)(Object)this).getTickCount(30)) == 0) {
+            if (EntityAccessor.getRandom().nextInt(GoalInvoker.invokeGetTickCount(30)) == 0) {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.world.getBlockState(blockPos);
@@ -86,7 +88,7 @@ public class BeeEntityMixin {
                             else if (block instanceof FloweringLeavesBlock) {
                                 entity.world.setBlockState(blockPos, blockState.with(intProperty, blockState.get(intProperty) + 1));
                             }
-                            entity.addCropCounter();
+                            BeeEntityInvoker.invokeAddCropCounter();
                         }
                     }
                 }
@@ -107,7 +109,6 @@ public class BeeEntityMixin {
 
         @Inject(method = "getFlower", at = @At("RETURN"), cancellable = true)
         private void injectGetFlower(CallbackInfoReturnable<Optional<BlockPos>> cir) {
-
             Predicate<BlockState> flowerPredicate = (predicate) -> {
                 if (predicate.isIn(BlockTags.FLOWERS)) {
                     if (predicate.isOf(Blocks.SUNFLOWER)) {
@@ -117,9 +118,7 @@ public class BeeEntityMixin {
                     }
                 } else return predicate.isOf(Blocks.OAK_LEAVES) || predicate.isOf(Blossom.FLOWERING_OAK_LEAVES);
             };
-
-            cir.setReturnValue(((BeeEntity.PollinateGoal)(Object)this).findFlower(flowerPredicate, 5.0D));
-
+            cir.setReturnValue(BeeEntityInvoker.PollinateGoalInvoker.invokeFindFlower(flowerPredicate, 5.0D));
         }
 
         /**
