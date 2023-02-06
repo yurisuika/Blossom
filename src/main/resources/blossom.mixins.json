@@ -8,7 +8,7 @@
     "block.LeavesBlockMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
     "entity.passive.BeeEntityMixin$InitMixin",
-    "entity.passive.BeeEntityMixin$PollinateGoalMixin",
+    "entity.passive.BeeEntityMixin$PollinateGoalMixin"
   ],
   "client": [
   ],

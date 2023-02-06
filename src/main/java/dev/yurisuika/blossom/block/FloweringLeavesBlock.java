@@ -213,7 +213,7 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
                 world.setBlockState(pos, this.shearedBlock.getDefaultState()
                         .with(DISTANCE, state.get(DISTANCE))
                         .with(PERSISTENT, state.get(PERSISTENT))
-                        .with(PERSISTENT, state.get(WATERLOGGED))
+                        .with(WATERLOGGED, state.get(WATERLOGGED))
                 );
             }
 
