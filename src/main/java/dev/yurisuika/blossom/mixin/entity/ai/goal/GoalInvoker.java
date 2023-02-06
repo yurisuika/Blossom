@@ -8,8 +8,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface GoalInvoker {
 
     @Invoker("getTickCount")
-    static int invokeGetTickCount(int ticks) {
-        throw new AssertionError();
-    }
+    int invokeGetTickCount(int ticks);
 
 }
