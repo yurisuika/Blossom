@@ -91,7 +91,7 @@ public class Blossom {
 	public static class CommonModBusEvents {
 		@SubscribeEvent
 		public static void commonSetup(FMLCommonSetupEvent event) {
-			ComposterBlockInvoker.invokeRegisterCompstableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
+			ComposterBlockInvoker.invokeRegisterComposableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
 		}
 	}
 
