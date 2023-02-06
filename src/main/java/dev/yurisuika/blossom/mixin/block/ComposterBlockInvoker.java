@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface ComposterBlockInvoker {
 
     @Invoker("registerCompostableItem")
-    static void invokeRegisterCompstableItem(float levelIncreaseChance, ItemConvertible item) {
+    static void invokeRegisterComposableItem(float levelIncreaseChance, ItemConvertible item) {
         throw new AssertionError();
     }
 

@@ -2,6 +2,7 @@ package dev.yurisuika.blossom;
 
 import com.mojang.logging.LogUtils;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.mixin.block.ComposterBlockInvoker;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.block.BlockColors;
@@ -93,7 +94,7 @@ public class Blossom {
 	public static class CommonModBusEvents {
 		@SubscribeEvent
 		public static void commonSetup(FMLCommonSetupEvent event) {
-			ComposterBlock.registerCompostableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
+			ComposterBlockInvoker.invokeRegisterComposableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
 		}
 	}
 
