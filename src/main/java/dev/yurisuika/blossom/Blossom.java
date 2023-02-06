@@ -81,6 +81,7 @@ public class Blossom {
 					}, Blossom.FLOWERING_OAK_LEAVES.get()
 			);
 		}
+		@SuppressWarnings("removal")
 		@SubscribeEvent
 		public static void clientSetup(FMLClientSetupEvent event) {
 			RenderLayers.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderLayer.getCutout());

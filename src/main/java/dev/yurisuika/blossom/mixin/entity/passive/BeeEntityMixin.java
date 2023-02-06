@@ -46,7 +46,7 @@ public class BeeEntityMixin {
 
     }
 
-    @Mixin(BeeEntity.GrowCropsGoal.class)
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
     public static class GrowCropsGoalMixin {
 
         private BeeEntity entity;
@@ -97,7 +97,7 @@ public class BeeEntityMixin {
 
     }
 
-    @Mixin(BeeEntity.PollinateGoal.class)
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$PollinateGoal")
     public abstract static class PollinateGoalMixin {
 
         private BeeEntity entity;
