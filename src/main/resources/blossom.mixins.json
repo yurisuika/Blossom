@@ -5,6 +5,7 @@
   "refmap": "blossom.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "block.ComposterBlockInvoker",
     "block.LeavesBlockMixin",
     "entity.EntityAccessor",
     "entity.ai.goal.GoalInvoker",

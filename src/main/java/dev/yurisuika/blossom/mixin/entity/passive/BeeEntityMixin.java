@@ -25,25 +25,21 @@ import java.util.function.Predicate;
 import static net.minecraft.block.LeavesBlock.DISTANCE;
 import static net.minecraft.block.LeavesBlock.PERSISTENT;
 
+@Mixin(BeeEntity.class)
 public class BeeEntityMixin {
 
-    @Mixin(BeeEntity.class)
-    public static class InitMixin {
+    private EntityType<? extends BeeEntity> entity;
+    private World here;
 
-        private EntityType<? extends BeeEntity> entity;
-        private World here;
+    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
+        entity = entityType;
+        here = world;
+    }
 
-        @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
-            entity = entityType;
-            here = world;
-        }
-
-        @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
-        private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-            cir.setReturnValue(((BeeEntity)(Object)this).world.canSetBlock(pos) && (((BeeEntity)(Object)this).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES.get()));
-        }
-
+    @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
+    private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(((BeeEntity)(Object)this).world.canSetBlock(pos) && (((BeeEntity)(Object)this).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES.get()));
     }
 
     @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
@@ -58,7 +54,7 @@ public class BeeEntityMixin {
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
         private void injectTick(CallbackInfo ci) {
-            if (EntityAccessor.getRandom().nextInt(GoalInvoker.invokeGetTickCount(30)) == 0) {
+            if (((EntityAccessor)this).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount(30)) == 0) {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.world.getBlockState(blockPos);
@@ -88,7 +84,7 @@ public class BeeEntityMixin {
                             else if (block instanceof FloweringLeavesBlock) {
                                 entity.world.setBlockState(blockPos, blockState.with(intProperty, blockState.get(intProperty) + 1));
                             }
-                            BeeEntityInvoker.invokeAddCropCounter();
+                            ((BeeEntityInvoker)this).invokeAddCropCounter();
                         }
                     }
                 }
@@ -118,7 +114,7 @@ public class BeeEntityMixin {
                     }
                 } else return predicate.isOf(Blocks.OAK_LEAVES) || predicate.isOf(Blossom.FLOWERING_OAK_LEAVES.get());
             };
-            cir.setReturnValue(BeeEntityInvoker.PollinateGoalInvoker.invokeFindFlower(flowerPredicate, 5.0D));
+            cir.setReturnValue(((BeeEntityInvoker.PollinateGoalInvoker)this).invokeFindFlower(flowerPredicate, 5.0D));
         }
 
         /**
