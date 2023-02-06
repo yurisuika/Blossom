@@ -25,28 +25,24 @@ import java.util.function.Predicate;
 import static net.minecraft.block.LeavesBlock.DISTANCE;
 import static net.minecraft.block.LeavesBlock.PERSISTENT;
 
+@Mixin(BeeEntity.class)
 public class BeeEntityMixin {
 
-    @Mixin(BeeEntity.class)
-    public static class InitMixin {
+    private EntityType<? extends BeeEntity> entity;
+    private World here;
 
-        private EntityType<? extends BeeEntity> entity;
-        private World here;
-
-        @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
-            entity = entityType;
-            here = world;
-        }
-
-        @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
-        private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-            cir.setReturnValue(((BeeEntity)(Object)this).world.canSetBlock(pos) && (((BeeEntity)(Object)this).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES));
-        }
-
+    @Inject(method = "<init>", at = @At(value = "TAIL"))
+    private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
+        entity = entityType;
+        here = world;
     }
 
-    @Mixin(BeeEntity.GrowCropsGoal.class)
+    @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
+    private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(((BeeEntity)(Object)this).world.canSetBlock(pos) && (((BeeEntity)(Object)this).world.getBlockState(pos).isIn(BlockTags.FLOWERS)) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blocks.OAK_LEAVES) || ((BeeEntity)(Object)this).world.getBlockState(pos).isOf(Blossom.FLOWERING_OAK_LEAVES));
+    }
+
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
     public static class GrowCropsGoalMixin {
 
         private BeeEntity entity;
@@ -97,7 +93,7 @@ public class BeeEntityMixin {
 
     }
 
-    @Mixin(BeeEntity.PollinateGoal.class)
+    @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$PollinateGoal")
     public abstract static class PollinateGoalMixin {
 
         private BeeEntity entity;

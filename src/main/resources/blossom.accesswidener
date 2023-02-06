@@ -1,4 +1,1 @@
 accessWidener v1 named
-
-accessible    class     net/minecraft/entity/passive/BeeEntity$GrowCropsGoal
-accessible    class     net/minecraft/entity/passive/BeeEntity$PollinateGoal
