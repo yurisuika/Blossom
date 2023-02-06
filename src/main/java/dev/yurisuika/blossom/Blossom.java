@@ -1,23 +1,18 @@
 package dev.yurisuika.blossom;
 
 import com.mojang.logging.LogUtils;
-import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
-import net.minecraft.client.Minecraft;
+import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import net.minecraft.block.*;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.FoliageColor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.color.world.BiomeColors;
+import net.minecraft.client.color.world.FoliageColors;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
+import net.minecraft.item.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,24 +38,24 @@ public class Blossom {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Blossom.MOD_ID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Blossom.MOD_ID);
 
-	public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES).requiresCorrectToolForDrops()) {
+	public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, AbstractBlock.Settings.copy(Blocks.OAK_LEAVES).requiresTool()) {
 		@Override
-		public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+		public boolean isFlammable(BlockState state, BlockView world, BlockPos pos, Direction direction) {
 			return true;
 		}
 		@Override
-		public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+		public int getFlammability(BlockState state, BlockView world, BlockPos pos, Direction direction) {
 			return 30;
 		}
 		@Override
-		public int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+		public int getFireSpreadSpeed(BlockState state, BlockView world, BlockPos pos, Direction direction) {
 			return 60;
 		}
-	}, new Item.Properties());
+	}, new Item.Settings());
 
-	private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> supplier, Item.Properties properties) {
+	private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> supplier, Item.Settings settings) {
 		RegistryObject<T> block = BLOCKS.register(name, supplier);
-		ITEMS.register(name, () -> new BlockItem(block.get(), properties));
+		ITEMS.register(name, () -> new BlockItem(block.get(), settings));
 		return block;
 	}
 
@@ -68,11 +63,11 @@ public class Blossom {
 	public static class ClientModBusEvents {
 		@SubscribeEvent
 		public static void colorBlocks(final RegisterColorHandlersEvent.Block color) {
-			color.getBlockColors().register((state, level, pos, tintIndex) -> {
-						if (level != null && pos != null) {
-							return BiomeColors.getAverageFoliageColor(level, pos);
+			color.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> {
+						if (world != null && pos != null) {
+							return BiomeColors.getFoliageColor(world, pos);
 						}
-						return FoliageColor.get(0.5, 1.0);
+						return FoliageColors.getColor(0.5, 1.0);
 					}, Blossom.FLOWERING_OAK_LEAVES.get()
 			);
 		}
@@ -80,14 +75,14 @@ public class Blossom {
 		public static void colorItems(final RegisterColorHandlersEvent.Item color) {
 			color.getItemColors().register((stack, tintIndex) -> {
 						if (tintIndex > 0) return -1;
-						BlockColors colors = Minecraft.getInstance().getBlockColors();
-						return colors.getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex);
+						BlockColors colors = MinecraftClient.getInstance().getBlockColors();
+						return colors.getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex);
 					}, Blossom.FLOWERING_OAK_LEAVES.get()
 			);
 		}
 		@SubscribeEvent
 		public static void clientSetup(FMLClientSetupEvent event) {
-			ItemBlockRenderTypes.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderType.cutout());
+			RenderLayers.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderLayer.getCutout());
 		}
 	}
 
@@ -95,7 +90,7 @@ public class Blossom {
 	public static class CommonModBusEvents {
 		@SubscribeEvent
 		public static void commonSetup(FMLCommonSetupEvent event) {
-			ComposterBlock.add(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
+			ComposterBlock.registerCompostableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
 		}
 	}
 
