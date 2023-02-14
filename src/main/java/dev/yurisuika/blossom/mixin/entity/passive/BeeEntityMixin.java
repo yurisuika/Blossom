@@ -3,10 +3,9 @@ package dev.yurisuika.blossom.mixin.entity.passive;
 import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
-import dev.yurisuika.blossom.mixin.entity.goal.GoalInvoker;
+import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.state.property.IntProperty;
@@ -55,7 +54,7 @@ public class BeeEntityMixin {
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
         private void injectTick(CallbackInfo ci) {
-            if (((EntityAccessor)this).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount(30)) == 0) {
+            if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount(30)) == 0) {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.world.getBlockState(blockPos);
@@ -85,7 +84,7 @@ public class BeeEntityMixin {
                             else if (block instanceof FloweringLeavesBlock) {
                                 entity.world.setBlockState(blockPos, blockState.with(intProperty, blockState.get(intProperty) + 1));
                             }
-                            ((BeeEntityInvoker)this).invokeAddCropCounter();
+                            ((BeeEntityInvoker)entity).invokeAddCropCounter();
                         }
                     }
                 }

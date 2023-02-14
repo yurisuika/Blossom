@@ -1,4 +1,4 @@
-package dev.yurisuika.blossom.mixin.entity.goal;
+package dev.yurisuika.blossom.mixin.entity.ai.goal;
 
 import net.minecraft.entity.ai.goal.Goal;
 import org.spongepowered.asm.mixin.Mixin;
