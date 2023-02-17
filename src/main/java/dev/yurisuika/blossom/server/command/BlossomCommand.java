@@ -27,7 +27,7 @@ public class BlossomCommand {
                                 .executes(context -> {
                                     Blossom.config.exposed = true;
                                     Blossom.config.rate = 5;
-                                    Blossom.config.count = new Blossom.Count(2,4);
+                                    Blossom.config.count = new Blossom.Count(2, 4);
                                     Blossom.saveConfig();
                                     context.getSource().sendFeedback(new TranslatableText("commands.blossom.config.reset"), true);
                                     return 1;
