@@ -42,9 +42,9 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static class Config {
 
         public boolean exposed = true;
-        public int rate = 10;
+        public int rate = 5;
 
-        public Count count = new Count(2,4);
+        public Count count = new Count(2, 4);
 
     }
 
