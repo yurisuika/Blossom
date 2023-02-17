@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom.block;
 
+import dev.yurisuika.blossom.Blossom;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
@@ -31,17 +32,16 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.event.GameEvent;
 
-public class FloweringLeavesBlock extends Block implements Waterloggable, Fertilizable {
+import java.util.concurrent.ThreadLocalRandom;
+
+public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
+
     private final Block shearedBlock;
 
     public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
     public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     public static final IntProperty AGE = Properties.AGE_7;
-
-    public static final int MAX_DISTANCE = 7;
-    private static final int field_31112 = 1;
-    public static final int MAX_AGE = 7;
 
     public FloweringLeavesBlock(Block shearedBlock, Settings settings) {
         super(settings);
@@ -54,7 +54,7 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
     }
 
     public boolean hasRandomTicks(BlockState state) {
-        return (state.get(DISTANCE) == 7 && !(Boolean)state.get(PERSISTENT)) || (!this.isMature(state) && state.get(DISTANCE) <= 7  && !(Boolean)state.get(PERSISTENT));
+        return state.get(DISTANCE) == 7 || !this.isMature(state);
     }
 
     public IntProperty getAgeProperty() {
@@ -81,9 +81,7 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
         if (!(Boolean)state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
             dropStacks(state, world, pos);
             world.removeBlock(pos, false);
-        }
-
-        else if (!this.isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
+        } else if (!this.isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {
                 world.setBlockState(pos, state.with(AGE, i + 1), 2);
@@ -101,7 +99,6 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
         if (i > j) {
             i = j;
         }
-
         world.setBlockState(pos, state.with(AGE, i), 2);
     }
 
@@ -117,39 +114,28 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
         if (state.get(WATERLOGGED)) {
             world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
-
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.get(DISTANCE) != i) {
             world.scheduleBlockTick(pos, this, 1);
         }
-
         return state;
     }
 
     private static BlockState updateDistanceFromLogs(BlockState state, WorldAccess world, BlockPos pos) {
         int i = 7;
         Mutable mutable = new Mutable();
-        Direction[] var5 = Direction.values();
-        int var6 = var5.length;
-
-        for(int var7 = 0; var7 < var6; ++var7) {
-            Direction direction = var5[var7];
+        for (Direction direction : Direction.values()) {
             mutable.set(pos, direction);
             i = Math.min(i, getDistanceFromLog(world.getBlockState(mutable)) + 1);
             if (i == 1) {
                 break;
             }
         }
-
         return state.with(DISTANCE, i);
     }
 
     private static int getDistanceFromLog(BlockState state) {
-        if (state.isIn(BlockTags.LOGS)) {
-            return 0;
-        } else {
-            return (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) ? state.get(DISTANCE) : 7;
-        }
+        return state.isIn(BlockTags.LOGS) ? 0 : (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) ? state.get(DISTANCE) : 7;
     }
 
     public FluidState getFluidState(BlockState state) {
@@ -193,14 +179,13 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
     }
 
     public static void dropApple(World world, BlockPos pos) {
-        dropStack(world, pos, new ItemStack(Items.APPLE, 3));
+        dropStack(world, pos, new ItemStack(Items.APPLE, ThreadLocalRandom.current().nextInt(Blossom.config.count.min, Blossom.config.count.max + 1)));
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getStackInHand(hand);
-        int i = state.get(AGE);
         boolean bl = false;
-        if (i == 7) {
+        if (state.get(AGE) == 7) {
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
@@ -216,12 +201,10 @@ public class FloweringLeavesBlock extends Block implements Waterloggable, Fertil
                         .with(WATERLOGGED, state.get(WATERLOGGED))
                 );
             }
-
             if (!world.isClient() && bl) {
                 player.incrementStat(Stats.USED.getOrCreateStat(item));
             }
             return ActionResult.SUCCESS;
-
         } else {
             return ActionResult.PASS;
         }
