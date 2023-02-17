@@ -46,9 +46,9 @@ public class Blossom {
     public static class Config {
 
         public boolean exposed = true;
-        public int rate = 10;
+        public int rate = 5;
 
-        public Count count = new Count(2,4);
+        public Count count = new Count(2, 4);
 
     }
 
@@ -162,18 +162,15 @@ public class Blossom {
     }
 
     public Blossom() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        MinecraftForge.EVENT_BUS.register(this);
-
-        BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-    }
-
-    public void setup(final FMLClientSetupEvent event) {
         if (!file.exists()) {
             saveConfig();
         }
         loadConfig();
+
+        MinecraftForge.EVENT_BUS.register(this);
+
+        BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
 }
