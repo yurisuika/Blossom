@@ -106,12 +106,10 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES).requiresTool());
 
-    @Environment(EnvType.SERVER)
     public static void registerCompostables() {
         CompostingChanceRegistry.INSTANCE.add(Blossom.FLOWERING_OAK_LEAVES, 0.3F);
     }
 
-    @Environment(EnvType.SERVER)
     public static void registerFlammables() {
         FlammableBlockRegistry.getDefaultInstance().add(Blossom.FLOWERING_OAK_LEAVES, 30, 60);
     }
