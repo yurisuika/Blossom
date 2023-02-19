@@ -19,4 +19,4 @@ modId = "forge"
 mandatory = true
 versionRange = "[40,)"
 ordering = "AFTER"
-side = "CLIENT"
+side = "BOTH"
