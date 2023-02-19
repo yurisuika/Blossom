@@ -1,5 +1,6 @@
 {
   "values": [
+    "minecraft:the_void",
     "#minecraft:is_end",
     "#minecraft:is_nether",
     "#minecraft:is_overworld"
