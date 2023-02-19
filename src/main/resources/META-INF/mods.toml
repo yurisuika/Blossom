@@ -15,6 +15,13 @@ Fruit blossoms from trees!
 '''
 
 [[dependencies.blossom]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.19.3,1.20)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.blossom]]
 modId = "forge"
 mandatory = true
 versionRange = "[44,)"
