@@ -124,7 +124,7 @@ public class Blossom {
 
         @SubscribeEvent
         public static void registerCommands(RegisterCommandsEvent event) {
-            BlossomCommand.register(event.getDispatcher());
+            BlossomCommand.register(event.getDispatcher(), event.getEnvironment());
         }
 
     }

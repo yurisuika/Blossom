@@ -12,7 +12,7 @@ import static net.minecraft.server.command.CommandManager.*;
 
 public class BlossomCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, RegistrationEnvironment environment) {
         dispatcher.register(literal("blossom")
                 .then(literal("config")
                         .requires(source -> source.hasPermissionLevel(4))
