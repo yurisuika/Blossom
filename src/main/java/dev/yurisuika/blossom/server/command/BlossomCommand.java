@@ -3,12 +3,12 @@ package dev.yurisuika.blossom.server.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import dev.yurisuika.blossom.Blossom;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
+import static dev.yurisuika.blossom.Blossom.*;
 import static net.minecraft.server.command.CommandManager.*;
 
 public class BlossomCommand {
@@ -19,17 +19,17 @@ public class BlossomCommand {
                         .requires(source -> source.hasPermissionLevel(4))
                         .then(literal("reload")
                                 .executes(context -> {
-                                    Blossom.loadConfig();
+                                    loadConfig();
                                     context.getSource().sendFeedback(Text.translatable("commands.blossom.config.reload"), true);
                                     return 1;
                                 })
                         )
                         .then(literal("reset")
                                 .executes(context -> {
-                                    Blossom.config.exposed = true;
-                                    Blossom.config.rate = 5;
-                                    Blossom.config.count = new Blossom.Count(2, 4);
-                                    Blossom.saveConfig();
+                                    config.exposed = true;
+                                    config.rate = 5;
+                                    config.count = new Count(2, 4);
+                                    saveConfig();
                                     context.getSource().sendFeedback(Text.translatable("commands.blossom.config.reset"), true);
                                     return 1;
                                 })
@@ -38,19 +38,19 @@ public class BlossomCommand {
                 .then(literal("query")
                         .then(literal("exposed")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.exposed", Blossom.config.exposed), false);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.exposed", config.exposed), false);
                                     return 1;
                                 })
                         )
                         .then(literal("rate")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.rate", Blossom.config.rate), false);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.rate", config.rate), false);
                                     return 1;
                                 })
                         )
                         .then(literal("count")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.count", Blossom.config.count.min, Blossom.config.count.max), false);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.count", config.count.min, config.count.max), false);
                                     return 1;
                                 })
                         )
@@ -60,9 +60,9 @@ public class BlossomCommand {
                         .then(literal("exposed")
                                 .then(argument("value", BoolArgumentType.bool())
                                         .executes(context -> {
-                                            Blossom.config.exposed = BoolArgumentType.getBool(context, "value");
-                                            Blossom.saveConfig();
-                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.exposed", Blossom.config.exposed), true);
+                                            config.exposed = BoolArgumentType.getBool(context, "value");
+                                            saveConfig();
+                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.exposed", config.exposed), true);
                                             return 1;
                                         })
                                 )
@@ -70,9 +70,9 @@ public class BlossomCommand {
                         .then(literal("rate")
                                 .then(CommandManager.argument("value", IntegerArgumentType.integer(1))
                                         .executes(context -> {
-                                            Blossom.config.rate = IntegerArgumentType.getInteger(context, "value");
-                                            Blossom.saveConfig();
-                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.rate", Blossom.config.rate), true);
+                                            config.rate = IntegerArgumentType.getInteger(context, "value");
+                                            saveConfig();
+                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.rate", config.rate), true);
                                             return 1;
                                         })
                                 )
@@ -83,9 +83,9 @@ public class BlossomCommand {
                                                 .executes(context -> {
                                                     int min = Math.min(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
                                                     int max = Math.max(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
-                                                    Blossom.config.count = new Blossom.Count(min, max);
-                                                    Blossom.saveConfig();
-                                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.set.count", Blossom.config.count.min, Blossom.config.count.max), true);
+                                                    config.count = new Count(min, max);
+                                                    saveConfig();
+                                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.set.count", config.count.min, config.count.max), true);
                                                     return 1;
                                                 })
                                         )
