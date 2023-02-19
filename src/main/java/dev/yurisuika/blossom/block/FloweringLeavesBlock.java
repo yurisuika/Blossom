@@ -1,9 +1,10 @@
 package dev.yurisuika.blossom.block;
 
-import java.util.Random;
-
+import dev.yurisuika.blossom.Blossom;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -22,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -29,18 +31,21 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     private final Block shearedBlock;
 
     public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
     public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
+    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     public static final IntProperty AGE = Properties.AGE_7;
 
     public FloweringLeavesBlock(Block shearedBlock, Settings settings) {
         super(settings);
         this.shearedBlock = shearedBlock;
-        this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(AGE, 0));
+        this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(WATERLOGGED, false).with(AGE, 0));
     }
 
     public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
@@ -105,6 +110,9 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (state.get(WATERLOGGED)) {
+            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        }
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.get(DISTANCE) != i) {
             world.createAndScheduleBlockTick(pos, this, 1);
@@ -129,6 +137,10 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         return state.isIn(BlockTags.LOGS) ? 0 : (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) ? state.get(DISTANCE) : 7;
     }
 
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+    }
+
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (world.hasRain(pos.up())) {
             if (random.nextInt(15) == 1) {
@@ -145,13 +157,14 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     protected void appendProperties(Builder<Block, BlockState> builder) {
-        builder.add(DISTANCE, PERSISTENT, AGE);
+        builder.add(DISTANCE, PERSISTENT, WATERLOGGED, AGE);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return updateDistanceFromLogs(this.getDefaultState().with(PERSISTENT, true).with(AGE, 0), ctx.getWorld(), ctx.getBlockPos());
+        return updateDistanceFromLogs(this.getDefaultState().with(PERSISTENT, true).with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(AGE, 0), ctx.getWorld(), ctx.getBlockPos());
     }
 
+    @Override
     public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
         return !this.isMature(state);
     }
@@ -165,7 +178,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public static void dropApple(World world, BlockPos pos) {
-        dropStack(world, pos, new ItemStack(Items.APPLE, 3));
+        dropStack(world, pos, new ItemStack(Items.APPLE, ThreadLocalRandom.current().nextInt(Blossom.config.count.min, Blossom.config.count.max + 1)));
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -184,6 +197,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
                 world.setBlockState(pos, this.shearedBlock.getDefaultState()
                         .with(DISTANCE, state.get(DISTANCE))
                         .with(PERSISTENT, state.get(PERSISTENT))
+                        .with(WATERLOGGED, state.get(WATERLOGGED))
                 );
             }
             if (!world.isClient() && bl) {

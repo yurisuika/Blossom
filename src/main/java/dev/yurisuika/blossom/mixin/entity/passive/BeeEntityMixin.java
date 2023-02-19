@@ -6,6 +6,7 @@ import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import net.minecraft.block.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -25,7 +26,7 @@ import static net.minecraft.block.LeavesBlock.*;
 @Mixin(BeeEntity.class)
 public class BeeEntityMixin {
 
-    private World world;
+    public World world;
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
     private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
@@ -65,6 +66,7 @@ public class BeeEntityMixin {
                             entity.world.setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
                                     .with(DISTANCE, blockState.get(DISTANCE))
                                     .with(PERSISTENT, blockState.get(PERSISTENT))
+                                    .with(WATERLOGGED, blockState.get(WATERLOGGED))
                             );
                             ((BeeEntityInvoker)entity).invokeAddCropCounter();
                         }
@@ -80,7 +82,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> state.isIn(Blossom.BLOSSOMS));
+            return predicate.or((state) -> (!state.contains(Properties.WATERLOGGED) || !state.get(Properties.WATERLOGGED)) && state.isIn(Blossom.BLOSSOMS));
         }
 
     }

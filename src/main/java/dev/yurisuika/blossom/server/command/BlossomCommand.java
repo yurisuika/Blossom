@@ -3,23 +3,24 @@ package dev.yurisuika.blossom.server.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import static dev.yurisuika.blossom.Blossom.*;
 import static net.minecraft.server.command.CommandManager.*;
 
 public class BlossomCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(literal("blossom")
                 .then(literal("config")
                         .requires(source -> source.hasPermissionLevel(4))
                         .then(literal("reload")
                                 .executes(context -> {
                                     loadConfig();
-                                    context.getSource().sendFeedback(new TranslatableText("commands.blossom.config.reload"), true);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.config.reload"), true);
                                     return 1;
                                 })
                         )
@@ -29,7 +30,7 @@ public class BlossomCommand {
                                     config.rate = 5;
                                     config.count = new Count(2, 4);
                                     saveConfig();
-                                    context.getSource().sendFeedback(new TranslatableText("commands.blossom.config.reset"), true);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.config.reset"), true);
                                     return 1;
                                 })
                         )
@@ -37,19 +38,19 @@ public class BlossomCommand {
                 .then(literal("query")
                         .then(literal("exposed")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(new TranslatableText("commands.blossom.query.exposed", config.exposed), false);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.exposed", config.exposed), false);
                                     return 1;
                                 })
                         )
                         .then(literal("rate")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(new TranslatableText("commands.blossom.query.rate", config.rate), false);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.rate", config.rate), false);
                                     return 1;
                                 })
                         )
                         .then(literal("count")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(new TranslatableText("commands.blossom.query.count", config.count.min, config.count.max), false);
+                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.count", config.count.min, config.count.max), false);
                                     return 1;
                                 })
                         )
@@ -61,7 +62,7 @@ public class BlossomCommand {
                                         .executes(context -> {
                                             config.exposed = BoolArgumentType.getBool(context, "value");
                                             saveConfig();
-                                            context.getSource().sendFeedback(new TranslatableText("commands.blossom.set.exposed", config.exposed), true);
+                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.exposed", config.exposed), true);
                                             return 1;
                                         })
                                 )
@@ -71,7 +72,7 @@ public class BlossomCommand {
                                         .executes(context -> {
                                             config.rate = IntegerArgumentType.getInteger(context, "value");
                                             saveConfig();
-                                            context.getSource().sendFeedback(new TranslatableText("commands.blossom.set.rate", config.rate), true);
+                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.rate", config.rate), true);
                                             return 1;
                                         })
                                 )
@@ -84,7 +85,7 @@ public class BlossomCommand {
                                                     int max = Math.max(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
                                                     config.count = new Count(min, max);
                                                     saveConfig();
-                                                    context.getSource().sendFeedback(new TranslatableText("commands.blossom.set.count", config.count.min, config.count.max), true);
+                                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.set.count", config.count.min, config.count.max), true);
                                                     return 1;
                                                 })
                                         )
