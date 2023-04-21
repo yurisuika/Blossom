@@ -57,7 +57,7 @@ public class BeeEntityMixin {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.world.getBlockState(blockPos);
                     boolean bl = false;
-                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (!Blossom.config.exposed || (Arrays.stream(Direction.values()).anyMatch(direction -> entity.world.getBlockState(blockPos.offset(direction)).getMaterial().equals(Material.ALLOWS_MOVEMENT_LIGHT_PASSES_THROUGH_NOT_SOLID) || entity.world.getBlockState(blockPos.offset(direction)).getMaterial().equals(Material.PLANT))))) {
+                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (!Blossom.config.exposed || (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.world.getBlockState(blockPos.offset(direction)).isSolidBlock(entity.world, blockPos))))) {
                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
                             bl = true;
                         }
