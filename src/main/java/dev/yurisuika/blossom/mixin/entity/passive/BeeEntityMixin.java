@@ -55,15 +55,15 @@ public class BeeEntityMixin {
             if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount(Blossom.config.rate)) == 0) {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
-                    BlockState blockState = entity.world.getBlockState(blockPos);
+                    BlockState blockState = ((EntityAccessor)entity).getWorld().getBlockState(blockPos);
                     boolean bl = false;
-                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (!Blossom.config.exposed || (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.world.getBlockState(blockPos.offset(direction)).isSolidBlock(entity.world, blockPos.offset(direction)))))) {
+                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (!Blossom.config.exposed || (Arrays.stream(Direction.values()).anyMatch(direction -> !((EntityAccessor)entity).getWorld().getBlockState(blockPos.offset(direction)).isSolidBlock(((EntityAccessor)entity).getWorld(), blockPos.offset(direction)))))) {
                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
                             bl = true;
                         }
                         if (bl) {
-                            entity.world.syncWorldEvent(2005, blockPos, 0);
-                            entity.world.setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
+                            ((EntityAccessor)entity).getWorld().syncWorldEvent(2005, blockPos, 0);
+                            ((EntityAccessor)entity).getWorld().setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
                                     .with(DISTANCE, blockState.get(DISTANCE))
                                     .with(PERSISTENT, blockState.get(PERSISTENT))
                                     .with(WATERLOGGED, blockState.get(WATERLOGGED))
