@@ -1,7 +1,6 @@
 package dev.yurisuika.blossom.server.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
@@ -26,7 +25,6 @@ public class BlossomCommand {
                         )
                         .then(literal("reset")
                                 .executes(context -> {
-                                    config.exposed = true;
                                     config.rate = 5;
                                     config.count = new Count(2, 4);
                                     saveConfig();
@@ -36,12 +34,6 @@ public class BlossomCommand {
                         )
                 )
                 .then(literal("query")
-                        .then(literal("exposed")
-                                .executes(context -> {
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.exposed", config.exposed), false);
-                                    return 1;
-                                })
-                        )
                         .then(literal("rate")
                                 .executes(context -> {
                                     context.getSource().sendFeedback(Text.translatable("commands.blossom.query.rate", config.rate), false);
@@ -57,16 +49,6 @@ public class BlossomCommand {
                 )
                 .then(literal("set")
                         .requires(source -> source.hasPermissionLevel(4))
-                        .then(literal("exposed")
-                                .then(argument("value", BoolArgumentType.bool())
-                                        .executes(context -> {
-                                            config.exposed = BoolArgumentType.getBool(context, "value");
-                                            saveConfig();
-                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.exposed", config.exposed), true);
-                                            return 1;
-                                        })
-                                )
-                        )
                         .then(literal("rate")
                                 .then(CommandManager.argument("value", IntegerArgumentType.integer(1))
                                         .executes(context -> {
