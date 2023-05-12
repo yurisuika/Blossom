@@ -16,7 +16,6 @@ import net.minecraft.item.*;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,7 +44,6 @@ public class Blossom {
 
     public static class Config {
 
-        public boolean exposed = true;
         public int rate = 5;
 
         public Count count = new Count(2, 4);
@@ -105,7 +103,6 @@ public class Blossom {
         saveConfig();
     }
 
-    public static final TagKey<Biome> ALLOWS_BLOSSOMS = TagKey.of(RegistryKeys.BIOME, new Identifier("blossom", "allows_blossoms"));
     public static final TagKey<Block> BLOSSOMS = TagKey.of(RegistryKeys.BLOCK, new Identifier("blossom", "blossoms"));
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "blossom");
