@@ -34,9 +34,7 @@ public class BeeEntityMixin {
 
     @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
     private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (world.getBiome(pos).isIn(Blossom.ALLOWS_BLOSSOMS)) {
-            cir.setReturnValue(cir.getReturnValue() || (world.canSetBlock(pos) && world.getBlockState(pos).isIn(Blossom.BLOSSOMS) && world.getBiome(pos).isIn(Blossom.ALLOWS_BLOSSOMS)));
-        }
+        cir.setReturnValue(cir.getReturnValue() || (world.canSetBlock(pos) && world.getBlockState(pos).isIn(Blossom.BLOSSOMS)));
     }
 
     @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
@@ -56,7 +54,7 @@ public class BeeEntityMixin {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.world.getBlockState(blockPos);
                     boolean bl = false;
-                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (!Blossom.config.exposed || Arrays.stream(Direction.values()).anyMatch(direction -> !entity.world.getBlockState(blockPos.offset(direction)).getMaterial().isSolid()))) {
+                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && Arrays.stream(Direction.values()).anyMatch(direction -> !entity.world.getBlockState(blockPos.offset(direction)).getMaterial().isSolid())) {
                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
                             bl = true;
                         }
