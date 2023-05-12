@@ -27,7 +27,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.biome.Biome;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -41,7 +40,6 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static class Config {
 
-        public boolean exposed = true;
         public int rate = 5;
 
         public Count count = new Count(2, 4);
@@ -101,7 +99,6 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         saveConfig();
     }
 
-    public static final TagKey<Biome> ALLOWS_BLOSSOMS = TagKey.of(RegistryKeys.BIOME, new Identifier("blossom", "allows_blossoms"));
     public static final TagKey<Block> BLOSSOMS = TagKey.of(RegistryKeys.BLOCK, new Identifier("blossom", "blossoms"));
 
     public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES).requiresTool());
