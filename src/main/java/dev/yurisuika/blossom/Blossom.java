@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
+import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -22,13 +23,16 @@ import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.*;
-import net.minecraft.tag.TagKey;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.stream.Stream;
 
 public class Blossom implements ModInitializer, ClientModInitializer {
 
@@ -69,7 +73,13 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static void loadConfig() {
         try {
             if (file.exists()) {
-                config = gson.fromJson(Files.readString(file.toPath()), Config.class);
+                StringBuilder contentBuilder = new StringBuilder();
+                try (Stream<String> stream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
+                    stream.forEach(s -> contentBuilder.append(s).append("\n"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                config = gson.fromJson(contentBuilder.toString(), Config.class);
             } else {
                 config = new Config();
             }
@@ -97,7 +107,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         saveConfig();
     }
 
-    public static final TagKey<Block> BLOSSOMS = TagKey.of(Registry.BLOCK_KEY, new Identifier("blossom", "blossoms"));
+    public static final Tag<Block> BLOSSOMS = TagRegistry.block(new Identifier("blossom", "blossoms"));
 
     public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES).requiresTool());
 

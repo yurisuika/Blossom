@@ -29,7 +29,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.GameEvent;
 
 public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
@@ -109,7 +108,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.get(DISTANCE) != i) {
-            world.createAndScheduleBlockTick(pos, this, 1);
+            world.getBlockTickScheduler().schedule(pos, this, 1);
         }
         return state;
     }
@@ -182,7 +181,6 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
                     playerx.sendToolBreakStatus(hand);
                 });
                 bl = true;
-                world.emitGameEvent(player, GameEvent.SHEAR, pos);
                 world.setBlockState(pos, this.shearedBlock.getDefaultState()
                         .with(DISTANCE, state.get(DISTANCE))
                         .with(PERSISTENT, state.get(PERSISTENT))
