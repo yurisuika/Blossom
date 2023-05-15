@@ -13,14 +13,15 @@ import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.item.*;
-import net.minecraft.tag.TagKey;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -28,12 +29,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @Mod("blossom")
 public class Blossom {
@@ -75,7 +78,13 @@ public class Blossom {
     public static void loadConfig() {
         try {
             if (file.exists()) {
-                config = gson.fromJson(Files.readString(file.toPath()), Config.class);
+                StringBuilder contentBuilder = new StringBuilder();
+                try (Stream<String> stream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
+                    stream.forEach(s -> contentBuilder.append(s).append("\n"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                config = gson.fromJson(contentBuilder.toString(), Config.class);
             } else {
                 config = new Config();
             }
@@ -103,7 +112,7 @@ public class Blossom {
         saveConfig();
     }
 
-    public static final TagKey<Block> BLOSSOMS = TagKey.of(Registry.BLOCK_KEY, new Identifier("blossom", "blossoms"));
+    public static final Tag<Block> BLOSSOMS = BlockTags.createOptional(new Identifier("blossom", "blossoms"));
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "blossom");
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "blossom");
