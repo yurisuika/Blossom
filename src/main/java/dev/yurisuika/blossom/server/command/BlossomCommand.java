@@ -19,7 +19,7 @@ public class BlossomCommand {
                         .then(literal("reload")
                                 .executes(context -> {
                                     loadConfig();
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.config.reload"), true);
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.config.reload"), true);
                                     return 1;
                                 })
                         )
@@ -28,7 +28,7 @@ public class BlossomCommand {
                                     config.rate = 5;
                                     config.count = new Count(2, 4);
                                     saveConfig();
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.config.reset"), true);
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.config.reset"), true);
                                     return 1;
                                 })
                         )
@@ -36,13 +36,13 @@ public class BlossomCommand {
                 .then(literal("query")
                         .then(literal("rate")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.rate", config.rate), false);
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.query.rate", config.rate), false);
                                     return 1;
                                 })
                         )
                         .then(literal("count")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.query.count", config.count.min, config.count.max), false);
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.query.count", config.count.min, config.count.max), false);
                                     return 1;
                                 })
                         )
@@ -54,7 +54,7 @@ public class BlossomCommand {
                                         .executes(context -> {
                                             config.rate = IntegerArgumentType.getInteger(context, "value");
                                             saveConfig();
-                                            context.getSource().sendFeedback(Text.translatable("commands.blossom.set.rate", config.rate), true);
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.set.rate", config.rate), true);
                                             return 1;
                                         })
                                 )
@@ -67,7 +67,7 @@ public class BlossomCommand {
                                                     int max = Math.max(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
                                                     config.count = new Count(min, max);
                                                     saveConfig();
-                                                    context.getSource().sendFeedback(Text.translatable("commands.blossom.set.count", config.count.min, config.count.max), true);
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.set.count", config.count.min, config.count.max), true);
                                                     return 1;
                                                 })
                                         )
