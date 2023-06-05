@@ -54,12 +54,8 @@ public class BeeEntityMixin {
                 for(int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = ((EntityAccessor)entity).getWorld().getBlockState(blockPos);
-                    boolean bl = false;
                     if (blockState.isIn(BlockTags.BEE_GROWABLES) && (Arrays.stream(Direction.values()).anyMatch(direction -> !((EntityAccessor)entity).getWorld().getBlockState(blockPos.offset(direction)).isSolid()))) {
                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                            bl = true;
-                        }
-                        if (bl) {
                             ((EntityAccessor)entity).getWorld().syncWorldEvent(2005, blockPos, 0);
                             ((EntityAccessor)entity).getWorld().setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
                                     .with(DISTANCE, blockState.get(DISTANCE))
