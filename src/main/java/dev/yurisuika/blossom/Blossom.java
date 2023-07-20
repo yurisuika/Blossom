@@ -44,6 +44,14 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         public Count count = new Count(2, 4);
 
+        public Climate climate = new Climate(
+                new String[]{"NONE", "RAIN", "SNOW"},
+                new Climate.Temperature(-2.0F, 2.0F),
+                new Climate.Downfall(0.0F, 1.0F),
+                new Climate.Whitelist(false, new String[]{"minecraft:overworld"}, new String[]{"minecraft:forest"}),
+                new Climate.Blacklist(false, new String[]{"minecraft:the_nether", "minecraft:the_end"}, new String[]{"minecraft:the_void"})
+        );
+
     }
 
     public static class Count {
@@ -54,6 +62,76 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         public Count(int min, int max) {
             this.min = min;
             this.max = max;
+        }
+
+    }
+
+    public static class Climate {
+
+       public String[] precipitation;
+       public Temperature temperature;
+       public Downfall downfall;
+       public Whitelist whitelist;
+       public Blacklist blacklist;
+
+       public Climate(String[] precipitation, Temperature temperature, Downfall downfall, Whitelist whitelist, Blacklist blacklist) {
+           this.precipitation = precipitation;
+           this.temperature = temperature;
+           this.downfall = downfall;
+           this.whitelist = whitelist;
+           this.blacklist = blacklist;
+       }
+
+        public static class Temperature {
+
+            public float min;
+            public float max;
+
+            public Temperature(float min, float max) {
+                this.min = min;
+                this.max = max;
+            }
+
+        }
+
+        public static class Downfall {
+
+            public float min;
+            public float max;
+
+            public Downfall(float min, float max) {
+                this.min = min;
+                this.max = max;
+            }
+
+        }
+
+        public static class Whitelist {
+
+            public boolean enabled;
+            public String[] dimensions;
+            public String[] biomes;
+
+            public Whitelist(boolean enabled, String[] dimensions, String[] biomes) {
+                this.enabled = enabled;
+                this.dimensions = dimensions;
+                this.biomes = biomes;
+            }
+
+        }
+
+        public static class Blacklist {
+
+            public boolean enabled;
+            public String[] dimensions;
+            public String[] biomes;
+
+            public Blacklist(boolean enabled, String[] dimensions, String[] biomes) {
+                this.enabled = enabled;
+                this.dimensions = dimensions;
+                this.biomes = biomes;
+            }
+
         }
 
     }

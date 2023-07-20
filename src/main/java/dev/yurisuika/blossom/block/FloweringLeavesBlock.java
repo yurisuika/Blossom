@@ -1,6 +1,7 @@
 package dev.yurisuika.blossom.block;
 
 import dev.yurisuika.blossom.Blossom;
+import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
@@ -30,6 +31,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -84,7 +86,18 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         } else if (!this.isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {
-                world.setBlockState(pos, state.with(AGE, i + 1), 2);
+                float temperature = world.getBiome(pos).value().getTemperature();
+                float downfall = ((BiomeAccessor)(Object)world.getBiome(pos).value()).getWeather().downfall();
+                temperature += 2;
+                float f = (downfall * temperature) / 4;
+                f = ((4 - 1) * f) + 1;
+                Biome.Precipitation precipitation = world.getBiome(pos).value().getPrecipitation(pos);
+                if (world.isRaining() && precipitation == Biome.Precipitation.RAIN) {
+                    f = 5.0F;
+                }
+                if (random.nextInt((int)(25.0F / f) + 1) == 0) {
+                    world.setBlockState(pos, state.with(AGE, i + 1), 2);
+                }
             }
         }
     }

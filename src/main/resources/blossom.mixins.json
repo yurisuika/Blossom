@@ -11,7 +11,8 @@
     "entity.passive.BeeEntityInvoker",
     "entity.passive.BeeEntityMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
-    "entity.passive.BeeEntityMixin$PollinateGoalMixin"
+    "entity.passive.BeeEntityMixin$PollinateGoalMixin",
+    "world.biome.BiomeAccessor"
   ],
   "client": [
   ],
