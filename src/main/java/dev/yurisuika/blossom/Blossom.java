@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom;
 
+import com.google.common.base.Enums;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
@@ -27,10 +28,13 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.biome.Biome;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 public class Blossom implements ModInitializer, ClientModInitializer {
 
@@ -169,11 +173,37 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     }
 
     public static void checkBounds() {
-        int min = Math.max(Math.min(Math.min(config.count.min, 64), config.count.max), 1);
-        int max = Math.max(Math.max(Math.min(config.count.max, 64), config.count.min), 1);
         config.rate = Math.max(config.rate, 1);
-        config.count.min = min;
-        config.count.max = max;
+
+        int countMin = Math.max(Math.min(Math.min(config.count.min, 64), config.count.max), 1);
+        int countMax = Math.max(Math.max(Math.min(config.count.max, 64), config.count.min), 1);
+        config.count.min = countMin;
+        config.count.max = countMax;
+
+        Arrays.stream(config.climate.precipitation).forEach(precipitation -> {
+            precipitation = precipitation.toUpperCase();
+            if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation).isPresent()) {
+                int index = ArrayUtils.indexOf(config.climate.precipitation, precipitation);
+                config.climate.precipitation = ArrayUtils.remove(config.climate.precipitation, index);
+            }
+        });
+        Arrays.sort(config.climate.precipitation);
+
+        float temperatureMin = Math.max(Math.min(Math.min(config.climate.temperature.min, 2.0F), config.climate.temperature.max), -2.0F);
+        float temperatureMax = Math.max(Math.max(Math.min(config.climate.temperature.max, 2.0F), config.climate.temperature.min), -2.0F);
+        config.climate.temperature.min = temperatureMin;
+        config.climate.temperature.max = temperatureMax;
+
+        float downfallMin = Math.max(Math.min(Math.min(config.climate.downfall.min, 2.0F), config.climate.downfall.max), -2.0F);
+        float downfallMax = Math.max(Math.max(Math.min(config.climate.downfall.max, 2.0F), config.climate.downfall.min), -2.0F);
+        config.climate.downfall.min = downfallMin;
+        config.climate.downfall.max = downfallMax;
+
+        Arrays.sort(config.climate.whitelist.dimensions);
+        Arrays.sort(config.climate.whitelist.biomes);
+        Arrays.sort(config.climate.blacklist.dimensions);
+        Arrays.sort(config.climate.blacklist.biomes);
+
         saveConfig();
     }
 

@@ -4,8 +4,48 @@
   "commands.blossom.config.reload": "Blossom config reloaded",
   "commands.blossom.config.reset": "Blossom config reset to defaults",
 
-  "commands.blossom.query.rate": "Rate is currently set to: %s",
-  "commands.blossom.query.count": "Count is currently set to: %s-%s",
-  "commands.blossom.set.rate": "Rate is now set to: %s",
-  "commands.blossom.set.count": "Count is now set to: %s-%s"
+  "commands.blossom.rate.query": "Rate is currently set to: %s",
+  "commands.blossom.rate.set": "Rate is now set to: %s",
+
+  "commands.blossom.count.query": "Count is currently set to: (min: %s, max: %s)",
+  "commands.blossom.count.set": "Count is now set to: (min: %s, max: %s)",
+
+  "commands.blossom.climate.precipitation.query": "Allowed precipitations: %s",
+  "commands.blossom.climate.precipitation.add": "Added %s to allowed precipitations",
+  "commands.blossom.climate.precipitation.add.failed": "%s is already an allowed precipitation",
+  "commands.blossom.climate.precipitation.remove": "Removed %s from allowed precipitations",
+  "commands.blossom.climate.precipitation.remove.failed": "%s is not an allowed precipitation",
+  "commands.blossom.climate.precipitation.invalid": "%s is not a valid precipitation",
+
+  "commands.blossom.climate.temperature.query": "Temperature is currently set to: (min: %s, max: %s)",
+  "commands.blossom.climate.temperature.set": "Temperature is now set to: (min: %s, max: %s)",
+
+  "commands.blossom.climate.downfall.query": "Downfall is currently set to: (min: %s, max: %s)",
+  "commands.blossom.climate.downfall.set": "Downfall is now set to: (min: %s, max: %s)",
+
+  "commands.blossom.climate.whitelist.enabled.query": "Whitelist is currently set to: %s",
+  "commands.blossom.climate.whitelist.enabled.set": "Whitelist is now set to: %s",
+  "commands.blossom.climate.whitelist.dimensions.query": "Whitelisted dimensions: %s",
+  "commands.blossom.climate.whitelist.dimensions.add": "Added %s to whitelisted dimensions",
+  "commands.blossom.climate.whitelist.dimensions.add.failed": "%s is already in whitelisted dimensions",
+  "commands.blossom.climate.whitelist.dimensions.remove": "Removed %s from whitelisted dimensions",
+  "commands.blossom.climate.whitelist.dimensions.remove.failed": "%s is not in whitelisted dimensions",
+  "commands.blossom.climate.whitelist.biomes.query": "Whitelisted biomes: %s",
+  "commands.blossom.climate.whitelist.biomes.add": "Added %s to whitelisted biomes",
+  "commands.blossom.climate.whitelist.biomes.add.failed": "%s is already in whitelisted biomes",
+  "commands.blossom.climate.whitelist.biomes.remove": "Removed %s from whitelisted biomes",
+  "commands.blossom.climate.whitelist.biomes.remove.failed": "%s is not in whitelisted biomes",
+
+  "commands.blossom.climate.blacklist.enabled.query": "Blacklist is currently set to: %s",
+  "commands.blossom.climate.blacklist.enabled.set": "Blacklist is now set to: %s",
+  "commands.blossom.climate.blacklist.dimensions.query": "Blacklisted dimensions: %s",
+  "commands.blossom.climate.blacklist.dimensions.add": "Added %s to blacklisted dimensions",
+  "commands.blossom.climate.blacklist.dimensions.add.failed": "%s is already in blacklisted dimensions",
+  "commands.blossom.climate.blacklist.dimensions.remove": "Removed %s from blacklisted dimensions",
+  "commands.blossom.climate.blacklist.dimensions.remove.failed": "%s is not in blacklisted dimensions",
+  "commands.blossom.climate.blacklist.biomes.query": "Blacklisted biomes: %s",
+  "commands.blossom.climate.blacklist.biomes.add": "Added %s to blacklisted biomes",
+  "commands.blossom.climate.blacklist.biomes.add.failed": "%s is already in blacklisted biomes",
+  "commands.blossom.climate.blacklist.biomes.remove": "Removed %s from blacklisted biomes",
+  "commands.blossom.climate.blacklist.biomes.remove.failed": "%s is not in blacklisted biomes"
 }

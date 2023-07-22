@@ -15,7 +15,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -63,11 +62,7 @@ public class BeeEntityMixin {
                     RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
                     RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
 
-//                    LoggerFactory.getLogger("Blossom").info("dim: " + dimension.getKey().get().getValue().toString());
-//                    LoggerFactory.getLogger("Blossom").info("biome: " + biome.getKey().get().getValue().toString());
-
                     boolean bl = false;
-
                     if(Blossom.config.climate.whitelist.enabled) {
                         if(Arrays.asList(Blossom.config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString())) {
                             if(Arrays.asList(Blossom.config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString())) {
