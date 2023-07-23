@@ -85,18 +85,22 @@ public class BeeEntityMixin {
                         float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
                         Biome.Precipitation precipitation = biome.value().getPrecipitation(entity.getBlockPos());
 
-                        if(Arrays.stream(config.climate.precipitation).anyMatch(precipitation.name()::equalsIgnoreCase) && (temperature >= config.climate.temperature.min && temperature <= config.climate.temperature.max) && (downfall >= config.climate.downfall.min && downfall <= config.climate.downfall.max)) {
-                            BlockPos blockPos = entity.getBlockPos().down(i);
-                            BlockState blockState = entity.getWorld().getBlockState(blockPos);
-                            if (blockState.isIn(BlockTags.BEE_GROWABLES) && (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid()))) {
-                                if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                                    entity.getWorld().syncWorldEvent(2005, blockPos, 0);
-                                    entity.getWorld().setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
-                                            .with(DISTANCE, blockState.get(DISTANCE))
-                                            .with(PERSISTENT, blockState.get(PERSISTENT))
-                                            .with(WATERLOGGED, blockState.get(WATERLOGGED))
-                                    );
-                                    ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                        if(Arrays.stream(config.climate.precipitation).anyMatch(precipitation.name()::equalsIgnoreCase)) {
+                            if(temperature >= config.climate.temperature.min && temperature <= config.climate.temperature.max) {
+                                if(downfall >= config.climate.downfall.min && downfall <= config.climate.downfall.max) {
+                                    BlockPos blockPos = entity.getBlockPos().down(i);
+                                    BlockState blockState = entity.getWorld().getBlockState(blockPos);
+                                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid()))) {
+                                        if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                            entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                                            entity.getWorld().setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
+                                                    .with(DISTANCE, blockState.get(DISTANCE))
+                                                    .with(PERSISTENT, blockState.get(PERSISTENT))
+                                                    .with(WATERLOGGED, blockState.get(WATERLOGGED))
+                                            );
+                                            ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                                        }
+                                    }
                                 }
                             }
                         }
