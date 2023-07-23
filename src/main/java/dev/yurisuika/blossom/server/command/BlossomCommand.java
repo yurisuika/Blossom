@@ -1,19 +1,17 @@
 package dev.yurisuika.blossom.server.command;
 
-import com.google.common.base.Enums;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.*;
-import dev.yurisuika.blossom.Blossom;
+import dev.yurisuika.blossom.command.argument.PrecipitationArgumentType;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.RegistryEntryPredicateArgumentType;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.world.biome.Biome;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
+import java.util.*;
 
 import static dev.yurisuika.blossom.Blossom.*;
 import static net.minecraft.server.command.CommandManager.*;
@@ -36,7 +34,7 @@ public class BlossomCommand {
                                     config.rate = 5;
                                     config.count = new Count(2, 4);
                                     config.climate = new Climate(
-                                            new String[]{"NONE", "RAIN", "SNOW"},
+                                            new String[]{"none", "rain", "snow"},
                                             new Climate.Temperature(-2.0F, 2.0F),
                                             new Climate.Downfall(0.0F, 1.0F),
                                             new Climate.Whitelist(false, new String[]{"minecraft:overworld"}, new String[]{"minecraft:forest"}),
@@ -101,13 +99,10 @@ public class BlossomCommand {
                                         })
                                 )
                                 .then(literal("add")
-                                        .then(argument("precipitation", StringArgumentType.word())
+                                          .then(argument("precipitation", PrecipitationArgumentType.precipitation())
                                                 .executes(context -> {
-                                                    String precipitation = StringArgumentType.getString(context, "precipitation").toUpperCase();
-                                                    if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation).isPresent()) {
-                                                        context.getSource().sendError(Text.translatable("commands.blossom.climate.precipitation.invalid", precipitation));
-                                                        return 0;
-                                                    } else if(Arrays.asList(config.climate.precipitation).contains(precipitation)) {
+                                                    String precipitation = PrecipitationArgumentType.getPrecipitation(context, "precipitation").asString();
+                                                    if(Arrays.stream(config.climate.precipitation).anyMatch(precipitation::equalsIgnoreCase)) {
                                                         context.getSource().sendError(Text.translatable("commands.blossom.climate.precipitation.add.failed", precipitation));
                                                         return 0;
                                                     } else {
@@ -121,18 +116,19 @@ public class BlossomCommand {
                                         )
                                 )
                                 .then(literal("remove")
-                                        .then(argument("precipitation", StringArgumentType.word())
+                                        .then(argument("precipitation", PrecipitationArgumentType.precipitation())
                                                 .executes(context -> {
-                                                    String precipitation = StringArgumentType.getString(context, "precipitation").toUpperCase();
-                                                    if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation).isPresent()) {
-                                                        context.getSource().sendError(Text.translatable("commands.blossom.climate.precipitation.invalid", precipitation));
-                                                        return 0;
-                                                    } else if(!Arrays.asList(config.climate.precipitation).contains(precipitation)) {
+                                                    String precipitation = PrecipitationArgumentType.getPrecipitation(context, "precipitation").asString();
+                                                    if(Arrays.stream(config.climate.precipitation).noneMatch(precipitation::equalsIgnoreCase)) {
                                                         context.getSource().sendError(Text.translatable("commands.blossom.climate.precipitation.remove.failed", precipitation));
                                                         return 0;
                                                     } else {
-                                                        int index = ArrayUtils.indexOf(config.climate.precipitation, precipitation);
-                                                        config.climate.precipitation = ArrayUtils.remove(config.climate.precipitation, index);
+                                                        for(String str : config.climate.precipitation) {
+                                                            if(str.equalsIgnoreCase(precipitation)) {
+                                                                int index = ArrayUtils.indexOf(config.climate.precipitation, str);
+                                                                config.climate.precipitation = ArrayUtils.remove(config.climate.precipitation, index);
+                                                            }
+                                                        }
                                                         saveConfig();
                                                         context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.precipitation.remove", precipitation), false);
                                                         return 1;
@@ -217,7 +213,7 @@ public class BlossomCommand {
                                                 .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
                                                             String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
-                                                            if (Arrays.asList(config.climate.whitelist.dimensions).contains(dimension)) {
+                                                            if (Arrays.stream(config.climate.whitelist.dimensions).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.biomes.add.failed", dimension));
                                                                 return 0;
                                                             } else {
@@ -234,12 +230,16 @@ public class BlossomCommand {
                                                 .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
                                                             String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
-                                                            if (!Arrays.asList(Blossom.config.climate.whitelist.dimensions).contains(dimension)) {
+                                                            if (Arrays.stream(config.climate.whitelist.dimensions).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.dimensions.remove.failed", dimension));
                                                                 return 0;
                                                             } else {
-                                                                int index = ArrayUtils.indexOf(config.climate.whitelist.dimensions, dimension);
-                                                                config.climate.whitelist.dimensions = ArrayUtils.remove(config.climate.whitelist.dimensions, index);
+                                                                for(String str : config.climate.whitelist.dimensions) {
+                                                                    if(str.equalsIgnoreCase(dimension)) {
+                                                                        int index = ArrayUtils.indexOf(config.climate.whitelist.dimensions, str);
+                                                                        config.climate.whitelist.dimensions = ArrayUtils.remove(config.climate.whitelist.dimensions, index);
+                                                                    }
+                                                                }
                                                                 saveConfig();
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.dimensions.remove", dimension), false);
                                                                 return 1;
@@ -259,7 +259,7 @@ public class BlossomCommand {
                                                 .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
                                                             String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
-                                                            if (Arrays.asList(Blossom.config.climate.whitelist.biomes).contains(biome)) {
+                                                            if (Arrays.stream(config.climate.whitelist.biomes).anyMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.biomes.add.failed", biome));
                                                                 return 0;
                                                             } else {
@@ -276,12 +276,16 @@ public class BlossomCommand {
                                                 .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
                                                             String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
-                                                            if (!Arrays.asList(Blossom.config.climate.whitelist.biomes).contains(biome)) {
+                                                            if (Arrays.stream(config.climate.whitelist.biomes).noneMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.biomes.remove.failed", biome));
                                                                 return 0;
                                                             } else {
-                                                                int index = ArrayUtils.indexOf(config.climate.whitelist.biomes, biome);
-                                                                config.climate.whitelist.biomes = ArrayUtils.remove(config.climate.whitelist.biomes, index);
+                                                                for(String str : config.climate.whitelist.biomes) {
+                                                                    if(str.equalsIgnoreCase(biome)) {
+                                                                        int index = ArrayUtils.indexOf(config.climate.whitelist.biomes, str);
+                                                                        config.climate.whitelist.biomes = ArrayUtils.remove(config.climate.whitelist.biomes, index);
+                                                                    }
+                                                                }
                                                                 saveConfig();
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.biomes.remove", biome), false);
                                                                 return 1;
@@ -321,7 +325,7 @@ public class BlossomCommand {
                                                 .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
                                                             String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
-                                                            if (Arrays.asList(config.climate.blacklist.dimensions).contains(dimension)) {
+                                                            if (Arrays.stream(config.climate.blacklist.dimensions).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.biomes.add.failed", dimension));
                                                                 return 0;
                                                             } else {
@@ -338,12 +342,16 @@ public class BlossomCommand {
                                                 .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
                                                             String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
-                                                            if (!Arrays.asList(Blossom.config.climate.blacklist.dimensions).contains(dimension)) {
+                                                            if (Arrays.stream(config.climate.blacklist.dimensions).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.dimensions.remove.failed", dimension));
                                                                 return 0;
                                                             } else {
-                                                                int index = ArrayUtils.indexOf(config.climate.blacklist.dimensions, dimension);
-                                                                config.climate.blacklist.dimensions = ArrayUtils.remove(config.climate.blacklist.dimensions, index);
+                                                                for(String str : config.climate.blacklist.dimensions) {
+                                                                    if(str.equalsIgnoreCase(dimension)) {
+                                                                        int index = ArrayUtils.indexOf(config.climate.blacklist.dimensions, str);
+                                                                        config.climate.blacklist.dimensions = ArrayUtils.remove(config.climate.blacklist.dimensions, index);
+                                                                    }
+                                                                }
                                                                 saveConfig();
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.dimensions.remove", dimension), false);
                                                                 return 1;
@@ -363,7 +371,7 @@ public class BlossomCommand {
                                                 .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
                                                             String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
-                                                            if (Arrays.asList(Blossom.config.climate.blacklist.biomes).contains(biome)) {
+                                                            if (Arrays.stream(config.climate.blacklist.biomes).anyMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.biomes.add.failed", biome));
                                                                 return 0;
                                                             } else {
@@ -380,12 +388,16 @@ public class BlossomCommand {
                                                 .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
                                                             String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
-                                                            if (!Arrays.asList(Blossom.config.climate.blacklist.biomes).contains(biome)) {
+                                                            if (Arrays.stream(config.climate.blacklist.biomes).noneMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.biomes.remove.failed", biome));
                                                                 return 0;
                                                             } else {
-                                                                int index = ArrayUtils.indexOf(config.climate.blacklist.biomes, biome);
-                                                                config.climate.blacklist.biomes = ArrayUtils.remove(config.climate.blacklist.biomes, index);
+                                                                for(String str : config.climate.blacklist.biomes) {
+                                                                    if(str.equalsIgnoreCase(biome)) {
+                                                                        int index = ArrayUtils.indexOf(config.climate.blacklist.biomes, str);
+                                                                        config.climate.blacklist.biomes = ArrayUtils.remove(config.climate.blacklist.biomes, index);
+                                                                    }
+                                                                }
                                                                 saveConfig();
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.biomes.remove", biome), false);
                                                                 return 1;

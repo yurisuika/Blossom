@@ -4,6 +4,7 @@ import com.google.common.base.Enums;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.command.argument.PrecipitationArgumentType;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -11,6 +12,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
@@ -22,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -49,7 +52,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         public Count count = new Count(2, 4);
 
         public Climate climate = new Climate(
-                new String[]{"NONE", "RAIN", "SNOW"},
+                new String[]{"none", "rain", "snow"},
                 new Climate.Temperature(-2.0F, 2.0F),
                 new Climate.Downfall(0.0F, 1.0F),
                 new Climate.Whitelist(false, new String[]{"minecraft:overworld"}, new String[]{"minecraft:forest"}),
@@ -181,8 +184,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         config.count.max = countMax;
 
         Arrays.stream(config.climate.precipitation).forEach(precipitation -> {
-            precipitation = precipitation.toUpperCase();
-            if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation).isPresent()) {
+            if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation.toUpperCase()).isPresent()) {
                 int index = ArrayUtils.indexOf(config.climate.precipitation, precipitation);
                 config.climate.precipitation = ArrayUtils.remove(config.climate.precipitation, index);
             }
@@ -244,6 +246,8 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         Blossom.registerFlammables();
         Blossom.registerCompostables();
+
+        ArgumentTypeRegistry.registerArgumentType(new Identifier("blossom", "precipitation"), PrecipitationArgumentType.class, ConstantArgumentSerializer.of(PrecipitationArgumentType::precipitation));
     }
 
     @Override
