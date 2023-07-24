@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom.mixin.entity.passive;
 
+import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
@@ -7,6 +8,7 @@ import net.minecraft.block.*;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -44,24 +46,24 @@ public class BeeEntityMixin {
             RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
             RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
 
-            boolean bl = false;
+            boolean enabled = false;
             if(config.climate.whitelist.enabled) {
                 if(Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
                     if(Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
-                        bl = true;
+                        enabled = true;
                     }
                 }
             } else if(config.climate.blacklist.enabled) {
                 if(!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
                     if(!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
-                        bl = true;
+                        enabled = true;
                     }
                 }
             } else {
-                bl = true;
+                enabled = true;
             }
 
-            if(bl) {
+            if(enabled) {
                 float temperature = biome.value().getTemperature();
                 float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
                 Biome.Precipitation precipitation = biome.value().getPrecipitation(entity.getBlockPos());
@@ -73,18 +75,33 @@ public class BeeEntityMixin {
                                 for(int i = 1; i <= 2; ++i) {
                                     BlockPos blockPos = entity.getBlockPos().down(i);
                                     BlockState blockState = entity.getWorld().getBlockState(blockPos);
-                                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid()))) {
+                                    if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
                                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                                            entity.getWorld().syncWorldEvent(2005, blockPos, 0);
                                             entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
                                                     .with(DISTANCE, blockState.get(DISTANCE))
                                                     .with(PERSISTENT, blockState.get(PERSISTENT))
                                                     .with(WATERLOGGED, blockState.get(WATERLOGGED))
                                             );
-                                            ((BeeEntityInvoker)entity).invokeAddCropCounter();
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (((EntityAccessor)entity).getRandom().nextInt(30) == 0) {
+                for(int i = 1; i <= 2; ++i) {
+                    BlockPos blockpos = entity.getBlockPos().down(i);
+                    BlockState blockstate = entity.getWorld().getBlockState(blockpos);
+                    if (blockstate.isIn(BlockTags.BEE_GROWABLES)) {
+                        if (blockstate.getBlock() instanceof FloweringLeavesBlock floweringLeavesBlock) {
+                            if (!floweringLeavesBlock.isMature(blockstate)) {
+                                IntProperty age = floweringLeavesBlock.getAgeProperty();
+                                entity.getWorld().syncWorldEvent(2005, blockpos, 0);
+                                entity.getWorld().setBlockState(blockpos, blockstate.with(age, blockstate.get(age) + 1));
+                                ((BeeEntityInvoker)entity).invokeAddCropCounter();
                             }
                         }
                     }
