@@ -29,8 +29,6 @@ import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import org.apache.commons.lang3.ArrayUtils;
@@ -209,8 +207,6 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         saveConfig();
     }
-
-    public static final TagKey<Block> BLOSSOMS = TagKey.of(RegistryKeys.BLOCK, new Identifier("blossom", "blossoms"));
 
     public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES).requiresTool());
 

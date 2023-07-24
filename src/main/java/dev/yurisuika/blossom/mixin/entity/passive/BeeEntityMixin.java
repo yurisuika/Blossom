@@ -4,14 +4,12 @@ import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.*;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -30,19 +27,6 @@ import static net.minecraft.block.LeavesBlock.*;
 
 @Mixin(BeeEntity.class)
 public class BeeEntityMixin {
-
-    @Unique
-    public World world;
-
-    @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
-        this.world = world;
-    }
-
-    @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
-    private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValue() || (world.canSetBlock(pos) && world.getBlockState(pos).isIn(BLOSSOMS)));
-    }
 
     @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
     public static class GrowCropsGoalMixin {
@@ -115,7 +99,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> (state.contains(Properties.WATERLOGGED) && !state.get(Properties.WATERLOGGED)) && state.isIn(BLOSSOMS));
+            return predicate.and((state) -> state.isOf(FLOWERING_OAK_LEAVES) ? (state.get(Properties.AGE_7) <= 1) : true);
         }
 
     }
