@@ -3,7 +3,6 @@ package dev.yurisuika.blossom;
 import com.google.common.base.Enums;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.brigadier.arguments.ArgumentType;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import dev.yurisuika.blossom.command.argument.PrecipitationArgumentType;
 import dev.yurisuika.blossom.mixin.block.ComposterBlockInvoker;
@@ -18,15 +17,9 @@ import net.minecraft.client.render.RenderLayers;
 import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.CreativeModeTabSearchRegistry;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -39,7 +32,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.server.command.ModIdArgument;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
@@ -218,8 +210,6 @@ public class Blossom {
 
         saveConfig();
     }
-
-    public static final TagKey<Block> BLOSSOMS = TagKey.of(RegistryKeys.BLOCK, new Identifier("blossom", "blossoms"));
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "blossom");
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "blossom");
