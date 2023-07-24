@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -246,6 +247,10 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         Blossom.registerFlammables();
         Blossom.registerCompostables();
+
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES);
+        });
 
         ArgumentTypeRegistry.registerArgumentType(new Identifier("blossom", "precipitation"), PrecipitationArgumentType.class, ConstantArgumentSerializer.of(PrecipitationArgumentType::precipitation));
     }
