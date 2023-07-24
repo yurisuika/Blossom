@@ -47,15 +47,15 @@ public class BeeEntityMixin {
             RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
 
             boolean enabled = false;
-            if(config.climate.whitelist.enabled) {
-                if(Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
-                    if(Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
+            if (config.climate.whitelist.enabled) {
+                if (Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                    if (Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
                         enabled = true;
                     }
                 }
-            } else if(config.climate.blacklist.enabled) {
-                if(!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
-                    if(!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
+            } else if (config.climate.blacklist.enabled) {
+                if (!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                    if (!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
                         enabled = true;
                     }
                 }
@@ -63,25 +63,27 @@ public class BeeEntityMixin {
                 enabled = true;
             }
 
-            if(enabled) {
+            if (enabled) {
                 float temperature = biome.value().getTemperature();
                 float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
                 Biome.Precipitation precipitation = biome.value().getPrecipitation(entity.getBlockPos());
 
-                if(Arrays.stream(config.climate.precipitation).anyMatch(precipitation.name()::equalsIgnoreCase)) {
-                    if(temperature >= config.climate.temperature.min && temperature <= config.climate.temperature.max) {
-                        if(downfall >= config.climate.downfall.min && downfall <= config.climate.downfall.max) {
-                            if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount(config.rate)) == 0) {
-                                for(int i = 1; i <= 2; ++i) {
+                if (Arrays.stream(config.climate.precipitation).anyMatch(precipitation.name()::equalsIgnoreCase)) {
+                    if (temperature >= config.climate.temperature.min && temperature <= config.climate.temperature.max) {
+                        if (downfall >= config.climate.downfall.min && downfall <= config.climate.downfall.max) {
+                            if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount((int)(1.0F / config.propagation.chance))) == 0) {
+                                for (int i = 1; i <= 2; ++i) {
                                     BlockPos blockPos = entity.getBlockPos().down(i);
                                     BlockState blockState = entity.getWorld().getBlockState(blockPos);
                                     if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
                                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                            entity.getWorld().syncWorldEvent(2005, blockPos, 0);
                                             entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
                                                     .with(DISTANCE, blockState.get(DISTANCE))
                                                     .with(PERSISTENT, blockState.get(PERSISTENT))
                                                     .with(WATERLOGGED, blockState.get(WATERLOGGED))
                                             );
+                                            ((BeeEntityInvoker)entity).invokeAddCropCounter();
                                         }
                                     }
                                 }
@@ -91,16 +93,16 @@ public class BeeEntityMixin {
                 }
             }
 
-            if (((EntityAccessor)entity).getRandom().nextInt(30) == 0) {
-                for(int i = 1; i <= 2; ++i) {
-                    BlockPos blockpos = entity.getBlockPos().down(i);
-                    BlockState blockstate = entity.getWorld().getBlockState(blockpos);
-                    if (blockstate.isIn(BlockTags.BEE_GROWABLES)) {
-                        if (blockstate.getBlock() instanceof FloweringLeavesBlock floweringLeavesBlock) {
-                            if (!floweringLeavesBlock.isMature(blockstate)) {
+            if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount((int)(1.0F / config.fertilization.chance))) == 0) {
+                for (int i = 1; i <= 2; ++i) {
+                    BlockPos blockPos = entity.getBlockPos().down(i);
+                    BlockState blockState = entity.getWorld().getBlockState(blockPos);
+                    if (blockState.isIn(BlockTags.BEE_GROWABLES)) {
+                        if (blockState.getBlock() instanceof FloweringLeavesBlock floweringLeavesBlock) {
+                            if (!floweringLeavesBlock.isMature(blockState)) {
                                 IntProperty age = floweringLeavesBlock.getAgeProperty();
-                                entity.getWorld().syncWorldEvent(2005, blockpos, 0);
-                                entity.getWorld().setBlockState(blockpos, blockstate.with(age, blockstate.get(age) + 1));
+                                entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                                entity.getWorld().setBlockState(blockPos, blockState.with(age, blockState.get(age) + 1));
                                 ((BeeEntityInvoker)entity).invokeAddCropCounter();
                             }
                         }

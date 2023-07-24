@@ -4,8 +4,11 @@
   "commands.blossom.config.reload": "Blossom config reloaded",
   "commands.blossom.config.reset": "Blossom config reset to defaults",
 
-  "commands.blossom.rate.query": "Rate is currently set to: %s",
-  "commands.blossom.rate.set": "Rate is now set to: %s",
+  "commands.blossom.propagation.query": "Propagation chance is currently set to: %s",
+  "commands.blossom.propagation.set": "Propagation chance is now set to: %s",
+
+  "commands.blossom.fertilization.query": "Fertilization chance is currently set to: %s",
+  "commands.blossom.fertilization.set": "Fertilization chance is now set to: %s",
 
   "commands.blossom.count.query": "Count is currently set to: (min: %s, max: %s)",
   "commands.blossom.count.set": "Count is now set to: (min: %s, max: %s)",

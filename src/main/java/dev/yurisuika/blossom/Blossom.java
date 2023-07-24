@@ -46,7 +46,9 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static class Config {
 
-        public int rate = 5;
+        public Propagation propagation = new Propagation(0.2F);
+
+        public Fertilization fertilization = new Fertilization(0.033333333F);
 
         public Count count = new Count(2, 4);
 
@@ -57,6 +59,26 @@ public class Blossom implements ModInitializer, ClientModInitializer {
                 new Climate.Whitelist(false, new String[]{"minecraft:overworld"}, new String[]{"minecraft:forest"}),
                 new Climate.Blacklist(false, new String[]{"minecraft:the_nether", "minecraft:the_end"}, new String[]{"minecraft:the_void"})
         );
+
+    }
+
+    public static class Propagation {
+
+        public float chance;
+
+        public Propagation(float chance) {
+            this.chance = chance;
+        }
+
+    }
+
+    public static class Fertilization {
+
+        public float chance;
+
+        public Fertilization(float chance) {
+            this.chance = chance;
+        }
 
     }
 
@@ -175,7 +197,8 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     }
 
     public static void checkBounds() {
-        config.rate = Math.max(config.rate, 1);
+        config.propagation.chance = Math.max(Math.min(config.propagation.chance, 1.0F), 0.0F);
+        config.fertilization.chance = Math.max(Math.min(config.fertilization.chance, 1.0F), 0.0F);
 
         int countMin = Math.max(Math.min(Math.min(config.count.min, 64), config.count.max), 1);
         int countMax = Math.max(Math.max(Math.min(config.count.max, 64), config.count.min), 1);

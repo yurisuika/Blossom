@@ -31,7 +31,8 @@ public class BlossomCommand {
                         )
                         .then(literal("reset")
                                 .executes(context -> {
-                                    config.rate = 5;
+                                    config.propagation = new Propagation(0.2F);
+                                    config.fertilization = new Fertilization(0.033333333F);
                                     config.count = new Count(2, 4);
                                     config.climate = new Climate(
                                             new String[]{"none", "rain", "snow"},
@@ -46,17 +47,32 @@ public class BlossomCommand {
                                 })
                         )
                 )
-                .then(literal("rate")
+                .then(literal("propagation")
                         .requires(source -> source.hasPermissionLevel(4))
                         .executes(context -> {
-                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.rate.query", config.rate), false);
+                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.propagation.query", config.propagation.chance), false);
                             return 1;
                         })
-                        .then(CommandManager.argument("value", IntegerArgumentType.integer(1))
+                        .then(CommandManager.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
                                 .executes(context -> {
-                                    config.rate = IntegerArgumentType.getInteger(context, "value");
+                                    config.propagation.chance = FloatArgumentType.getFloat(context, "chance");
                                     saveConfig();
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.rate.set", config.rate), true);
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.propagation.set", config.propagation.chance), true);
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("fertilization")
+                        .requires(source -> source.hasPermissionLevel(4))
+                        .executes(context -> {
+                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.fertilization.query", config.fertilization.chance), false);
+                            return 1;
+                        })
+                        .then(CommandManager.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
+                                .executes(context -> {
+                                    config.fertilization.chance = FloatArgumentType.getFloat(context, "chance");
+                                    saveConfig();
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.fertilization.set", config.fertilization.chance), true);
                                     return 1;
                                 })
                         )
@@ -91,7 +107,7 @@ public class BlossomCommand {
                                           .then(argument("precipitation", PrecipitationArgumentType.precipitation())
                                                 .executes(context -> {
                                                     String precipitation = PrecipitationArgumentType.getPrecipitation(context, "precipitation").asString();
-                                                    if(Arrays.stream(config.climate.precipitation).anyMatch(precipitation::equalsIgnoreCase)) {
+                                                    if (Arrays.stream(config.climate.precipitation).anyMatch(precipitation::equalsIgnoreCase)) {
                                                         context.getSource().sendError(Text.translatable("commands.blossom.climate.precipitation.add.failed", precipitation));
                                                         return 0;
                                                     } else {
@@ -108,12 +124,12 @@ public class BlossomCommand {
                                         .then(argument("precipitation", PrecipitationArgumentType.precipitation())
                                                 .executes(context -> {
                                                     String precipitation = PrecipitationArgumentType.getPrecipitation(context, "precipitation").asString();
-                                                    if(Arrays.stream(config.climate.precipitation).noneMatch(precipitation::equalsIgnoreCase)) {
+                                                    if (Arrays.stream(config.climate.precipitation).noneMatch(precipitation::equalsIgnoreCase)) {
                                                         context.getSource().sendError(Text.translatable("commands.blossom.climate.precipitation.remove.failed", precipitation));
                                                         return 0;
                                                     } else {
-                                                        for(String str : config.climate.precipitation) {
-                                                            if(str.equalsIgnoreCase(precipitation)) {
+                                                        for (String str : config.climate.precipitation) {
+                                                            if (str.equalsIgnoreCase(precipitation)) {
                                                                 int index = ArrayUtils.indexOf(config.climate.precipitation, str);
                                                                 config.climate.precipitation = ArrayUtils.remove(config.climate.precipitation, index);
                                                             }
@@ -209,8 +225,8 @@ public class BlossomCommand {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.dimensions.remove.failed", dimension));
                                                                 return 0;
                                                             } else {
-                                                                for(String str : config.climate.whitelist.dimensions) {
-                                                                    if(str.equalsIgnoreCase(dimension)) {
+                                                                for (String str : config.climate.whitelist.dimensions) {
+                                                                    if (str.equalsIgnoreCase(dimension)) {
                                                                         int index = ArrayUtils.indexOf(config.climate.whitelist.dimensions, str);
                                                                         config.climate.whitelist.dimensions = ArrayUtils.remove(config.climate.whitelist.dimensions, index);
                                                                     }
@@ -253,8 +269,8 @@ public class BlossomCommand {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.biomes.remove.failed", biome));
                                                                 return 0;
                                                             } else {
-                                                                for(String str : config.climate.whitelist.biomes) {
-                                                                    if(str.equalsIgnoreCase(biome)) {
+                                                                for (String str : config.climate.whitelist.biomes) {
+                                                                    if (str.equalsIgnoreCase(biome)) {
                                                                         int index = ArrayUtils.indexOf(config.climate.whitelist.biomes, str);
                                                                         config.climate.whitelist.biomes = ArrayUtils.remove(config.climate.whitelist.biomes, index);
                                                                     }
@@ -313,8 +329,8 @@ public class BlossomCommand {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.dimensions.remove.failed", dimension));
                                                                 return 0;
                                                             } else {
-                                                                for(String str : config.climate.blacklist.dimensions) {
-                                                                    if(str.equalsIgnoreCase(dimension)) {
+                                                                for (String str : config.climate.blacklist.dimensions) {
+                                                                    if (str.equalsIgnoreCase(dimension)) {
                                                                         int index = ArrayUtils.indexOf(config.climate.blacklist.dimensions, str);
                                                                         config.climate.blacklist.dimensions = ArrayUtils.remove(config.climate.blacklist.dimensions, index);
                                                                     }
@@ -357,8 +373,8 @@ public class BlossomCommand {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.biomes.remove.failed", biome));
                                                                 return 0;
                                                             } else {
-                                                                for(String str : config.climate.blacklist.biomes) {
-                                                                    if(str.equalsIgnoreCase(biome)) {
+                                                                for (String str : config.climate.blacklist.biomes) {
+                                                                    if (str.equalsIgnoreCase(biome)) {
                                                                         int index = ArrayUtils.indexOf(config.climate.blacklist.biomes, str);
                                                                         config.climate.blacklist.biomes = ArrayUtils.remove(config.climate.blacklist.biomes, index);
                                                                     }
