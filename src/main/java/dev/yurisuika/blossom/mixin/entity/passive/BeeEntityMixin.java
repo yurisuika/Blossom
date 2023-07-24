@@ -1,6 +1,5 @@
 package dev.yurisuika.blossom.mixin.entity.passive;
 
-import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
@@ -42,7 +41,7 @@ public class BeeEntityMixin {
 
     @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
     private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValue() || (world.canSetBlock(pos) && world.getBlockState(pos).isIn(Blossom.BLOSSOMS)));
+        cir.setReturnValue(cir.getReturnValue() || (world.canSetBlock(pos) && world.getBlockState(pos).isIn(BLOSSOMS)));
     }
 
     @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
@@ -93,7 +92,7 @@ public class BeeEntityMixin {
                                     if (blockState.isIn(BlockTags.BEE_GROWABLES) && (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid()))) {
                                         if (blockState.getBlock() == Blocks.OAK_LEAVES) {
                                             entity.getWorld().syncWorldEvent(2005, blockPos, 0);
-                                            entity.getWorld().setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
+                                            entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
                                                     .with(DISTANCE, blockState.get(DISTANCE))
                                                     .with(PERSISTENT, blockState.get(PERSISTENT))
                                                     .with(WATERLOGGED, blockState.get(WATERLOGGED))
@@ -116,7 +115,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> (!state.contains(Properties.WATERLOGGED) || !state.get(Properties.WATERLOGGED)) && state.isIn(Blossom.BLOSSOMS));
+            return predicate.or((state) -> (!state.contains(Properties.WATERLOGGED) || !state.get(Properties.WATERLOGGED)) && state.isIn(BLOSSOMS));
         }
 
     }

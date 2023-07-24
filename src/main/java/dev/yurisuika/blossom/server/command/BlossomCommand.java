@@ -18,7 +18,7 @@ import static net.minecraft.server.command.CommandManager.*;
 
 public class BlossomCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, RegistrationEnvironment environment) {
         dispatcher.register(literal("blossom")
                 .then(literal("config")
                         .requires(source -> source.hasPermissionLevel(4))
@@ -48,56 +48,45 @@ public class BlossomCommand {
                 )
                 .then(literal("rate")
                         .requires(source -> source.hasPermissionLevel(4))
-                        .then(literal("query")
+                        .executes(context -> {
+                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.rate.query", config.rate), false);
+                            return 1;
+                        })
+                        .then(CommandManager.argument("value", IntegerArgumentType.integer(1))
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.rate.query", config.rate), false);
+                                    config.rate = IntegerArgumentType.getInteger(context, "value");
+                                    saveConfig();
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.rate.set", config.rate), true);
                                     return 1;
                                 })
-                        )
-                        .then(literal("set")
-                                .then(CommandManager.argument("value", IntegerArgumentType.integer(1))
-                                        .executes(context -> {
-                                            config.rate = IntegerArgumentType.getInteger(context, "value");
-                                            saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.rate.set", config.rate), true);
-                                            return 1;
-                                        })
-                                )
                         )
                 )
                 .then(literal("count")
                         .requires(source -> source.hasPermissionLevel(4))
-                        .then(literal("query")
-                                .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.count.query", config.count.min, config.count.max), false);
-                                    return 1;
-                                })
-                        )
-                        .then(literal("set")
-                                .then(CommandManager.argument("min", IntegerArgumentType.integer(1, 64))
-                                        .then(CommandManager.argument("max", IntegerArgumentType.integer(1, 64))
-                                                .executes(context -> {
-                                                    int min = Math.min(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
-                                                    int max = Math.max(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
-                                                    config.count = new Count(min, max);
-                                                    saveConfig();
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.count.set", min, max), true);
-                                                    return 1;
-                                                })
-                                        )
+                        .executes(context -> {
+                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.count.query", config.count.min, config.count.max), false);
+                            return 1;
+                        })
+                        .then(CommandManager.argument("min", IntegerArgumentType.integer(1, 64))
+                                .then(CommandManager.argument("max", IntegerArgumentType.integer(1, 64))
+                                        .executes(context -> {
+                                            int min = Math.min(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
+                                            int max = Math.max(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
+                                            config.count = new Count(min, max);
+                                            saveConfig();
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.count.set", min, max), true);
+                                            return 1;
+                                        })
                                 )
                         )
-
                 )
                 .then(literal("climate")
                         .requires(source -> source.hasPermissionLevel(4))
                         .then(literal("precipitation")
-                                .then(literal("query")
-                                        .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.precipitation.query", Arrays.asList(config.climate.precipitation)), false);
-                                            return 1;
-                                        })
-                                )
+                                .executes(context -> {
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.precipitation.query", Arrays.asList(config.climate.precipitation)), false);
+                                    return 1;
+                                })
                                 .then(literal("add")
                                           .then(argument("precipitation", PrecipitationArgumentType.precipitation())
                                                 .executes(context -> {
@@ -138,77 +127,63 @@ public class BlossomCommand {
                                 )
                         )
                         .then(literal("temperature")
-                                .then(literal("query")
-                                        .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.temperature.query", config.climate.temperature.min, config.climate.temperature.max), false);
-                                            return 1;
-                                        })
-                                )
-                                .then(literal("set")
-                                        .then(argument("min", FloatArgumentType.floatArg(-2.0F, 2.0F))
-                                                .then(argument("max", FloatArgumentType.floatArg(-2.0F, 2.0F))
-                                                        .executes(context -> {
-                                                            float min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
-                                                            float max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
-                                                            config.climate.temperature.min = min;
-                                                            config.climate.temperature.max = max;
-                                                            saveConfig();
-                                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.temperature.set", min, max), false);
-                                                            return 1;
-                                                        })
-                                                )
+                                .executes(context -> {
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.temperature.query", config.climate.temperature.min, config.climate.temperature.max), false);
+                                    return 1;
+                                })
+                                .then(argument("min", FloatArgumentType.floatArg(-2.0F, 2.0F))
+                                        .then(argument("max", FloatArgumentType.floatArg(-2.0F, 2.0F))
+                                                .executes(context -> {
+                                                    float min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
+                                                    float max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
+                                                    config.climate.temperature.min = min;
+                                                    config.climate.temperature.max = max;
+                                                    saveConfig();
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.temperature.set", min, max), false);
+                                                    return 1;
+                                                })
                                         )
                                 )
                         )
                         .then(literal("downfall")
-                                .then(literal("query")
-                                        .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.downfall.query", config.climate.downfall.min, config.climate.downfall.max), false);
-                                            return 1;
-                                        })
-                                )
-                                .then(literal("set")
-                                        .then(argument("min", FloatArgumentType.floatArg(0.0F, 1.0F))
-                                                .then(argument("max", FloatArgumentType.floatArg(0.0F, 1.0F))
-                                                        .executes(context -> {
-                                                            float min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
-                                                            float max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
-                                                            config.climate.downfall.min = min;
-                                                            config.climate.downfall.max = max;
-                                                            saveConfig();
-                                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.downfall.set", min, max), false);
-                                                            return 1;
-                                                        })
-                                                )
+                                .executes(context -> {
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.downfall.query", config.climate.downfall.min, config.climate.downfall.max), false);
+                                    return 1;
+                                })
+                                .then(argument("min", FloatArgumentType.floatArg(0.0F, 1.0F))
+                                        .then(argument("max", FloatArgumentType.floatArg(0.0F, 1.0F))
+                                                .executes(context -> {
+                                                    float min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
+                                                    float max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
+                                                    config.climate.downfall.min = min;
+                                                    config.climate.downfall.max = max;
+                                                    saveConfig();
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.downfall.set", min, max), false);
+                                                    return 1;
+                                                })
                                         )
                                 )
                         )
                         .then(literal("whitelist")
                                 .then(literal("enabled")
-                                        .then(literal("query")
+                                        .executes(context -> {
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.enabled.query", config.climate.whitelist.enabled), false);
+                                            return 1;
+                                        })
+                                        .then(argument("value", BoolArgumentType.bool())
                                                 .executes(context -> {
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.enabled.query", config.climate.whitelist.enabled), false);
+                                                    config.climate.whitelist.enabled = BoolArgumentType.getBool(context, "value");
+                                                    saveConfig();
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.enabled.set", config.climate.whitelist.enabled), false);
                                                     return 1;
                                                 })
-                                        )
-                                        .then(literal("set")
-                                                .then(argument("value", BoolArgumentType.bool())
-                                                        .executes(context -> {
-                                                            config.climate.whitelist.enabled = BoolArgumentType.getBool(context, "value");
-                                                            saveConfig();
-                                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.enabled.query", config.climate.whitelist.enabled), false);
-                                                            return 1;
-                                                        })
-                                                )
                                         )
                                 )
                                 .then(literal("dimensions")
-                                        .then(literal("query")
-                                                .executes(context -> {
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.dimensions.query", Arrays.asList(config.climate.whitelist.dimensions)), false);
-                                                    return 1;
-                                                })
-                                        )
+                                        .executes(context -> {
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.dimensions.query", Arrays.asList(config.climate.whitelist.dimensions)), false);
+                                            return 1;
+                                        })
                                         .then(literal("add")
                                                 .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
@@ -249,12 +224,10 @@ public class BlossomCommand {
                                         )
                                 )
                                 .then(literal("biomes")
-                                        .then(literal("query")
-                                                .executes(context -> {
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.biomes.query", Arrays.asList(config.climate.whitelist.biomes)), false);
-                                                    return 1;
-                                                })
-                                        )
+                                        .executes(context -> {
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.whitelist.biomes.query", Arrays.asList(config.climate.whitelist.biomes)), false);
+                                            return 1;
+                                        })
                                         .then(literal("add")
                                                 .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
@@ -297,30 +270,24 @@ public class BlossomCommand {
                         )
                         .then(literal("blacklist")
                                 .then(literal("enabled")
-                                        .then(literal("query")
+                                        .executes(context -> {
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.enabled.query", config.climate.blacklist.enabled), false);
+                                            return 1;
+                                        })
+                                        .then(argument("value", BoolArgumentType.bool())
                                                 .executes(context -> {
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.enabled.query", config.climate.blacklist.enabled), false);
+                                                    config.climate.blacklist.enabled = BoolArgumentType.getBool(context, "value");
+                                                    saveConfig();
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.enabled.set", config.climate.blacklist.enabled), false);
                                                     return 1;
                                                 })
-                                        )
-                                        .then(literal("set")
-                                                .then(argument("value", BoolArgumentType.bool())
-                                                        .executes(context -> {
-                                                            config.climate.blacklist.enabled = BoolArgumentType.getBool(context, "value");
-                                                            saveConfig();
-                                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.enabled.query", config.climate.blacklist.enabled), false);
-                                                            return 1;
-                                                        })
-                                                )
                                         )
                                 )
                                 .then(literal("dimensions")
-                                        .then(literal("query")
-                                                .executes(context -> {
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.dimensions.query", Arrays.asList(config.climate.blacklist.dimensions)), false);
-                                                    return 1;
-                                                })
-                                        )
+                                        .executes(context -> {
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.dimensions.query", Arrays.asList(config.climate.blacklist.dimensions)), false);
+                                            return 1;
+                                        })
                                         .then(literal("add")
                                                 .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
@@ -361,12 +328,10 @@ public class BlossomCommand {
                                         )
                                 )
                                 .then(literal("biomes")
-                                        .then(literal("query")
-                                                .executes(context -> {
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.biomes.query", Arrays.asList(config.climate.blacklist.biomes)), false);
-                                                    return 1;
-                                                })
-                                        )
+                                        .executes(context -> {
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.climate.blacklist.biomes.query", Arrays.asList(config.climate.blacklist.biomes)), false);
+                                            return 1;
+                                        })
                                         .then(literal("add")
                                                 .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {

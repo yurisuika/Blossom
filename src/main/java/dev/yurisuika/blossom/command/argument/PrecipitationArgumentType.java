@@ -8,15 +8,15 @@ import net.minecraft.util.StringIdentifiable;
 public class PrecipitationArgumentType extends EnumArgumentType<PrecipitationArgumentType.Precipitation> {
 
     public PrecipitationArgumentType() {
-        super(PrecipitationArgumentType.Precipitation.CODEC, PrecipitationArgumentType.Precipitation::values);
+        super(Precipitation.CODEC, Precipitation::values);
     }
 
-    public static EnumArgumentType<PrecipitationArgumentType.Precipitation> precipitation() {
+    public static EnumArgumentType<Precipitation> precipitation() {
         return new PrecipitationArgumentType();
     }
 
-    public static PrecipitationArgumentType.Precipitation getPrecipitation(CommandContext<ServerCommandSource> context, String id) {
-        return context.getArgument(id, PrecipitationArgumentType.Precipitation.class);
+    public static Precipitation getPrecipitation(CommandContext<ServerCommandSource> context, String id) {
+        return context.getArgument(id, Precipitation.class);
     }
 
     public enum Precipitation implements StringIdentifiable {
@@ -26,7 +26,7 @@ public class PrecipitationArgumentType extends EnumArgumentType<PrecipitationArg
         SNOW("snow") {};
         
         private final String name;
-        public static final Codec<PrecipitationArgumentType.Precipitation> CODEC;
+        public static final Codec<Precipitation> CODEC;
 
         Precipitation(String name) {
             this.name = name;
@@ -38,7 +38,7 @@ public class PrecipitationArgumentType extends EnumArgumentType<PrecipitationArg
         }
 
         static {
-            CODEC = StringIdentifiable.createCodec(PrecipitationArgumentType.Precipitation::values);
+            CODEC = StringIdentifiable.createCodec(Precipitation::values);
         }
         
     }

@@ -249,7 +249,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         Blossom.registerCompostables();
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
-            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES);
+            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, Item.fromBlock(FLOWERING_OAK_LEAVES));
         });
 
         ArgumentTypeRegistry.registerArgumentType(new Identifier("blossom", "precipitation"), PrecipitationArgumentType.class, ConstantArgumentSerializer.of(PrecipitationArgumentType::precipitation));

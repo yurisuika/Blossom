@@ -1,6 +1,5 @@
 package dev.yurisuika.blossom.block;
 
-import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,6 +34,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static dev.yurisuika.blossom.Blossom.*;
 
 public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
@@ -192,7 +193,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public static void dropApple(World world, BlockPos pos) {
-        dropStack(world, pos, new ItemStack(Items.APPLE, ThreadLocalRandom.current().nextInt(Blossom.config.count.min, Blossom.config.count.max + 1)));
+        dropStack(world, pos, new ItemStack(Items.APPLE, ThreadLocalRandom.current().nextInt(config.count.min, config.count.max + 1)));
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
