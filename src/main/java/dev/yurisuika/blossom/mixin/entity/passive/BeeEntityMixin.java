@@ -115,7 +115,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> (!state.contains(Properties.WATERLOGGED) || !state.get(Properties.WATERLOGGED)) && state.isIn(BLOSSOMS));
+            return predicate.or((state) -> (!state.get(Properties.WATERLOGGED)) && state.isIn(BLOSSOMS));
         }
 
     }
