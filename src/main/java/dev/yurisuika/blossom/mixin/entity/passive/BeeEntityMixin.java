@@ -64,14 +64,14 @@ public class BeeEntityMixin {
 
                     boolean bl = false;
                     if(config.climate.whitelist.enabled) {
-                        if(Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString())) {
-                            if(Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString())) {
+                        if(Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                            if(Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
                                 bl = true;
                             }
                         }
                     } else if(config.climate.blacklist.enabled) {
-                        if(!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString())) {
-                            if(!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString())) {
+                        if(!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                            if(!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
                                 bl = true;
                             }
                         }
@@ -115,7 +115,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> (!state.get(Properties.WATERLOGGED)) && state.isIn(BLOSSOMS));
+            return predicate.or((state) -> (!state.contains(Properties.WATERLOGGED) || !state.get(Properties.WATERLOGGED)) && state.isIn(BLOSSOMS));
         }
 
     }
