@@ -120,7 +120,7 @@ public class BlossomCommand {
                                     return 1;
                                 })
                                 .then(literal("add")
-                                          .then(argument("precipitation", PrecipitationArgumentType.precipitation())
+                                        .then(argument("precipitation", PrecipitationArgumentType.precipitation())
                                                 .executes(context -> {
                                                     String precipitation = PrecipitationArgumentType.getPrecipitation(context, "precipitation").asString();
                                                     if (Arrays.stream(config.climate.precipitation).anyMatch(precipitation::equalsIgnoreCase)) {
