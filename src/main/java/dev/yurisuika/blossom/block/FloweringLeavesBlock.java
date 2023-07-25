@@ -34,7 +34,6 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -202,7 +201,6 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
                 count++;
             }
         }
-        LoggerFactory.getLogger("Blossom").info("count: " + count);
         dropStack(world, pos, new ItemStack(Items.APPLE, count));
     }
 
