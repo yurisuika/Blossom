@@ -32,7 +32,7 @@ public class BlossomCommand {
                         .then(literal("reset")
                                 .executes(context -> {
                                     config.propagation = new Propagation(0.2F);
-                                    config.fertilization = new Fertilization(0.066666666F);
+                                    config.fertilization = new Fertilization(0.0666666666F);
                                     config.count = new Count(2, 4);
                                     config.climate = new Climate(
                                             new String[]{"none", "rain", "snow"},
@@ -73,6 +73,21 @@ public class BlossomCommand {
                                     config.fertilization.chance = FloatArgumentType.getFloat(context, "chance");
                                     saveConfig();
                                     context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.fertilization.set", config.fertilization.chance), true);
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("pollination")
+                        .requires(source -> source.hasPermissionLevel(4))
+                        .executes(context -> {
+                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.pollination.query", config.pollination.age), false);
+                            return 1;
+                        })
+                        .then(CommandManager.argument("age", IntegerArgumentType.integer(0, 7))
+                                .executes(context -> {
+                                    config.pollination.age = IntegerArgumentType.getInteger(context, "age");
+                                    saveConfig();
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.pollination.set", config.pollination.age), true);
                                     return 1;
                                 })
                         )

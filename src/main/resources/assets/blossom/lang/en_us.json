@@ -9,6 +9,9 @@
 
   "commands.blossom.fertilization.query": "Fertilization chance is currently set to: %s",
   "commands.blossom.fertilization.set": "Fertilization chance is now set to: %s",
+  
+  "commands.blossom.pollination.query": "Pollination age is currently set to: %s",
+  "commands.blossom.pollination.set": "Pollination age is now set to: %s",
 
   "commands.blossom.count.query": "Count is currently set to: (min: %s, max: %s)",
   "commands.blossom.count.set": "Count is now set to: (min: %s, max: %s)",

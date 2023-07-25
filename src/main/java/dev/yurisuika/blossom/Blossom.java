@@ -47,11 +47,9 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static class Config {
 
         public Propagation propagation = new Propagation(0.2F);
-
-        public Fertilization fertilization = new Fertilization(0.066666666F);
-
+        public Fertilization fertilization = new Fertilization(0.0666666666F);
+        public Pollination pollination = new Pollination(1);
         public Count count = new Count(2, 4);
-
         public Climate climate = new Climate(
                 new String[]{"none", "rain", "snow"},
                 new Climate.Temperature(-2.0F, 2.0F),
@@ -78,6 +76,16 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         public Fertilization(float chance) {
             this.chance = chance;
+        }
+
+    }
+
+    public static class Pollination {
+
+        public int age;
+
+        public Pollination(int age) {
+            this.age = age;
         }
 
     }
