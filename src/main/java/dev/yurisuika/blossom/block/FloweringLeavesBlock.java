@@ -2,6 +2,8 @@ package dev.yurisuika.blossom.block;
 
 import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.*;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
@@ -32,6 +34,7 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -192,8 +195,15 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         this.applyGrowth(world, pos, state);
     }
 
-    public static void dropApple(World world, BlockPos pos) {
-        dropStack(world, pos, new ItemStack(Items.APPLE, ThreadLocalRandom.current().nextInt(config.count.min, config.count.max + 1)));
+    public static void dropApple(World world, BlockPos pos, int bonus) {
+        int count = 1;
+        for(int i = 0; i < config.harvest.extra + bonus; i++) {
+            if (ThreadLocalRandom.current().nextFloat() <= config.harvest.probability) {
+                count++;
+            }
+        }
+        LoggerFactory.getLogger("Blossom").info("count: " + count);
+        dropStack(world, pos, new ItemStack(Items.APPLE, count));
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -203,7 +213,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                dropApple(world, pos);
+                dropApple(world, pos, (itemStack.hasEnchantments() && EnchantmentHelper.get(itemStack).containsKey(Enchantments.FORTUNE)) ? EnchantmentHelper.getLevel(Enchantments.FORTUNE, itemStack) : 0);
                 itemStack.damage(1, player, (playerx) -> {
                     playerx.sendToolBreakStatus(hand);
                 });

@@ -47,9 +47,9 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static class Config {
 
         public Propagation propagation = new Propagation(0.2F);
-        public Fertilization fertilization = new Fertilization(0.0666666666F);
+        public Fertilization fertilization = new Fertilization(0.06666667F);
         public Pollination pollination = new Pollination(1);
-        public Count count = new Count(2, 4);
+        public Harvest harvest = new Harvest(3, 0.5714286F);
         public Climate climate = new Climate(
                 new String[]{"none", "rain", "snow"},
                 new Climate.Temperature(-2.0F, 2.0F),
@@ -90,14 +90,14 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     }
 
-    public static class Count {
+    public static class Harvest {
 
-        public int min;
-        public int max;
+        public int extra;
+        public float probability;
 
-        public Count(int min, int max) {
-            this.min = min;
-            this.max = max;
+        public Harvest(int extra, float probability) {
+            this.extra = extra;
+            this.probability = probability;
         }
 
     }
@@ -208,11 +208,8 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         config.propagation.chance = Math.max(Math.min(config.propagation.chance, 1.0F), 0.0F);
         config.fertilization.chance = Math.max(Math.min(config.fertilization.chance, 1.0F), 0.0F);
         config.pollination.age = Math.max(Math.min(config.pollination.age, 7), 0);
-
-        int countMin = Math.max(Math.min(Math.min(config.count.min, 64), config.count.max), 1);
-        int countMax = Math.max(Math.max(Math.min(config.count.max, 64), config.count.min), 1);
-        config.count.min = countMin;
-        config.count.max = countMax;
+        config.harvest.extra = Math.max(config.harvest.extra, 0);
+        config.harvest.probability = Math.max(Math.min(config.harvest.probability, 1.0F), 0.0F);
 
         Arrays.stream(config.climate.precipitation).forEach(precipitation -> {
             if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation.toUpperCase()).isPresent()) {

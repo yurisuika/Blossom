@@ -32,8 +32,9 @@ public class BlossomCommand {
                         .then(literal("reset")
                                 .executes(context -> {
                                     config.propagation = new Propagation(0.2F);
-                                    config.fertilization = new Fertilization(0.0666666666F);
-                                    config.count = new Count(2, 4);
+                                    config.fertilization = new Fertilization(0.06666667F);
+                                    config.pollination = new Pollination(1);
+                                    config.harvest = new Harvest(3, 0.5714286F);
                                     config.climate = new Climate(
                                             new String[]{"none", "rain", "snow"},
                                             new Climate.Temperature(-2.0F, 2.0F),
@@ -92,20 +93,20 @@ public class BlossomCommand {
                                 })
                         )
                 )
-                .then(literal("count")
+                .then(literal("harvest")
                         .requires(source -> source.hasPermissionLevel(4))
                         .executes(context -> {
-                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.count.query", config.count.min, config.count.max), false);
+                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.harvest.query", config.harvest.extra, config.harvest.probability), false);
                             return 1;
                         })
-                        .then(CommandManager.argument("min", IntegerArgumentType.integer(1, 64))
-                                .then(CommandManager.argument("max", IntegerArgumentType.integer(1, 64))
+                        .then(CommandManager.argument("extra", IntegerArgumentType.integer(0))
+                                .then(CommandManager.argument("probability", FloatArgumentType.floatArg(0.0F, 1.0F))
                                         .executes(context -> {
-                                            int min = Math.min(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
-                                            int max = Math.max(IntegerArgumentType.getInteger(context, "min"), IntegerArgumentType.getInteger(context, "max"));
-                                            config.count = new Count(min, max);
+                                            int extra = IntegerArgumentType.getInteger(context, "extra");
+                                            float probability = FloatArgumentType.getFloat(context, "probability");
+                                            config.harvest = new Harvest(extra, probability);
                                             saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.count.set", min, max), true);
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.harvest.set", extra, probability), true);
                                             return 1;
                                         })
                                 )

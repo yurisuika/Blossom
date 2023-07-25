@@ -45,24 +45,24 @@ public class BeeEntityMixin {
             RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
             RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
 
-            boolean enabled = false;
+            boolean bl = false;
             if (config.climate.whitelist.enabled) {
                 if (Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
                     if (Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
-                        enabled = true;
+                        bl = true;
                     }
                 }
             } else if (config.climate.blacklist.enabled) {
                 if (!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
                     if (!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
-                        enabled = true;
+                        bl = true;
                     }
                 }
             } else {
-                enabled = true;
+                bl = true;
             }
 
-            if (enabled) {
+            if (bl) {
                 float temperature = biome.value().getTemperature();
                 float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
                 Biome.Precipitation precipitation = biome.value().getPrecipitation(entity.getBlockPos());
