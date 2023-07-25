@@ -221,7 +221,7 @@ public class BlossomCommand {
                                                         .executes(context -> {
                                                             String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
                                                             if (Arrays.stream(config.climate.whitelist.dimensions).anyMatch(dimension::equalsIgnoreCase)) {
-                                                                context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.biomes.add.failed", dimension));
+                                                                context.getSource().sendError(Text.translatable("commands.blossom.climate.whitelist.dimensions.add.failed", dimension));
                                                                 return 0;
                                                             } else {
                                                                 config.climate.whitelist.dimensions = ArrayUtils.add(config.climate.whitelist.dimensions, dimension);
@@ -325,7 +325,7 @@ public class BlossomCommand {
                                                         .executes(context -> {
                                                             String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
                                                             if (Arrays.stream(config.climate.blacklist.dimensions).anyMatch(dimension::equalsIgnoreCase)) {
-                                                                context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.biomes.add.failed", dimension));
+                                                                context.getSource().sendError(Text.translatable("commands.blossom.climate.blacklist.dimensions.add.failed", dimension));
                                                                 return 0;
                                                             } else {
                                                                 config.climate.blacklist.dimensions = ArrayUtils.add(config.climate.blacklist.dimensions, dimension);
