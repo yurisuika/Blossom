@@ -32,7 +32,7 @@ public class BlossomCommand {
                         .then(literal("reset")
                                 .executes(context -> {
                                     config.propagation = new Propagation(0.2F);
-                                    config.fertilization = new Fertilization(0.033333333F);
+                                    config.fertilization = new Fertilization(0.066666666F);
                                     config.count = new Count(2, 4);
                                     config.climate = new Climate(
                                             new String[]{"none", "rain", "snow"},

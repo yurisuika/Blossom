@@ -48,7 +48,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         public Propagation propagation = new Propagation(0.2F);
 
-        public Fertilization fertilization = new Fertilization(0.033333333F);
+        public Fertilization fertilization = new Fertilization(0.066666666F);
 
         public Count count = new Count(2, 4);
 

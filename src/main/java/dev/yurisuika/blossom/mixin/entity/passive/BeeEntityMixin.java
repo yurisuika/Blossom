@@ -1,8 +1,6 @@
 package dev.yurisuika.blossom.mixin.entity.passive;
 
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
-import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
-import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.*;
 import net.minecraft.entity.passive.BeeEntity;
@@ -22,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 import static dev.yurisuika.blossom.Blossom.*;
@@ -71,7 +70,7 @@ public class BeeEntityMixin {
                 if (Arrays.stream(config.climate.precipitation).anyMatch(precipitation.name()::equalsIgnoreCase)) {
                     if (temperature >= config.climate.temperature.min && temperature <= config.climate.temperature.max) {
                         if (downfall >= config.climate.downfall.min && downfall <= config.climate.downfall.max) {
-                            if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount((int)(1.0F / config.propagation.chance))) == 0) {
+                            if (ThreadLocalRandom.current().nextDouble() <= config.propagation.chance) {
                                 for (int i = 1; i <= 2; ++i) {
                                     BlockPos blockPos = entity.getBlockPos().down(i);
                                     BlockState blockState = entity.getWorld().getBlockState(blockPos);
@@ -93,7 +92,7 @@ public class BeeEntityMixin {
                 }
             }
 
-            if (((EntityAccessor)entity).getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount((int)(1.0F / config.fertilization.chance))) == 0) {
+            if (ThreadLocalRandom.current().nextDouble() <= config.fertilization.chance) {
                 for (int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.getWorld().getBlockState(blockPos);
