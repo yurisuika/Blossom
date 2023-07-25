@@ -207,6 +207,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static void checkBounds() {
         config.propagation.chance = Math.max(Math.min(config.propagation.chance, 1.0F), 0.0F);
         config.fertilization.chance = Math.max(Math.min(config.fertilization.chance, 1.0F), 0.0F);
+        config.pollination.age = Math.max(Math.min(config.pollination.age, 7), 0);
 
         int countMin = Math.max(Math.min(Math.min(config.count.min, 64), config.count.max), 1);
         int countMax = Math.max(Math.max(Math.min(config.count.max, 64), config.count.min), 1);
