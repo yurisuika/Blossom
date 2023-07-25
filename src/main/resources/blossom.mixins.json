@@ -7,8 +7,6 @@
   "mixins": [
     "block.ComposterBlockInvoker",
     "block.FireBlockInvoker",
-    "entity.EntityAccessor",
-    "entity.ai.goal.GoalInvoker",
     "entity.passive.BeeEntityInvoker",
     "entity.passive.BeeEntityMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
