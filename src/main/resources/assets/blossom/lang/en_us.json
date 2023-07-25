@@ -13,8 +13,8 @@
   "commands.blossom.pollination.query": "Pollination age is currently set to: %s",
   "commands.blossom.pollination.set": "Pollination age is now set to: %s",
 
-  "commands.blossom.count.query": "Count is currently set to: (min: %s, max: %s)",
-  "commands.blossom.count.set": "Count is now set to: (min: %s, max: %s)",
+  "commands.blossom.harvest.query": "Harvest is currently set to: (extra: %s, probability: %s)",
+  "commands.blossom.harvest.set": "Harvest is now set to: (extra: %s, probability: %s)",
 
   "commands.blossom.climate.precipitation.query": "Allowed precipitations: %s",
   "commands.blossom.climate.precipitation.add": "Added %s to allowed precipitations",
