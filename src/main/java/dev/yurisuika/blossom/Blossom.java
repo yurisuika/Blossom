@@ -10,9 +10,13 @@ import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.FoliageColors;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -291,6 +295,17 @@ public class Blossom {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             RenderLayers.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderLayer.getCutout());
+
+            ModelPredicateProviderRegistry.register(Item.fromBlock(FLOWERING_OAK_LEAVES.get()), new Identifier("age"), (stack, world, entity, seed) -> {
+                NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
+                try {
+                    NbtElement nbtElement;
+                    if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
+                        return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 8.0F;
+                    }
+                } catch (NumberFormatException ignored) {}
+                return 0.0F;
+            });
         }
 
         @SubscribeEvent
