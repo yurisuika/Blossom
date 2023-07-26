@@ -254,12 +254,30 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
 
+    public static void registerBlocks() {
+        Registry.register(Registries.BLOCK, new Identifier("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
+    }
+
+    public static void registerItems() {
+        Registry.register(Registries.ITEM, new Identifier("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings()));
+    }
+
     public static void registerCompostables() {
         CompostingChanceRegistry.INSTANCE.add(Blossom.FLOWERING_OAK_LEAVES, 0.3F);
     }
 
     public static void registerFlammables() {
         FlammableBlockRegistry.getDefaultInstance().add(Blossom.FLOWERING_OAK_LEAVES, 30, 60);
+    }
+
+    public static void registerItemGroupEvents() {
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, Item.fromBlock(FLOWERING_OAK_LEAVES));
+        });
+    }
+
+    public static void registerCommands() {
+        CommandRegistrationCallback.EVENT.register(BlossomCommand::register);
     }
 
     @Environment(EnvType.CLIENT)
@@ -273,25 +291,8 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), Blossom.FLOWERING_OAK_LEAVES);
     }
 
-    @Override
-    public void onInitialize() {
-        if (!file.exists()) {
-            saveConfig();
-        }
-        loadConfig();
-
-        CommandRegistrationCallback.EVENT.register(BlossomCommand::register);
-
-        Registry.register(Registries.BLOCK, new Identifier("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
-        Registry.register(Registries.ITEM, new Identifier("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings()));
-
-        Blossom.registerFlammables();
-        Blossom.registerCompostables();
-
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
-            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, Item.fromBlock(FLOWERING_OAK_LEAVES));
-        });
-
+    @Environment(EnvType.CLIENT)
+    public static void registerModelPredicateProviders() {
         ModelPredicateProviderRegistry.register(Item.fromBlock(FLOWERING_OAK_LEAVES), new Identifier("age"), (stack, world, entity, seed) -> {
             NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
             try {
@@ -305,9 +306,25 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     }
 
     @Override
+    public void onInitialize() {
+        if (!file.exists()) {
+            saveConfig();
+        }
+        loadConfig();
+
+        registerBlocks();
+        registerItems();
+        registerFlammables();
+        registerCompostables();
+        registerItemGroupEvents();
+        registerCommands();
+    }
+
+    @Override
     public void onInitializeClient() {
-        Blossom.registerRenderLayers();
-        Blossom.registerColorProviders();
+        registerRenderLayers();
+        registerColorProviders();
+        registerModelPredicateProviders();
     }
 
 }
