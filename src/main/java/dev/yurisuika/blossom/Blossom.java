@@ -21,8 +21,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.FoliageColors;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -156,7 +159,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         }
 
         public static class Dimension {
-           
+
             public String[] whitelist;
             public String[] blacklist;
 
@@ -287,6 +290,17 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.FLOWERING_AZALEA_LEAVES, Item.fromBlock(FLOWERING_OAK_LEAVES));
+        });
+
+        ModelPredicateProviderRegistry.register(Item.fromBlock(FLOWERING_OAK_LEAVES), new Identifier("age"), (stack, world, entity, seed) -> {
+            NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
+            try {
+                NbtElement nbtElement;
+                if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
+                    return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 8.0F;
+                }
+            } catch (NumberFormatException ignored) {}
+            return 0.0F;
         });
     }
 
