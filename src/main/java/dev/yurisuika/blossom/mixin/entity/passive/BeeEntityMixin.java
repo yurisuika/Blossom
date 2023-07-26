@@ -44,17 +44,19 @@ public class BeeEntityMixin {
         private void injectTick(CallbackInfo ci) {
             RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
             RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
+            float temperature = biome.value().getTemperature();
+            float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
 
             boolean bl = false;
-            if (config.climate.whitelist.enabled) {
-                if (Arrays.asList(config.climate.whitelist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
-                    if (Arrays.asList(config.climate.whitelist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
+            if (config.toggle.whitelist) {
+                if (Arrays.asList(config.filter.dimension.whitelist).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                    if (Arrays.asList(config.filter.biome.whitelist).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
                         bl = true;
                     }
                 }
-            } else if (config.climate.blacklist.enabled) {
-                if (!Arrays.asList(config.climate.blacklist.dimensions).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
-                    if (!Arrays.asList(config.climate.blacklist.biomes).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
+            } else if (config.toggle.blacklist) {
+                if (!Arrays.asList(config.filter.dimension.blacklist).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                    if (!Arrays.asList(config.filter.biome.blacklist).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
                         bl = true;
                     }
                 }
@@ -62,29 +64,21 @@ public class BeeEntityMixin {
                 bl = true;
             }
 
-            if (bl) {
-                float temperature = biome.value().getTemperature();
-                float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
-                Biome.Precipitation precipitation = biome.value().getPrecipitation(entity.getBlockPos());
-
-                if (Arrays.stream(config.climate.precipitation).anyMatch(precipitation.name()::equalsIgnoreCase)) {
-                    if (temperature >= config.climate.temperature.min && temperature <= config.climate.temperature.max) {
-                        if (downfall >= config.climate.downfall.min && downfall <= config.climate.downfall.max) {
-                            if (ThreadLocalRandom.current().nextDouble() <= config.propagation.chance) {
-                                for (int i = 1; i <= 2; ++i) {
-                                    BlockPos blockPos = entity.getBlockPos().down(i);
-                                    BlockState blockState = entity.getWorld().getBlockState(blockPos);
-                                    if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
-                                        if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                                            entity.getWorld().syncWorldEvent(2005, blockPos, 0);
-                                            entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
-                                                    .with(DISTANCE, blockState.get(DISTANCE))
-                                                    .with(PERSISTENT, blockState.get(PERSISTENT))
-                                                    .with(WATERLOGGED, blockState.get(WATERLOGGED))
-                                            );
-                                            ((BeeEntityInvoker)entity).invokeAddCropCounter();
-                                        }
-                                    }
+            if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
+                if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
+                    if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
+                        for (int i = 1; i <= 2; ++i) {
+                            BlockPos blockPos = entity.getBlockPos().down(i);
+                            BlockState blockState = entity.getWorld().getBlockState(blockPos);
+                            if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
+                                if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                    entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                                    entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
+                                            .with(DISTANCE, blockState.get(DISTANCE))
+                                            .with(PERSISTENT, blockState.get(PERSISTENT))
+                                            .with(WATERLOGGED, blockState.get(WATERLOGGED))
+                                    );
+                                    ((BeeEntityInvoker)entity).invokeAddCropCounter();
                                 }
                             }
                         }
@@ -92,7 +86,7 @@ public class BeeEntityMixin {
                 }
             }
 
-            if (ThreadLocalRandom.current().nextDouble() <= config.fertilization.chance) {
+            if (ThreadLocalRandom.current().nextDouble() <= config.value.fertilization.chance) {
                 for (int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
                     BlockState blockState = entity.getWorld().getBlockState(blockPos);
@@ -117,7 +111,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.and((state) -> state.isOf(FLOWERING_OAK_LEAVES) ? (state.get(Properties.AGE_7) <= config.pollination.age) : true);
+            return predicate.and((state) -> state.isOf(FLOWERING_OAK_LEAVES) ? (state.get(Properties.AGE_7) <= config.value.pollination.age) : true);
         }
 
     }

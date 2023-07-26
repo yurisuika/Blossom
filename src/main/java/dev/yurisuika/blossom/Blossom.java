@@ -1,10 +1,8 @@
 package dev.yurisuika.blossom;
 
-import com.google.common.base.Enums;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
-import dev.yurisuika.blossom.command.argument.PrecipitationArgumentType;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -12,7 +10,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -25,13 +22,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.biome.Biome;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -46,77 +40,96 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static class Config {
 
-        public Propagation propagation = new Propagation(0.2F);
-        public Fertilization fertilization = new Fertilization(0.06666667F);
-        public Pollination pollination = new Pollination(1);
-        public Harvest harvest = new Harvest(3, 0.5714286F);
-        public Climate climate = new Climate(
-                new String[]{"none", "rain", "snow"},
-                new Climate.Temperature(-2.0F, 2.0F),
-                new Climate.Downfall(0.0F, 1.0F),
-                new Climate.Whitelist(false, new String[]{"minecraft:overworld"}, new String[]{"minecraft:forest"}),
-                new Climate.Blacklist(false, new String[]{"minecraft:the_nether", "minecraft:the_end"}, new String[]{"minecraft:the_void"})
+        public Value value = new Value(
+                new Value.Propagation(0.2F),
+                new Value.Fertilization(0.06666667F),
+                new Value.Pollination(1),
+                new Value.Fruit(3, 0.5714286F)
+        );
+        public Filter filter = new Filter(
+                new Filter.Temperature(-2.0F, 2.0F),
+                new Filter.Downfall(0.0F, 1.0F),
+                new Filter.Dimension(new String[]{"minecraft:overworld"}, new String[]{"minecraft:the_nether", "minecraft:the_end"}),
+                new Filter.Biome(new String[]{"minecraft:forest"}, new String[]{"minecraft:the_void"})
+        );
+        public Toggle toggle = new Toggle(
+                false,
+                false
         );
 
     }
 
-    public static class Propagation {
+    public static class Value {
 
-        public float chance;
+        public Propagation propagation;
+        public Fertilization fertilization;
+        public Pollination pollination;
+        public Fruit fruit;
 
-        public Propagation(float chance) {
-            this.chance = chance;
+        public Value(Propagation propagation, Fertilization fertilization, Pollination pollination, Fruit fruit) {
+            this.propagation = propagation;
+            this.fertilization = fertilization;
+            this.pollination = pollination;
+            this.fruit = fruit;
+        }
+
+        public static class Propagation {
+
+            public float chance;
+
+            public Propagation(float chance) {
+                this.chance = chance;
+            }
+
+        }
+
+        public static class Fertilization {
+
+            public float chance;
+
+            public Fertilization(float chance) {
+                this.chance = chance;
+            }
+
+        }
+
+        public static class Pollination {
+
+            public int age;
+
+            public Pollination(int age) {
+                this.age = age;
+            }
+
+        }
+
+        public static class Fruit {
+
+            public int bonus;
+            public float chance;
+
+            public Fruit(int bonus, float chance) {
+                this.bonus = bonus;
+                this.chance = chance;
+            }
+
         }
 
     }
 
-    public static class Fertilization {
+    public static class Filter {
 
-        public float chance;
+        public Temperature temperature;
+        public Downfall downfall;
+        public Dimension dimension;
+        public Biome biome;
 
-        public Fertilization(float chance) {
-            this.chance = chance;
+        public Filter(Temperature temperature, Downfall downfall, Dimension dimension, Biome biome) {
+            this.temperature = temperature;
+            this.downfall = downfall;
+            this.dimension = dimension;
+            this.biome = biome;
         }
-
-    }
-
-    public static class Pollination {
-
-        public int age;
-
-        public Pollination(int age) {
-            this.age = age;
-        }
-
-    }
-
-    public static class Harvest {
-
-        public int extra;
-        public float probability;
-
-        public Harvest(int extra, float probability) {
-            this.extra = extra;
-            this.probability = probability;
-        }
-
-    }
-
-    public static class Climate {
-
-       public String[] precipitation;
-       public Temperature temperature;
-       public Downfall downfall;
-       public Whitelist whitelist;
-       public Blacklist blacklist;
-
-       public Climate(String[] precipitation, Temperature temperature, Downfall downfall, Whitelist whitelist, Blacklist blacklist) {
-           this.precipitation = precipitation;
-           this.temperature = temperature;
-           this.downfall = downfall;
-           this.whitelist = whitelist;
-           this.blacklist = blacklist;
-       }
 
         public static class Temperature {
 
@@ -142,34 +155,41 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         }
 
-        public static class Whitelist {
+        public static class Dimension {
+           
+            public String[] whitelist;
+            public String[] blacklist;
 
-            public boolean enabled;
-            public String[] dimensions;
-            public String[] biomes;
-
-            public Whitelist(boolean enabled, String[] dimensions, String[] biomes) {
-                this.enabled = enabled;
-                this.dimensions = dimensions;
-                this.biomes = biomes;
+            public Dimension(String[] whitelist, String[] blacklist) {
+                this.whitelist = whitelist;
+                this.blacklist = blacklist;
             }
 
         }
 
-        public static class Blacklist {
+        public static class Biome {
 
-            public boolean enabled;
-            public String[] dimensions;
-            public String[] biomes;
+            public String[] whitelist;
+            public String[] blacklist;
 
-            public Blacklist(boolean enabled, String[] dimensions, String[] biomes) {
-                this.enabled = enabled;
-                this.dimensions = dimensions;
-                this.biomes = biomes;
+            public Biome(String[] whitelist, String[] blacklist) {
+                this.whitelist = whitelist;
+                this.blacklist = blacklist;
             }
 
         }
 
+    }
+
+    public static class Toggle {
+
+        public boolean whitelist;
+        public boolean blacklist;
+
+        public Toggle(boolean whitelist, boolean blacklist) {
+            this.whitelist = whitelist;
+            this.blacklist = blacklist;
+        }
     }
 
     public static void saveConfig() {
@@ -205,34 +225,26 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     }
 
     public static void checkBounds() {
-        config.propagation.chance = Math.max(Math.min(config.propagation.chance, 1.0F), 0.0F);
-        config.fertilization.chance = Math.max(Math.min(config.fertilization.chance, 1.0F), 0.0F);
-        config.pollination.age = Math.max(Math.min(config.pollination.age, 7), 0);
-        config.harvest.extra = Math.max(config.harvest.extra, 0);
-        config.harvest.probability = Math.max(Math.min(config.harvest.probability, 1.0F), 0.0F);
+        config.value.propagation.chance = Math.max(Math.min(config.value.propagation.chance, 1.0F), 0.0F);
+        config.value.fertilization.chance = Math.max(Math.min(config.value.fertilization.chance, 1.0F), 0.0F);
+        config.value.pollination.age = Math.max(Math.min(config.value.pollination.age, 7), 0);
+        config.value.fruit.bonus = Math.max(config.value.fruit.bonus, 0);
+        config.value.fruit.chance = Math.max(Math.min(config.value.fruit.chance, 1.0F), 0.0F);
 
-        Arrays.stream(config.climate.precipitation).forEach(precipitation -> {
-            if(!Enums.getIfPresent(Biome.Precipitation.class, precipitation.toUpperCase()).isPresent()) {
-                int index = ArrayUtils.indexOf(config.climate.precipitation, precipitation);
-                config.climate.precipitation = ArrayUtils.remove(config.climate.precipitation, index);
-            }
-        });
-        Arrays.sort(config.climate.precipitation);
+        float temperatureMin = Math.max(Math.min(Math.min(config.filter.temperature.min, 2.0F), config.filter.temperature.max), -2.0F);
+        float temperatureMax = Math.max(Math.max(Math.min(config.filter.temperature.max, 2.0F), config.filter.temperature.min), -2.0F);
+        config.filter.temperature.min = temperatureMin;
+        config.filter.temperature.max = temperatureMax;
 
-        float temperatureMin = Math.max(Math.min(Math.min(config.climate.temperature.min, 2.0F), config.climate.temperature.max), -2.0F);
-        float temperatureMax = Math.max(Math.max(Math.min(config.climate.temperature.max, 2.0F), config.climate.temperature.min), -2.0F);
-        config.climate.temperature.min = temperatureMin;
-        config.climate.temperature.max = temperatureMax;
+        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 2.0F), config.filter.downfall.max), -2.0F);
+        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 2.0F), config.filter.downfall.min), -2.0F);
+        config.filter.downfall.min = downfallMin;
+        config.filter.downfall.max = downfallMax;
 
-        float downfallMin = Math.max(Math.min(Math.min(config.climate.downfall.min, 2.0F), config.climate.downfall.max), -2.0F);
-        float downfallMax = Math.max(Math.max(Math.min(config.climate.downfall.max, 2.0F), config.climate.downfall.min), -2.0F);
-        config.climate.downfall.min = downfallMin;
-        config.climate.downfall.max = downfallMax;
-
-        Arrays.sort(config.climate.whitelist.dimensions);
-        Arrays.sort(config.climate.whitelist.biomes);
-        Arrays.sort(config.climate.blacklist.dimensions);
-        Arrays.sort(config.climate.blacklist.biomes);
+        Arrays.sort(config.filter.dimension.whitelist);
+        Arrays.sort(config.filter.dimension.blacklist);
+        Arrays.sort(config.filter.biome.whitelist);
+        Arrays.sort(config.filter.biome.blacklist);
 
         saveConfig();
     }
@@ -276,8 +288,6 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.FLOWERING_AZALEA_LEAVES, Item.fromBlock(FLOWERING_OAK_LEAVES));
         });
-
-        ArgumentTypeRegistry.registerArgumentType(new Identifier("blossom", "precipitation"), PrecipitationArgumentType.class, ConstantArgumentSerializer.of(PrecipitationArgumentType::precipitation));
     }
 
     @Override

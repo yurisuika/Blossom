@@ -196,8 +196,8 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public static void dropApple(World world, BlockPos pos, int bonus) {
         int count = 1;
-        for(int i = 0; i < config.harvest.extra + bonus; i++) {
-            if (ThreadLocalRandom.current().nextFloat() <= config.harvest.probability) {
+        for(int i = 0; i < config.value.fruit.bonus + bonus; i++) {
+            if (ThreadLocalRandom.current().nextFloat() <= config.value.fruit.chance) {
                 count++;
             }
         }
