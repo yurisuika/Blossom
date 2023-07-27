@@ -13,6 +13,8 @@ public class BlossomEnglishLanguageProvider extends FabricLanguageProvider {
     public void generateTranslations(TranslationBuilder translationBuilder) {
         translationBuilder.add("block.blossom.flowering_oak_leaves", "Flowering Oak Leaves");
 
+        translationBuilder.add("item.blossom.flowering_oak_leaves", "Flowering Oak Leaves");
+
         translationBuilder.add("commands.blossom.config.reload", "Blossom config reloaded");
         translationBuilder.add("commands.blossom.config.reset", "Blossom config reset to defaults");
 
