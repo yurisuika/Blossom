@@ -297,7 +297,7 @@ public class Blossom {
         public static void clientSetup(FMLClientSetupEvent event) {
             RenderLayers.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderLayer.getCutout());
 
-            ModelPredicateProviderRegistry.register(Item.fromBlock(FLOWERING_OAK_LEAVES.get()), new Identifier("age"), (stack, world, entity, seed) -> {
+            ModelPredicateProviderRegistry.register(FLOWERING_OAK_LEAVES.get().asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
                 NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
                 try {
                     NbtElement nbtElement;
@@ -323,7 +323,7 @@ public class Blossom {
         public static void registerCreativeModeTabEvent(BuildCreativeModeTabContentsEvent event) {
             if(event.getTabKey() == ItemGroups.NATURAL) {
                 event.accept(FLOWERING_OAK_LEAVES);
-                event.getEntries().putAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultStack(), Item.fromBlock(FLOWERING_OAK_LEAVES.get()).getDefaultStack(), ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
+                event.getEntries().putAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultStack(), FLOWERING_OAK_LEAVES.get().asItem().getDefaultStack(), ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
             }
         }
 
