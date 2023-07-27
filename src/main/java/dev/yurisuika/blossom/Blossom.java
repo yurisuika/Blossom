@@ -3,6 +3,7 @@ package dev.yurisuika.blossom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.data.server.BlossomEnglishLanguageProvider;
 import dev.yurisuika.blossom.data.server.loottable.BlossomBlockLootTableGenerator;
 import dev.yurisuika.blossom.data.server.tag.BlossomBlockTagProvider;
 import dev.yurisuika.blossom.data.server.tag.BlossomItemTagProvider;
@@ -315,6 +316,7 @@ public class Blossom implements ModInitializer, ClientModInitializer, DataGenera
         fabricDataGenerator.createPack().addProvider(BlossomBlockLootTableGenerator::new);
         fabricDataGenerator.createPack().addProvider(BlossomBlockTagProvider::new);
         fabricDataGenerator.createPack().addProvider(BlossomItemTagProvider::new);
+        fabricDataGenerator.createPack().addProvider(BlossomEnglishLanguageProvider::new);
     }
 
     @Override
