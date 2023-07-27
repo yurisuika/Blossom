@@ -1,4 +1,4 @@
-package dev.yurisuika.blossom.data.server.tag;
+package dev.yurisuika.blossom.datagen.tag;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;

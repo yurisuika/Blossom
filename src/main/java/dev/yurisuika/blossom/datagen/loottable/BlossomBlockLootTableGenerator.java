@@ -1,4 +1,4 @@
-package dev.yurisuika.blossom.data.server.loottable;
+package dev.yurisuika.blossom.datagen.loottable;
 
 import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;

@@ -1,4 +1,4 @@
-package dev.yurisuika.blossom.data.server;
+package dev.yurisuika.blossom.datagen.lang;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
