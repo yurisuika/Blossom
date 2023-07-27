@@ -3,6 +3,9 @@ package dev.yurisuika.blossom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.data.server.loottable.BlossomBlockLootTableGenerator;
+import dev.yurisuika.blossom.data.server.tag.BlossomBlockTagProvider;
+import dev.yurisuika.blossom.data.server.tag.BlossomItemTagProvider;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -11,6 +14,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
@@ -35,7 +40,7 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
 
-public class Blossom implements ModInitializer, ClientModInitializer {
+public class Blossom implements ModInitializer, ClientModInitializer, DataGeneratorEntrypoint {
 
     public static File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "blossom.json");
     public static Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
@@ -272,7 +277,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static void registerItemGroupEvents() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
-            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, Item.fromBlock(FLOWERING_OAK_LEAVES));
+            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES.asItem());
         });
     }
 
@@ -293,7 +298,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     @Environment(EnvType.CLIENT)
     public static void registerModelPredicateProviders() {
-        ModelPredicateProviderRegistry.register(Item.fromBlock(FLOWERING_OAK_LEAVES), new Identifier("age"), (stack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(FLOWERING_OAK_LEAVES.asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
             NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
             try {
                 NbtElement nbtElement;
@@ -303,6 +308,13 @@ public class Blossom implements ModInitializer, ClientModInitializer {
             } catch (NumberFormatException ignored) {}
             return 0.0F;
         });
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void registerDataProviders(FabricDataGenerator fabricDataGenerator) {
+        fabricDataGenerator.createPack().addProvider(BlossomBlockLootTableGenerator::new);
+        fabricDataGenerator.createPack().addProvider(BlossomBlockTagProvider::new);
+        fabricDataGenerator.createPack().addProvider(BlossomItemTagProvider::new);
     }
 
     @Override
@@ -325,6 +337,11 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         registerRenderLayers();
         registerColorProviders();
         registerModelPredicateProviders();
+    }
+
+    @Override
+    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+        registerDataProviders(fabricDataGenerator);
     }
 
 }
