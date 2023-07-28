@@ -26,9 +26,6 @@
     ],
     "client": [
       "dev.yurisuika.blossom.Blossom"
-    ],
-    "fabric-datagen": [
-      "dev.yurisuika.blossom.Blossom"
     ]
   },
   "mixins": [

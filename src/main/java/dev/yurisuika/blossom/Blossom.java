@@ -3,10 +3,6 @@ package dev.yurisuika.blossom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
-import dev.yurisuika.blossom.datagen.lang.BlossomEnglishLanguageProvider;
-import dev.yurisuika.blossom.datagen.loottable.BlossomBlockLootTableGenerator;
-import dev.yurisuika.blossom.datagen.tag.BlossomBlockTagsProvider;
-import dev.yurisuika.blossom.datagen.tag.BlossomItemTagsProvider;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -15,8 +11,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
@@ -41,7 +35,7 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
 
-public class Blossom implements ModInitializer, ClientModInitializer, DataGeneratorEntrypoint {
+public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "blossom.json");
     public static Gson gson = new GsonBuilder().enableComplexMapKeySerialization().setPrettyPrinting().create();
@@ -311,14 +305,6 @@ public class Blossom implements ModInitializer, ClientModInitializer, DataGenera
         });
     }
 
-    @Environment(EnvType.CLIENT)
-    public static void registerDataProviders(FabricDataGenerator fabricDataGenerator) {
-        fabricDataGenerator.createPack().addProvider(BlossomEnglishLanguageProvider::new);
-        fabricDataGenerator.createPack().addProvider(BlossomBlockLootTableGenerator::new);
-        fabricDataGenerator.createPack().addProvider(BlossomBlockTagsProvider::new);
-        fabricDataGenerator.createPack().addProvider(BlossomItemTagsProvider::new);
-    }
-
     @Override
     public void onInitialize() {
         if (!file.exists()) {
@@ -339,11 +325,6 @@ public class Blossom implements ModInitializer, ClientModInitializer, DataGenera
         registerRenderLayers();
         registerColorProviders();
         registerModelPredicateProviders();
-    }
-
-    @Override
-    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        registerDataProviders(fabricDataGenerator);
     }
 
 }

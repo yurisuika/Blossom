@@ -39,16 +39,6 @@ loom {
     mixin {
         defaultRefmapName = "${project.archives_base_name}.refmap.json"
     }
-
-    runs {
-        datagenClient {
-            inherit client
-            name "Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
-            vmArg "-Dfabric-api-datagen.modid=${mod_id}"
-        }
-    }
 }
 
 java {
@@ -61,8 +51,6 @@ jar {
     sourcesJar.archiveAppendix.set("fabric-${project.minecraft_version}")
     remapJar.archiveAppendix.set("fabric-${project.minecraft_version}")
     remapSourcesJar.archiveAppendix.set("fabric-${project.minecraft_version}")
-    sourceSets.main.resources.srcDir("src/main/generated")
-    sourceSets.main.resources.exclude(".cache")
 }
 
 publishing {

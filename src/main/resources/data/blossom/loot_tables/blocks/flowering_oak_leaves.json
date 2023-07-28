@@ -216,5 +216,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "blossom:blocks/flowering_oak_leaves"
 }
