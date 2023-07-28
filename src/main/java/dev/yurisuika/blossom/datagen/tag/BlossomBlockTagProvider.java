@@ -13,8 +13,8 @@ import static net.minecraft.registry.tag.BlockTags.*;
 
 public class BlossomBlockTagProvider extends FabricTagProvider<Block> {
 
-    public BlossomBlockTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
-        super(output, RegistryKeys.BLOCK, completableFuture);
+    public BlossomBlockTagProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
+        super(dataOutput, RegistryKeys.BLOCK, completableFuture);
     }
 
     @Override

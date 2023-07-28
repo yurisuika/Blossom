@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 
 public class BlossomEnglishLanguageProvider extends FabricLanguageProvider {
 
-    public BlossomEnglishLanguageProvider(FabricDataOutput dataGenerator) {
-        super(dataGenerator, "en_us");
+    public BlossomEnglishLanguageProvider(FabricDataOutput dataOutput) {
+        super(dataOutput, "en_us");
     }
 
     @Override

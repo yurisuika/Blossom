@@ -22,9 +22,9 @@ import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
 
-public class BlossomBlockLootTableGenerator extends FabricBlockLootTableProvider {
+public class BlossomBlockLootTableProvider extends FabricBlockLootTableProvider {
 
-    public BlossomBlockLootTableGenerator(FabricDataOutput dataOutput) {
+    public BlossomBlockLootTableProvider(FabricDataOutput dataOutput) {
         super(dataOutput);
     }
 
@@ -54,7 +54,7 @@ public class BlossomBlockLootTableGenerator extends FabricBlockLootTableProvider
                 )
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1.0F))
-                        .conditionally(WITHOUT_SILK_TOUCH_NOR_SHEARS)
+                        .conditionally(WITH_SHEARS.invert().or(WITH_SILK_TOUCH.invert()))
                         .with(applyExplosionDecay(Blocks.OAK_LEAVES, ItemEntry.builder(Items.STICK)
                                                         .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0F, 2.0F)))
                                 )
@@ -63,7 +63,7 @@ public class BlossomBlockLootTableGenerator extends FabricBlockLootTableProvider
                 )
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1.0F))
-                        .conditionally(WITHOUT_SILK_TOUCH)
+                        .conditionally(WITH_SILK_TOUCH.invert())
                         .conditionally(condition)
                         .with(addSurvivesExplosionCondition(leaves, ItemEntry.builder(Items.APPLE)
                                 .apply(ApplyBonusLootFunction.binomialWithBonusCount(Enchantments.FORTUNE, 0.5714286F, 3)))
