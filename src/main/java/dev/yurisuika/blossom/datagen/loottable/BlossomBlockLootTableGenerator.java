@@ -10,28 +10,31 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
-import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.loot.condition.SurvivesExplosionLootCondition;
-import net.minecraft.loot.condition.TableBonusLootCondition;
+import net.minecraft.loot.condition.*;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
 import net.minecraft.loot.function.CopyStateFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
+import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.StatePredicate;
+import net.minecraft.predicate.item.EnchantmentPredicate;
+import net.minecraft.predicate.item.ItemPredicate;
 
-public class BlossomBlockLootTableProvider extends FabricBlockLootTableProvider {
+public class BlossomBlockLootTableGenerator extends FabricBlockLootTableProvider {
 
-    public BlossomBlockLootTableProvider(FabricDataOutput dataOutput) {
+    public static final LootCondition.Builder WITH_SILK_TOUCH = MatchToolLootCondition.builder(ItemPredicate.Builder.create().enchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, NumberRange.IntRange.atLeast(1))));
+    public static final LootCondition.Builder WITH_SHEARS = MatchToolLootCondition.builder(ItemPredicate.Builder.create().items(Items.SHEARS));
+
+    public BlossomBlockLootTableGenerator(FabricDataOutput dataOutput) {
         super(dataOutput);
     }
 
     @Override
     public void generate() {
-        addDrop(Blossom.FLOWERING_OAK_LEAVES, (Block block) -> blossomingOakLeavesDrops(block, Blocks.OAK_SAPLING, BlockStatePropertyLootCondition.builder(Blossom.FLOWERING_OAK_LEAVES).properties(StatePredicate.Builder.create().exactMatch(FloweringLeavesBlock.AGE, 7)), SAPLING_DROP_CHANCE));
-        addDrop(Blocks.OAK_LEAVES, (Block block) -> leavesDrops(block, Blocks.OAK_SAPLING, SAPLING_DROP_CHANCE));
+        addDrop(Blossom.FLOWERING_OAK_LEAVES, (Block block) -> blossomingOakLeavesDrops(block, Blocks.OAK_SAPLING, BlockStatePropertyLootCondition.builder(Blossom.FLOWERING_OAK_LEAVES).properties(StatePredicate.Builder.create().exactMatch(FloweringLeavesBlock.AGE, 7)), 0.05F, 0.0625F, 0.083333336F, 0.1F));
+        addDrop(Blocks.OAK_LEAVES, (Block block) -> leavesDrops(block, Blocks.OAK_SAPLING, 0.05F, 0.0625F, 0.083333336F, 0.1F));
     }
 
     public LootTable.Builder blossomingOakLeavesDrops(Block leaves, Block drop, LootCondition.Builder condition, float ... chance) {
@@ -58,7 +61,7 @@ public class BlossomBlockLootTableProvider extends FabricBlockLootTableProvider 
                         .with(applyExplosionDecay(Blocks.OAK_LEAVES, ItemEntry.builder(Items.STICK)
                                                         .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0F, 2.0F)))
                                 )
-                                .conditionally(TableBonusLootCondition.builder(Enchantments.FORTUNE, LEAVES_STICK_DROP_CHANCE))
+                                .conditionally(TableBonusLootCondition.builder(Enchantments.FORTUNE, 0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F))
                         )
                 )
                 .pool(LootPool.builder()

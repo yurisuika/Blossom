@@ -11,17 +11,19 @@ import java.util.concurrent.CompletableFuture;
 import static dev.yurisuika.blossom.Blossom.*;
 import static net.minecraft.registry.tag.ItemTags.*;
 
-public class BlossomItemTagProvider extends FabricTagProvider<Item> {
+public class BlossomItemTagsProvider extends FabricTagProvider<Item> {
 
-    public BlossomItemTagProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
+    public BlossomItemTagsProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
         super(dataOutput, RegistryKeys.ITEM, completableFuture);
     }
 
     @Override
-    public void configure(RegistryWrapper.WrapperLookup arg) {
+    public void configure(RegistryWrapper.WrapperLookup lookup) {
         getOrCreateTagBuilder(FLOWERS)
+                .setReplace(false)
                 .add(FLOWERING_OAK_LEAVES.asItem());
         getOrCreateTagBuilder(LEAVES)
+                .setReplace(false)
                 .add(FLOWERING_OAK_LEAVES.asItem());
     }
 

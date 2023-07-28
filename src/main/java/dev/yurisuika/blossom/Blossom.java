@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import dev.yurisuika.blossom.datagen.lang.BlossomEnglishLanguageProvider;
-import dev.yurisuika.blossom.datagen.loottable.BlossomBlockLootTableProvider;
-import dev.yurisuika.blossom.datagen.tag.BlossomBlockTagProvider;
-import dev.yurisuika.blossom.datagen.tag.BlossomItemTagProvider;
+import dev.yurisuika.blossom.datagen.loottable.BlossomBlockLootTableGenerator;
+import dev.yurisuika.blossom.datagen.tag.BlossomBlockTagsProvider;
+import dev.yurisuika.blossom.datagen.tag.BlossomItemTagsProvider;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -314,9 +314,9 @@ public class Blossom implements ModInitializer, ClientModInitializer, DataGenera
     @Environment(EnvType.CLIENT)
     public static void registerDataProviders(FabricDataGenerator fabricDataGenerator) {
         fabricDataGenerator.createPack().addProvider(BlossomEnglishLanguageProvider::new);
-        fabricDataGenerator.createPack().addProvider(BlossomBlockLootTableProvider::new);
-        fabricDataGenerator.createPack().addProvider(BlossomBlockTagProvider::new);
-        fabricDataGenerator.createPack().addProvider(BlossomItemTagProvider::new);
+        fabricDataGenerator.createPack().addProvider(BlossomBlockLootTableGenerator::new);
+        fabricDataGenerator.createPack().addProvider(BlossomBlockTagsProvider::new);
+        fabricDataGenerator.createPack().addProvider(BlossomItemTagsProvider::new);
     }
 
     @Override
