@@ -43,14 +43,6 @@ loom {
     mixin {
         defaultRefmapName = "${project.archives_base_name}.refmap.json"
     }
-
-    runs {
-        data {
-            data()
-            programArgs "--all", "--mod", project.mod_id
-            programArgs "--output", file("src/main/generated").absolutePath
-        }
-    }
 }
 
 java {
@@ -63,8 +55,6 @@ jar {
     sourcesJar.archiveAppendix.set("forge-${project.minecraft_version}")
     remapJar.archiveAppendix.set("forge-${project.minecraft_version}")
     remapSourcesJar.archiveAppendix.set("forge-${project.minecraft_version}")
-    sourceSets.main.resources.srcDir("src/main/generated")
-    sourceSets.main.resources.exclude(".cache")
 }
 
 publishing {

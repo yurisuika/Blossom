@@ -3,10 +3,6 @@ package dev.yurisuika.blossom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
-import dev.yurisuika.blossom.datagen.lang.BlossomEnglishLanguageProvider;
-import dev.yurisuika.blossom.datagen.loottable.BlossomBlockLootTableGenerator;
-import dev.yurisuika.blossom.datagen.tag.BlossomBlockTagsProvider;
-import dev.yurisuika.blossom.datagen.tag.BlossomItemTagsProvider;
 import dev.yurisuika.blossom.mixin.block.ComposterBlockInvoker;
 import dev.yurisuika.blossom.mixin.block.FireBlockInvoker;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
@@ -17,22 +13,13 @@ import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataOutput;
-import net.minecraft.data.server.loottable.LootTableProvider;
 import net.minecraft.item.*;
-import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,9 +36,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 @Mod("blossom")
@@ -301,24 +285,6 @@ public class Blossom {
             ComposterBlockInvoker.invokeRegisterComposableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
 
             ((FireBlockInvoker) Blocks.FIRE).invokeRegisterFlammableBlock(Blossom.FLOWERING_OAK_LEAVES.get(), 30, 60);
-        }
-
-        @SubscribeEvent
-        public static void gatherData(GatherDataEvent event) {
-            DataGenerator generator = event.getGenerator();
-            DataOutput dataOutput = generator.getPackOutput();
-            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-            CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture = CompletableFuture.supplyAsync(BuiltinRegistries::createWrapperLookup, Util.getMainWorkerExecutor());
-
-            BlossomEnglishLanguageProvider englishLanguageProvider = new BlossomEnglishLanguageProvider(dataOutput);
-            LootTableProvider lootTableProvider = new LootTableProvider(dataOutput, Set.of(), List.of(new LootTableProvider.LootTypeGenerator(BlossomBlockLootTableGenerator::new, LootContextTypes.BLOCK)));
-            BlossomBlockTagsProvider blockTagsProvider = new BlossomBlockTagsProvider(dataOutput, completableFuture, existingFileHelper);
-            BlossomItemTagsProvider itemTagsProvider = new BlossomItemTagsProvider(dataOutput, completableFuture, blockTagsProvider.getTagLookupFuture(), existingFileHelper);
-
-            generator.addProvider(event.includeServer(), englishLanguageProvider);
-            generator.addProvider(event.includeServer(), lootTableProvider);
-            generator.addProvider(event.includeServer(), blockTagsProvider);
-            generator.addProvider(event.includeServer(), itemTagsProvider);
         }
 
     }

@@ -24,7 +24,6 @@
                   }
                 }
               ],
-              "name": "blossom:flowering_oak_leaves",
               "functions": [
                 {
                   "block": "blossom:flowering_oak_leaves",
@@ -33,7 +32,8 @@
                     "age"
                   ]
                 }
-              ]
+              ],
+              "name": "blossom:flowering_oak_leaves"
             },
             {
               "type": "minecraft:item",
@@ -41,6 +41,14 @@
                 {
                   "condition": "minecraft:all_of",
                   "terms": [
+                    {
+                      "condition": "minecraft:match_tool",
+                      "predicate": {
+                        "items": [
+                          "minecraft:shears"
+                        ]
+                      }
+                    },
                     {
                       "condition": "minecraft:inverted",
                       "term": {
@@ -55,14 +63,6 @@
                             }
                           ]
                         }
-                      }
-                    },
-                    {
-                      "condition": "minecraft:match_tool",
-                      "predicate": {
-                        "items": [
-                          "minecraft:shears"
-                        ]
                       }
                     }
                   ]
@@ -98,19 +98,22 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "condition": "minecraft:inverted",
-          "term": {
-            "condition": "minecraft:any_of",
-            "terms": [
-              {
+          "condition": "minecraft:any_of",
+          "terms": [
+            {
+              "condition": "minecraft:inverted",
+              "term": {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "items": [
                     "minecraft:shears"
                   ]
                 }
-              },
-              {
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "enchantments": [
@@ -123,8 +126,8 @@
                   ]
                 }
               }
-            ]
-          }
+            }
+          ]
         }
       ],
       "entries": [
@@ -192,6 +195,11 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
           "functions": [
             {
               "enchantment": "minecraft:fortune",
