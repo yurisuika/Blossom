@@ -13,7 +13,6 @@ git clone --branch <branch> --recursive https://github.com/yurisuika/blossom.git
 
 cd ./blossom
 
-./gradlew runDatagenClient
 ./gradlew build
 ```
 
