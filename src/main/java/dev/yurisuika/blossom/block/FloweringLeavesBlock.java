@@ -38,7 +38,7 @@ import net.minecraft.world.event.GameEvent;
 import java.util.OptionalInt;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static dev.yurisuika.blossom.Blossom.config;
+import static dev.yurisuika.blossom.Blossom.*;
 
 public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
