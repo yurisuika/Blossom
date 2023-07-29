@@ -8,8 +8,6 @@
     "block.ComposterBlockInvoker",
     "block.FireBlockInvoker",
     "block.LeavesBlockMixin",
-    "entity.EntityAccessor",
-    "entity.ai.goal.GoalInvoker",
     "entity.passive.BeeEntityInvoker",
     "entity.passive.BeeEntityMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
