@@ -8,6 +8,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,14 +48,14 @@ public class BeeEntityMixin {
 
             boolean bl = false;
             if (config.toggle.whitelist) {
-                if (Arrays.asList(config.filter.dimension.whitelist).contains(dimension.toString())) {
-                    if (Arrays.asList(config.filter.biome.whitelist).contains(biome.toString())) {
+                if (Arrays.asList(config.filter.dimension.whitelist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
+                    if (Arrays.asList(config.filter.biome.whitelist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
                         bl = true;
                     }
                 }
             } else if (config.toggle.blacklist) {
-                if (!Arrays.asList(config.filter.dimension.blacklist).contains(dimension.toString())) {
-                    if (!Arrays.asList(config.filter.biome.blacklist).contains(biome.toString())) {
+                if (!Arrays.asList(config.filter.dimension.blacklist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
+                    if (!Arrays.asList(config.filter.biome.blacklist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
                         bl = true;
                     }
                 }
