@@ -15,7 +15,6 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -197,6 +196,7 @@ public class Blossom {
             this.whitelist = whitelist;
             this.blacklist = blacklist;
         }
+
     }
 
     public static void saveConfig() {
@@ -300,7 +300,6 @@ public class Blossom {
             ModelPredicateProviderRegistry.register(FLOWERING_OAK_LEAVES.get().asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
                 NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
                 try {
-                    NbtElement nbtElement;
                     if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
                         return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 8.0F;
                     }
