@@ -1,6 +1,5 @@
 package dev.yurisuika.blossom.mixin.block;
 
-import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +14,7 @@ public class LeavesBlockMixin {
 
     @Inject(method = "getDistanceFromLog(Lnet/minecraft/block/BlockState;)I", at = @At("RETURN"), cancellable = true)
     private static void injectDistance(BlockState state, CallbackInfoReturnable<Integer> info) {
-        if (state.getBlock() instanceof FloweringLeavesBlock) {
+        if (state.contains(DISTANCE)) {
             info.setReturnValue(state.get(DISTANCE));
         }
     }
