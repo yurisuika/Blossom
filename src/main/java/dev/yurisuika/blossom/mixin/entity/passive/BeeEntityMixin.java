@@ -36,8 +36,8 @@ public class BeeEntityMixin {
         public BeeEntity entity;
 
         @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(BeeEntity entity, CallbackInfo ci) {
-            entity = entity;
+        private void injectInit(BeeEntity entityType, CallbackInfo ci) {
+            entity = entityType;
         }
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
