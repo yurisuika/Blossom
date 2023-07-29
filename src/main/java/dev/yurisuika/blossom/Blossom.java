@@ -25,7 +25,6 @@ import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -193,6 +192,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
             this.whitelist = whitelist;
             this.blacklist = blacklist;
         }
+
     }
 
     public static void saveConfig() {
@@ -296,7 +296,6 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         ModelPredicateProviderRegistry.register(FLOWERING_OAK_LEAVES.asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
             NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
             try {
-                NbtElement nbtElement;
                 if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
                     return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 8.0F;
                 }

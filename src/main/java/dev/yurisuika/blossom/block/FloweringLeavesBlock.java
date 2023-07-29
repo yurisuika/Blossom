@@ -35,13 +35,14 @@ import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
 
+import java.util.OptionalInt;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static dev.yurisuika.blossom.Blossom.*;
 
 public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
-    private final Block shearedBlock;
+    public final Block shearedBlock;
 
     public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
     public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
@@ -118,7 +119,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         world.setBlockState(pos, state.with(AGE, i), 2);
     }
 
-    protected int getGrowthAmount(World world) {
+    public int getGrowthAmount(World world) {
         return MathHelper.nextInt(world.random, 2, 5);
     }
 
@@ -137,7 +138,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         return state;
     }
 
-    private static BlockState updateDistanceFromLogs(BlockState state, WorldAccess world, BlockPos pos) {
+    public static BlockState updateDistanceFromLogs(BlockState state, WorldAccess world, BlockPos pos) {
         int i = 7;
         Mutable mutable = new Mutable();
         for (Direction direction : Direction.values()) {
@@ -150,8 +151,18 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         return state.with(DISTANCE, i);
     }
 
-    private static int getDistanceFromLog(BlockState state) {
-        return state.isIn(BlockTags.LOGS) ? 0 : (state.getBlock() instanceof LeavesBlock || state.getBlock() instanceof FloweringLeavesBlock) ? state.get(DISTANCE) : 7;
+    public static int getDistanceFromLog(BlockState state) {
+        return getOptionalDistanceFromLog(state).orElse(7);
+    }
+
+    public static OptionalInt getOptionalDistanceFromLog(BlockState state) {
+        if (state.isIn(BlockTags.LOGS)) {
+            return OptionalInt.of(0);
+        }
+        if (state.contains(DISTANCE)) {
+            return OptionalInt.of(state.get(DISTANCE));
+        }
+        return OptionalInt.empty();
     }
 
     public FluidState getFluidState(BlockState state) {
@@ -173,7 +184,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         }
     }
 
-    protected void appendProperties(Builder<Block, BlockState> builder) {
+    public void appendProperties(Builder<Block, BlockState> builder) {
         builder.add(DISTANCE, PERSISTENT, WATERLOGGED, AGE);
     }
 
@@ -206,25 +217,23 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getStackInHand(hand);
-        boolean bl = false;
         if (state.get(AGE) == 7) {
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 dropApple(world, pos, (itemStack.hasEnchantments() && EnchantmentHelper.get(itemStack).containsKey(Enchantments.FORTUNE)) ? EnchantmentHelper.getLevel(Enchantments.FORTUNE, itemStack) : 0);
-                itemStack.damage(1, player, (playerx) -> {
-                    playerx.sendToolBreakStatus(hand);
+                itemStack.damage(1, player, (entity) -> {
+                    entity.sendToolBreakStatus(hand);
                 });
-                bl = true;
+                if (!world.isClient()) {
+                    player.incrementStat(Stats.USED.getOrCreateStat(item));
+                }
                 world.emitGameEvent(player, GameEvent.SHEAR, pos);
                 world.setBlockState(pos, this.shearedBlock.getDefaultState()
                         .with(DISTANCE, state.get(DISTANCE))
                         .with(PERSISTENT, state.get(PERSISTENT))
                         .with(WATERLOGGED, state.get(WATERLOGGED))
                 );
-            }
-            if (!world.isClient() && bl) {
-                player.incrementStat(Stats.USED.getOrCreateStat(item));
             }
             return ActionResult.SUCCESS;
         } else {
