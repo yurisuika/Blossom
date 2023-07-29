@@ -1,65 +1,101 @@
 package dev.yurisuika.blossom.mixin.entity.passive;
 
-import dev.yurisuika.blossom.Blossom;
-import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
+import dev.yurisuika.blossom.block.FloweringLeavesBlock;
 import net.minecraft.block.*;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
+import static dev.yurisuika.blossom.Blossom.*;
 import static net.minecraft.block.LeavesBlock.*;
 
 @Mixin(BeeEntity.class)
 public class BeeEntityMixin {
 
-    private World world;
-
-    @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void injectInit(EntityType<? extends BeeEntity> entityType, World world, CallbackInfo ci) {
-        this.world = world;
-    }
-
-    @Inject(method = "isFlowers", at = @At("RETURN"), cancellable = true)
-    private void injectIsFlowers(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(cir.getReturnValue() || (world.canSetBlock(pos) && world.getBlockState(pos).isIn(Blossom.BLOSSOMS)));
-    }
-
     @Mixin(targets = "net.minecraft.entity.passive.BeeEntity$GrowCropsGoal")
     public static class GrowCropsGoalMixin {
 
+        @Unique
         public BeeEntity entity;
 
         @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(BeeEntity entityType, CallbackInfo ci) {
-            entity = entityType;
+        private void injectInit(BeeEntity entity, CallbackInfo ci) {
+            entity = entity;
         }
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
         private void injectTick(CallbackInfo ci) {
-            if (((EntityAccessor)entity).getRandom().nextInt(Blossom.config.rate) == 0) {
-                for(int i = 1; i <= 2; ++i) {
+            DimensionType dimension = entity.getEntityWorld().getDimension();
+            Biome biome = entity.getEntityWorld().getBiome(entity.getBlockPos());
+            float temperature = biome.getTemperature();
+            float downfall = biome.getDownfall();
+
+            boolean bl = false;
+            if (config.toggle.whitelist) {
+                if (Arrays.asList(config.filter.dimension.whitelist).contains(dimension.toString())) {
+                    if (Arrays.asList(config.filter.biome.whitelist).contains(biome.toString())) {
+                        bl = true;
+                    }
+                }
+            } else if (config.toggle.blacklist) {
+                if (!Arrays.asList(config.filter.dimension.blacklist).contains(dimension.toString())) {
+                    if (!Arrays.asList(config.filter.biome.blacklist).contains(biome.toString())) {
+                        bl = true;
+                    }
+                }
+            } else {
+                bl = true;
+            }
+
+            if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
+                if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
+                    if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
+                        for (int i = 1; i <= 2; ++i) {
+                            BlockPos blockPos = entity.getBlockPos().down(i);
+                            BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                            if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getEntityWorld().getBlockState(blockPos.offset(direction)).getMaterial().isSolid())) {
+                                if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                    entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
+                                    entity.getEntityWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
+                                            .with(DISTANCE, blockState.get(DISTANCE))
+                                            .with(PERSISTENT, blockState.get(PERSISTENT))
+                                    );
+                                    ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (ThreadLocalRandom.current().nextDouble() <= config.value.fertilization.chance) {
+                for (int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
-                    BlockState blockState = entity.world.getBlockState(blockPos);
-                    if (blockState.isIn(BlockTags.BEE_GROWABLES) && Arrays.stream(Direction.values()).anyMatch(direction -> !entity.world.getBlockState(blockPos.offset(direction)).getMaterial().isSolid())) {
-                        if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                            entity.world.syncWorldEvent(2005, blockPos, 0);
-                            entity.world.setBlockState(blockPos, Blossom.FLOWERING_OAK_LEAVES.getDefaultState()
-                                    .with(DISTANCE, blockState.get(DISTANCE))
-                                    .with(PERSISTENT, blockState.get(PERSISTENT))
-                            );
-                            ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                    BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                    if (blockState.isIn(BlockTags.BEE_GROWABLES)) {
+                        if (blockState.getBlock() instanceof FloweringLeavesBlock) {
+                            FloweringLeavesBlock floweringLeavesBlock = (FloweringLeavesBlock)blockState.getBlock();
+                            if (!floweringLeavesBlock.isMature(blockState)) {
+                                IntProperty age = floweringLeavesBlock.getAgeProperty();
+                                entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
+                                entity.getEntityWorld().setBlockState(blockPos, blockState.with(age, blockState.get(age) + 1));
+                                ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                            }
                         }
                     }
                 }
@@ -73,7 +109,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> state.isIn(Blossom.BLOSSOMS));
+            return predicate.and((state) -> state.isOf(FLOWERING_OAK_LEAVES) ? (state.get(Properties.AGE_7) <= config.value.pollination.age) : true);
         }
 
     }

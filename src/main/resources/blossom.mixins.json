@@ -6,7 +6,6 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "block.LeavesBlockMixin",
-    "entity.EntityAccessor",
     "entity.passive.BeeEntityInvoker",
     "entity.passive.BeeEntityMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
