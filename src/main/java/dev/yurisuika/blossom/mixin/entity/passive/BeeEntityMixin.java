@@ -64,21 +64,23 @@ public class BeeEntityMixin {
                 bl = true;
             }
 
-            if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
-                if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
-                    if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
-                        for (int i = 1; i <= 2; ++i) {
-                            BlockPos blockPos = entity.getBlockPos().down(i);
-                            BlockState blockState = entity.getWorld().getBlockState(blockPos);
-                            if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
-                                if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                                    entity.getWorld().syncWorldEvent(2005, blockPos, 0);
-                                    entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
-                                            .with(DISTANCE, blockState.get(DISTANCE))
-                                            .with(PERSISTENT, blockState.get(PERSISTENT))
-                                            .with(WATERLOGGED, blockState.get(WATERLOGGED))
-                                    );
-                                    ((BeeEntityInvoker)entity).invokeAddCropCounter();
+            if (bl) {
+                if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
+                    if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
+                        if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
+                            for (int i = 1; i <= 2; ++i) {
+                                BlockPos blockPos = entity.getBlockPos().down(i);
+                                BlockState blockState = entity.getWorld().getBlockState(blockPos);
+                                if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
+                                    if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                        entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                                        entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
+                                                .with(DISTANCE, blockState.get(DISTANCE))
+                                                .with(PERSISTENT, blockState.get(PERSISTENT))
+                                                .with(WATERLOGGED, blockState.get(WATERLOGGED))
+                                        );
+                                        ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                                    }
                                 }
                             }
                         }
