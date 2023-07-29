@@ -282,6 +282,7 @@ public class Blossom {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             ComposterBlockInvoker.invokeRegisterComposableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
+
             ((FireBlockInvoker)Blocks.FIRE).invokeRegisterFlammableBlock(Blossom.FLOWERING_OAK_LEAVES.get(), 30, 60);
         }
 
