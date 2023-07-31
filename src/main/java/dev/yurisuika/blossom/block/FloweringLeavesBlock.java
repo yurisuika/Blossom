@@ -81,11 +81,6 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         if (!(Boolean)state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
             dropStacks(state, world, pos);
             world.removeBlock(pos, false);
-        } else if (state.get(WATERLOGGED)) {
-            world.setBlockState(pos, shearedBlock.getDefaultState()
-                    .with(DISTANCE, state.get(DISTANCE))
-                    .with(PERSISTENT, state.get(PERSISTENT))
-            );
         } else if (!this.isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {
