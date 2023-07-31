@@ -61,7 +61,7 @@ public class FloweringLeavesBlock extends Block implements Fertilizable {
     }
 
     public boolean hasRandomTicks(BlockState state) {
-        return state.get(DISTANCE) == 7 || !this.isMature(state);
+        return state.get(DISTANCE) == 7 || !this.isMature(state) || state.get(WATERLOGGED);
     }
 
     public IntProperty getAgeProperty() {
