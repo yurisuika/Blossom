@@ -87,6 +87,12 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         if (!(Boolean)state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
             dropStacks(state, world, pos);
             world.removeBlock(pos, false);
+        } else if (state.get(WATERLOGGED)) {
+            world.setBlockState(pos, shearedBlock.getDefaultState()
+                    .with(DISTANCE, state.get(DISTANCE))
+                    .with(PERSISTENT, state.get(PERSISTENT))
+                    .with(WATERLOGGED, state.get(WATERLOGGED))
+            );
         } else if (!this.isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
             int i = this.getAge(state);
             if (i < this.getMaxAge()) {
@@ -205,7 +211,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         this.applyGrowth(world, pos, state);
     }
 
-    public static void dropApple(World world, BlockPos pos, int bonus) {
+    public static void dropFruit(World world, BlockPos pos, int bonus) {
         int count = 1;
         for(int i = 0; i < config.value.fruit.bonus + bonus; i++) {
             if (ThreadLocalRandom.current().nextFloat() <= config.value.fruit.chance) {
@@ -221,7 +227,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                dropApple(world, pos, (itemStack.hasEnchantments() && EnchantmentHelper.get(itemStack).containsKey(Enchantments.FORTUNE)) ? EnchantmentHelper.getLevel(Enchantments.FORTUNE, itemStack) : 0);
+                dropFruit(world, pos, (itemStack.hasEnchantments() && EnchantmentHelper.get(itemStack).containsKey(Enchantments.FORTUNE)) ? EnchantmentHelper.getLevel(Enchantments.FORTUNE, itemStack) : 0);
                 itemStack.damage(1, player, (entity) -> {
                     entity.sendToolBreakStatus(hand);
                 });
