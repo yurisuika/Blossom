@@ -252,7 +252,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         saveConfig();
     }
 
-    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
+    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
 
     public static void registerBlocks() {
         Registry.register(Registries.BLOCK, new Identifier("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);

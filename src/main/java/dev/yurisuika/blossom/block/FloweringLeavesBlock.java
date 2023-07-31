@@ -43,15 +43,17 @@ import static dev.yurisuika.blossom.Blossom.*;
 public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public final Block shearedBlock;
+    public final Item shearedItem;
 
     public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
     public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     public static final IntProperty AGE = Properties.AGE_7;
 
-    public FloweringLeavesBlock(Block shearedBlock, Settings settings) {
+    public FloweringLeavesBlock(Block shearedBlock, Item shearedItem, Settings settings) {
         super(settings);
         this.shearedBlock = shearedBlock;
+        this.shearedItem = shearedItem;
         this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(WATERLOGGED, false).with(AGE, 0));
     }
 
@@ -211,14 +213,14 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         this.applyGrowth(world, pos, state);
     }
 
-    public static void dropFruit(World world, BlockPos pos, int bonus) {
+    public static void dropFruit(World world, BlockPos pos, Item item, int bonus) {
         int count = 1;
         for(int i = 0; i < config.value.fruit.bonus + bonus; i++) {
             if (ThreadLocalRandom.current().nextFloat() <= config.value.fruit.chance) {
                 count++;
             }
         }
-        dropStack(world, pos, new ItemStack(Items.APPLE, count));
+        dropStack(world, pos, new ItemStack(item, count));
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
@@ -227,7 +229,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_CROP_BREAK, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                dropFruit(world, pos, (itemStack.hasEnchantments() && EnchantmentHelper.get(itemStack).containsKey(Enchantments.FORTUNE)) ? EnchantmentHelper.getLevel(Enchantments.FORTUNE, itemStack) : 0);
+                dropFruit(world, pos, this.shearedItem, (itemStack.hasEnchantments() && EnchantmentHelper.get(itemStack).containsKey(Enchantments.FORTUNE)) ? EnchantmentHelper.getLevel(Enchantments.FORTUNE, itemStack) : 0);
                 itemStack.damage(1, player, (entity) -> {
                     entity.sendToolBreakStatus(hand);
                 });
