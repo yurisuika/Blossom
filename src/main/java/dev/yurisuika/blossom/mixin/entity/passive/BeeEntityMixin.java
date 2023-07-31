@@ -112,7 +112,7 @@ public class BeeEntityMixin {
 
         @ModifyArg(method = "getFlower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/BeeEntity$PollinateGoal;findFlower(Ljava/util/function/Predicate;D)Ljava/util/Optional;"), index = 0)
         private Predicate<BlockState> modifyGetFlower(Predicate<BlockState> predicate) {
-            return predicate.or((state) -> state.isIn(BlockTags.FLOWERS) && state.isOf(FLOWERING_OAK_LEAVES.get()) && (state.get(Properties.AGE_7) <= config.value.pollination.age));
+            return predicate.or((state) -> state.isIn(BlockTags.FLOWERS) && state.getBlock() instanceof FloweringLeavesBlock && state.get(Properties.AGE_7) <= config.value.pollination.age);
         }
 
     }
