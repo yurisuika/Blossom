@@ -41,6 +41,24 @@ public class BeeEntityMixin {
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
         private void injectTick(CallbackInfo ci) {
+            if (ThreadLocalRandom.current().nextDouble() <= config.value.fertilization.chance) {
+                for (int i = 1; i <= 2; ++i) {
+                    BlockPos blockPos = entity.getBlockPos().down(i);
+                    BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                    if (blockState.isIn(BlockTags.BEE_GROWABLES)) {
+                        if (blockState.getBlock() instanceof FloweringLeavesBlock) {
+                            FloweringLeavesBlock floweringLeavesBlock = (FloweringLeavesBlock)blockState.getBlock();
+                            if (!floweringLeavesBlock.isMature(blockState)) {
+                                IntProperty age = floweringLeavesBlock.getAgeProperty();
+                                entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
+                                entity.getEntityWorld().setBlockState(blockPos, blockState.with(age, blockState.get(age) + 1));
+                                ((BeeEntityInvoker)entity).invokeAddCropCounter();
+                            }
+                        }
+                    }
+                }
+            }
+
             DimensionType dimension = entity.getEntityWorld().getDimension();
             Biome biome = entity.getEntityWorld().getBiome(entity.getBlockPos());
             float temperature = biome.getTemperature();
@@ -79,24 +97,6 @@ public class BeeEntityMixin {
                                         .with(DISTANCE, blockState.get(DISTANCE))
                                         .with(PERSISTENT, blockState.get(PERSISTENT))
                                 );
-                                ((BeeEntityInvoker)entity).invokeAddCropCounter();
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (ThreadLocalRandom.current().nextDouble() <= config.value.fertilization.chance) {
-                for (int i = 1; i <= 2; ++i) {
-                    BlockPos blockPos = entity.getBlockPos().down(i);
-                    BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
-                    if (blockState.isIn(BlockTags.BEE_GROWABLES)) {
-                        if (blockState.getBlock() instanceof FloweringLeavesBlock) {
-                            FloweringLeavesBlock floweringLeavesBlock = (FloweringLeavesBlock)blockState.getBlock();
-                            if (!floweringLeavesBlock.isMature(blockState)) {
-                                IntProperty age = floweringLeavesBlock.getAgeProperty();
-                                entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
-                                entity.getEntityWorld().setBlockState(blockPos, blockState.with(age, blockState.get(age) + 1));
                                 ((BeeEntityInvoker)entity).invokeAddCropCounter();
                             }
                         }
