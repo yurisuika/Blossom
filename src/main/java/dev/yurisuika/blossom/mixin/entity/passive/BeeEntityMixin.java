@@ -46,40 +46,40 @@ public class BeeEntityMixin {
             float temperature = biome.getTemperature();
             float downfall = biome.getDownfall();
 
-            boolean bl = false;
-            if (config.toggle.whitelist) {
-                if (Arrays.asList(config.filter.dimension.whitelist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
-                    if (Arrays.asList(config.filter.biome.whitelist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
-                        bl = true;
+            boolean enabled = false;
+            if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
+                if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
+                    if (config.toggle.whitelist) {
+                        if (Arrays.asList(config.filter.dimension.whitelist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
+                            if (Arrays.asList(config.filter.biome.whitelist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
+                                enabled = true;
+                            }
+                        }
+                    } else if (config.toggle.blacklist) {
+                        if (!Arrays.asList(config.filter.dimension.blacklist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
+                            if (!Arrays.asList(config.filter.biome.blacklist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
+                                enabled = true;
+                            }
+                        }
+                    } else {
+                        enabled = true;
                     }
                 }
-            } else if (config.toggle.blacklist) {
-                if (!Arrays.asList(config.filter.dimension.blacklist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
-                    if (!Arrays.asList(config.filter.biome.blacklist).contains(entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
-                        bl = true;
-                    }
-                }
-            } else {
-                bl = true;
             }
 
-            if (bl) {
-                if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
-                    if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
-                        if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
-                            for (int i = 1; i <= 2; ++i) {
-                                BlockPos blockPos = entity.getBlockPos().down(i);
-                                BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
-                                if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getEntityWorld().getBlockState(blockPos.offset(direction)).getMaterial().isSolid())) {
-                                    if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                                        entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
-                                        entity.getEntityWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.get().getDefaultState()
-                                                .with(DISTANCE, blockState.get(DISTANCE))
-                                                .with(PERSISTENT, blockState.get(PERSISTENT))
-                                        );
-                                        ((BeeEntityInvoker)entity).invokeAddCropCounter();
-                                    }
-                                }
+            if (enabled) {
+                if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
+                    for (int i = 1; i <= 2; ++i) {
+                        BlockPos blockPos = entity.getBlockPos().down(i);
+                        BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                        if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getEntityWorld().getBlockState(blockPos.offset(direction)).getMaterial().isSolid())) {
+                            if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
+                                entity.getEntityWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.get().getDefaultState()
+                                        .with(DISTANCE, blockState.get(DISTANCE))
+                                        .with(PERSISTENT, blockState.get(PERSISTENT))
+                                );
+                                ((BeeEntityInvoker)entity).invokeAddCropCounter();
                             }
                         }
                     }
