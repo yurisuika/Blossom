@@ -47,41 +47,55 @@ public class BeeEntityMixin {
             float temperature = biome.value().getTemperature();
             float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
 
-            boolean bl = false;
-            if (config.toggle.whitelist) {
-                if (Arrays.asList(config.filter.dimension.whitelist).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
-                    if (Arrays.asList(config.filter.biome.whitelist).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
-                        bl = true;
-                    }
+            boolean whitelist = false;
+            if (Arrays.asList(config.filter.dimension.whitelist).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                if (Arrays.asList(config.filter.biome.whitelist).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
+                    whitelist = true;
                 }
-            } else if (config.toggle.blacklist) {
-                if (!Arrays.asList(config.filter.dimension.blacklist).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
-                    if (!Arrays.asList(config.filter.biome.blacklist).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
-                        bl = true;
-                    }
-                }
-            } else {
-                bl = true;
             }
 
-            if (bl) {
-                if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
-                    if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
-                        if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
-                            for (int i = 1; i <= 2; ++i) {
-                                BlockPos blockPos = entity.getBlockPos().down(i);
-                                BlockState blockState = entity.getWorld().getBlockState(blockPos);
-                                if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
-                                    if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                                        entity.getWorld().syncWorldEvent(2005, blockPos, 0);
-                                        entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
-                                                .with(DISTANCE, blockState.get(DISTANCE))
-                                                .with(PERSISTENT, blockState.get(PERSISTENT))
-                                                .with(WATERLOGGED, blockState.get(WATERLOGGED))
-                                        );
-                                        ((BeeEntityInvoker)entity).invokeAddCropCounter();
-                                    }
-                                }
+            boolean blacklist = false;
+            if (!Arrays.asList(config.filter.dimension.blacklist).contains(dimension.getKey().get().getValue().toString()) && dimension.getKey().isPresent()) {
+                if (!Arrays.asList(config.filter.biome.blacklist).contains(biome.getKey().get().getValue().toString()) && biome.getKey().isPresent()) {
+                    blacklist = true;
+                }
+            }
+
+            boolean enabled = false;
+            if (temperature >= config.filter.temperature.min && temperature <= config.filter.temperature.max) {
+                if (downfall >= config.filter.downfall.min && downfall <= config.filter.downfall.max) {
+                    if (config.toggle.whitelist && config.toggle.blacklist) {
+                        if (whitelist && blacklist) {
+                            enabled = true;
+                        }
+                    } else if (config.toggle.whitelist) {
+                        if (whitelist) {
+                            enabled = true;
+                        }
+                    } else if (config.toggle.blacklist) {
+                        if (blacklist) {
+                            enabled = true;
+                        }
+                    } else {
+                        enabled = true;
+                    }
+                }
+            }
+
+            if (enabled) {
+                if (ThreadLocalRandom.current().nextDouble() <= config.value.propagation.chance) {
+                    for (int i = 1; i <= 2; ++i) {
+                        BlockPos blockPos = entity.getBlockPos().down(i);
+                        BlockState blockState = entity.getWorld().getBlockState(blockPos);
+                        if (Arrays.stream(Direction.values()).anyMatch(direction -> !entity.getWorld().getBlockState(blockPos.offset(direction)).isSolid())) {
+                            if (blockState.getBlock() == Blocks.OAK_LEAVES) {
+                                entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                                entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.getDefaultState()
+                                        .with(DISTANCE, blockState.get(DISTANCE))
+                                        .with(PERSISTENT, blockState.get(PERSISTENT))
+                                        .with(WATERLOGGED, blockState.get(WATERLOGGED))
+                                );
+                                ((BeeEntityInvoker)entity).invokeAddCropCounter();
                             }
                         }
                     }
