@@ -1,0 +1,53 @@
+{
+  "parent": "blossom:block/fruiting_oak_leaves_stage7",
+  "overrides": [
+    {
+      "predicate": {
+        "age": 0.000
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage0"
+    },
+    {
+      "predicate": {
+        "age": 0.125
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage1"
+    },
+    {
+      "predicate": {
+        "age": 0.250
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage2"
+    },
+    {
+      "predicate": {
+        "age": 0.375
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage3"
+    },
+    {
+      "predicate": {
+        "age": 0.500
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage4"
+    },
+    {
+      "predicate": {
+        "age": 0.625
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage5"
+    },
+    {
+      "predicate": {
+        "age": 0.750
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage6"
+    },
+    {
+      "predicate": {
+        "age": 0.875
+      },
+      "model": "blossom:block/fruiting_oak_leaves_stage7"
+    }
+  ]
+}

@@ -3,30 +3,40 @@ package dev.yurisuika.blossom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.block.FruitingLeavesBlock;
+import dev.yurisuika.blossom.client.particle.BlossomParticle;
+import dev.yurisuika.blossom.entity.ai.goal.BlossomGoal;
+import dev.yurisuika.blossom.entity.ai.goal.FruitGoal;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
 import java.io.File;
@@ -43,10 +53,9 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static class Config {
 
         public Value value = new Value(
-                new Value.Propagation(0.2F),
-                new Value.Fertilization(0.06666667F),
-                new Value.Pollination(1),
-                new Value.Fruit(3, 0.5714286F)
+                new Value.Blossoming(0.2F, 10.0D),
+                new Value.Fruiting(0.2F, 10.0D),
+                new Value.Harvesting(3, 0.5714286F)
         );
         public Filter filter = new Filter(
                 new Filter.Temperature(-2.0F, 2.0F),
@@ -63,54 +72,46 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static class Value {
 
-        public Propagation propagation;
-        public Fertilization fertilization;
-        public Pollination pollination;
-        public Fruit fruit;
+        public Blossoming blossoming;
+        public Fruiting fruiting;
+        public Harvesting harvesting;
 
-        public Value(Propagation propagation, Fertilization fertilization, Pollination pollination, Fruit fruit) {
-            this.propagation = propagation;
-            this.fertilization = fertilization;
-            this.pollination = pollination;
-            this.fruit = fruit;
+        public Value(Blossoming blossoming, Fruiting fruiting, Harvesting harvesting) {
+            this.blossoming = blossoming;
+            this.fruiting = fruiting;
+            this.harvesting = harvesting;
         }
 
-        public static class Propagation {
+        public static class Blossoming {
 
             public float chance;
+            public double distance;
 
-            public Propagation(float chance) {
+            public Blossoming(float chance, double distance) {
                 this.chance = chance;
+                this.distance = distance;
             }
 
         }
 
-        public static class Fertilization {
+        public static class Fruiting {
 
             public float chance;
+            public double distance;
 
-            public Fertilization(float chance) {
+            public Fruiting(float chance, double distance) {
                 this.chance = chance;
+                this.distance = distance;
             }
 
         }
 
-        public static class Pollination {
-
-            public int age;
-
-            public Pollination(int age) {
-                this.age = age;
-            }
-
-        }
-
-        public static class Fruit {
+        public static class Harvesting {
 
             public int bonus;
             public float chance;
 
-            public Fruit(int bonus, float chance) {
+            public Harvesting(int bonus, float chance) {
                 this.bonus = bonus;
                 this.chance = chance;
             }
@@ -228,11 +229,12 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     }
 
     public static void checkBounds() {
-        config.value.propagation.chance = Math.max(Math.min(config.value.propagation.chance, 1.0F), 0.0F);
-        config.value.fertilization.chance = Math.max(Math.min(config.value.fertilization.chance, 1.0F), 0.0F);
-        config.value.pollination.age = Math.max(Math.min(config.value.pollination.age, 7), 0);
-        config.value.fruit.bonus = Math.max(config.value.fruit.bonus, 0);
-        config.value.fruit.chance = Math.max(Math.min(config.value.fruit.chance, 1.0F), 0.0F);
+        config.value.blossoming.chance = Math.max(Math.min(config.value.blossoming.chance, 1.0F), 0.0F);
+        config.value.blossoming.distance = Math.max(config.value.blossoming.distance, 0.0D);
+        config.value.fruiting.chance = Math.max(Math.min(config.value.fruiting.chance, 1.0F), 0.0F);
+        config.value.fruiting.distance = Math.max(config.value.fruiting.distance, 0.0D);
+        config.value.harvesting.bonus = Math.max(config.value.harvesting.bonus, 0);
+        config.value.harvesting.chance = Math.max(Math.min(config.value.harvesting.chance, 1.0F), 0.0F);
 
         float temperatureMin = Math.max(Math.min(Math.min(config.filter.temperature.min, 2.0F), config.filter.temperature.max), -2.0F);
         float temperatureMax = Math.max(Math.max(Math.min(config.filter.temperature.max, 2.0F), config.filter.temperature.min), -2.0F);
@@ -252,27 +254,70 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         saveConfig();
     }
 
-    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, FabricBlockSettings.copy(Blocks.OAK_LEAVES));
+    public static final Block FRUITING_OAK_LEAVES = new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, FabricBlockSettings.create()
+            .mapColor(MapColor.DARK_GREEN)
+            .strength(0.2f)
+            .ticksRandomly()
+            .sounds(BlockSoundGroup.GRASS)
+            .nonOpaque()
+            .allowsSpawning(Blocks::canSpawnOnLeaves)
+            .suffocates(Blocks::never)
+            .blockVision(Blocks::never)
+            .burnable()
+            .pistonBehavior(PistonBehavior.DESTROY)
+            .solidBlock(Blocks::never));
+    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES, FabricBlockSettings.create()
+            .mapColor(MapColor.DARK_GREEN)
+            .strength(0.2f)
+            .ticksRandomly()
+            .sounds(BlockSoundGroup.GRASS)
+            .nonOpaque()
+            .allowsSpawning(Blocks::canSpawnOnLeaves)
+            .suffocates(Blocks::never)
+            .blockVision(Blocks::never)
+            .burnable()
+            .pistonBehavior(PistonBehavior.DESTROY)
+            .solidBlock(Blocks::never));
+
+    public static final DefaultParticleType BLOSSOM = FabricParticleTypes.simple(false);
 
     public static void registerBlocks() {
         Registry.register(Registries.BLOCK, new Identifier("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
+        Registry.register(Registries.BLOCK, new Identifier("blossom", "fruiting_oak_leaves"), FRUITING_OAK_LEAVES);
     }
 
     public static void registerItems() {
         Registry.register(Registries.ITEM, new Identifier("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings()));
+        Registry.register(Registries.ITEM, new Identifier("blossom", "fruiting_oak_leaves"), new BlockItem(FRUITING_OAK_LEAVES, new Item.Settings()));
+    }
+
+    public static void registerParticles() {
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier("blossom", "blossom"), BLOSSOM);
     }
 
     public static void registerCompostables() {
-        CompostingChanceRegistry.INSTANCE.add(Blossom.FLOWERING_OAK_LEAVES, 0.3F);
+        CompostingChanceRegistry.INSTANCE.add(FLOWERING_OAK_LEAVES, 0.3F);
+        CompostingChanceRegistry.INSTANCE.add(FRUITING_OAK_LEAVES, 0.3F);
     }
 
     public static void registerFlammables() {
-        FlammableBlockRegistry.getDefaultInstance().add(Blossom.FLOWERING_OAK_LEAVES, 30, 60);
+        FlammableBlockRegistry.getDefaultInstance().add(FLOWERING_OAK_LEAVES, 30, 60);
+        FlammableBlockRegistry.getDefaultInstance().add(FRUITING_OAK_LEAVES, 30, 60);
     }
 
     public static void registerItemGroupEvents() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES.asItem());
+            content.addAfter(FLOWERING_OAK_LEAVES.asItem(), FRUITING_OAK_LEAVES.asItem());
+        });
+    }
+
+    public static void registerServerEntityEvents() {
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            if (entity instanceof BeeEntity) {
+                ((BeeEntity)entity).getGoalSelector().add(4, new BlossomGoal((BeeEntity)entity));
+                ((BeeEntity)entity).getGoalSelector().add(4, new FruitGoal((BeeEntity)entity));
+            }
         });
     }
 
@@ -281,14 +326,23 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     }
 
     @Environment(EnvType.CLIENT)
+    public static void registerParticleFactories() {
+        ParticleFactoryRegistry.getInstance().register(BLOSSOM, BlossomParticle.Factory::new);
+    }
+
+    @Environment(EnvType.CLIENT)
     public static void registerRenderLayers() {
-        BlockRenderLayerMap.INSTANCE.putBlock(Blossom.FLOWERING_OAK_LEAVES, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(FLOWERING_OAK_LEAVES, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(FRUITING_OAK_LEAVES, RenderLayer.getCutout());
     }
 
     @Environment(EnvType.CLIENT)
     public static void registerColorProviders() {
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FLOWERING_OAK_LEAVES);
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), Blossom.FLOWERING_OAK_LEAVES);
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), FLOWERING_OAK_LEAVES);
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), FRUITING_OAK_LEAVES);
+
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FLOWERING_OAK_LEAVES);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FRUITING_OAK_LEAVES);
     }
 
     @Environment(EnvType.CLIENT)
@@ -297,7 +351,16 @@ public class Blossom implements ModInitializer, ClientModInitializer {
             NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
             try {
                 if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
-                    return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 8.0F;
+                    return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 4.0F;
+                }
+            } catch (NumberFormatException ignored) {}
+            return 0.0F;
+        });
+        ModelPredicateProviderRegistry.register(FRUITING_OAK_LEAVES.asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
+            NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
+            try {
+                if (nbtCompound != null && nbtCompound.get(FruitingLeavesBlock.AGE.getName()) != null) {
+                    return (float)Integer.parseInt(nbtCompound.get(FruitingLeavesBlock.AGE.getName()).asString()) / 8.0F;
                 }
             } catch (NumberFormatException ignored) {}
             return 0.0F;
@@ -313,14 +376,17 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
         registerBlocks();
         registerItems();
+        registerParticles();
         registerFlammables();
         registerCompostables();
         registerItemGroupEvents();
+        registerServerEntityEvents();
         registerCommands();
     }
 
     @Override
     public void onInitializeClient() {
+        registerParticleFactories();
         registerRenderLayers();
         registerColorProviders();
         registerModelPredicateProviders();

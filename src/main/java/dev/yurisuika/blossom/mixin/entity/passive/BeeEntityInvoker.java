@@ -12,4 +12,10 @@ public interface BeeEntityInvoker {
     @Invoker("addCropCounter")
     void invokeAddCropCounter();
 
+    @Invoker("isHiveValid")
+    boolean invokeIsHiveValid();
+
+    @Invoker("getCropsGrownSincePollination")
+    int invokeGetCropsGrownSincePollination();
+
 }

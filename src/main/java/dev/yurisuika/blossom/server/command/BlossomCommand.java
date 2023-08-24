@@ -7,7 +7,11 @@ import net.minecraft.command.argument.RegistryEntryPredicateArgumentType;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -24,6 +28,7 @@ public class BlossomCommand {
                         .then(literal("reload")
                                 .executes(context -> {
                                     loadConfig();
+
                                     context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.config.reload"), true);
                                     return 1;
                                 })
@@ -31,10 +36,9 @@ public class BlossomCommand {
                         .then(literal("reset")
                                 .executes(context -> {
                                     config.value = new Value(
-                                            new Value.Propagation(0.2F),
-                                            new Value.Fertilization(0.06666667F),
-                                            new Value.Pollination(1),
-                                            new Value.Fruit(3, 0.5714286F)
+                                            new Value.Blossoming(0.2F, 10.0D),
+                                            new Value.Fruiting(0.2F, 10.0D),
+                                            new Value.Harvesting(3, 0.5714286F)
                                     );
                                     config.filter = new Filter(
                                             new Filter.Temperature(-2.0F, 2.0F),
@@ -47,6 +51,7 @@ public class BlossomCommand {
                                             false
                                     );
                                     saveConfig();
+
                                     context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.config.reset"), true);
                                     return 1;
                                 })
@@ -54,62 +59,74 @@ public class BlossomCommand {
                 )
                 .then(literal("value")
                         .requires(source -> source.hasPermissionLevel(4))
-                        .then(literal("propagation")
+                        .then(literal("blossoming")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.propagation.query", config.value.propagation.chance), false);
+                                    MutableText chance = Texts.bracketed(Text.translatable("commands.blossom.value.blossoming.chance", config.value.blossoming.chance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.blossoming.chance.tooltip"))));
+                                    MutableText distance = Texts.bracketed(Text.translatable("commands.blossom.value.blossoming.distance", config.value.blossoming.distance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.blossoming.distance.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.blossoming.query", chance, distance), true);
                                     return 1;
                                 })
                                 .then(CommandManager.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
-                                        .executes(context -> {
-                                            config.value.propagation.chance = FloatArgumentType.getFloat(context, "chance");
-                                            saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.propagation.set", config.value.propagation.chance), true);
-                                            return 1;
-                                        })
+                                        .then(CommandManager.argument("distance", DoubleArgumentType.doubleArg(0.0D))
+                                                .executes(context -> {
+                                                    config.value.blossoming.chance = FloatArgumentType.getFloat(context, "chance");
+                                                    config.value.blossoming.distance = DoubleArgumentType.getDouble(context, "distance");
+                                                    saveConfig();
+
+                                                    MutableText chance = Texts.bracketed(Text.translatable("commands.blossom.value.blossoming.chance", config.value.blossoming.chance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.blossoming.chance.tooltip"))));
+                                                    MutableText distance = Texts.bracketed(Text.translatable("commands.blossom.value.blossoming.distance", config.value.blossoming.distance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.blossoming.distance.tooltip"))));
+
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.blossoming.set", chance, distance), true);
+                                                    return 1;
+                                                })
+                                        )
                                 )
                         )
-                        .then(literal("fertilization")
+                        .then(literal("fruiting")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.fertilization.query", config.value.fertilization.chance), false);
+                                    MutableText chance = Texts.bracketed(Text.translatable("commands.blossom.value.fruiting.chance", config.value.fruiting.chance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.fruiting.chance.tooltip"))));
+                                    MutableText distance = Texts.bracketed(Text.translatable("commands.blossom.value.fruiting.distance", config.value.fruiting.distance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.blossoming.fruiting.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.fruiting.query", chance, distance), false);
                                     return 1;
                                 })
                                 .then(CommandManager.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
-                                        .executes(context -> {
-                                            config.value.fertilization.chance = FloatArgumentType.getFloat(context, "chance");
-                                            saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.fertilization.set", config.value.fertilization.chance), true);
-                                            return 1;
-                                        })
+                                        .then(CommandManager.argument("distance", DoubleArgumentType.doubleArg(0.0D))
+                                                .executes(context -> {
+                                                    config.value.fruiting.chance = FloatArgumentType.getFloat(context, "chance");
+                                                    config.value.fruiting.distance = DoubleArgumentType.getDouble(context, "distance");
+                                                    saveConfig();
+
+                                                    MutableText chance = Texts.bracketed(Text.translatable("commands.blossom.value.fruiting.chance", config.value.fruiting.chance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.fruiting.chance.tooltip"))));
+                                                    MutableText distance = Texts.bracketed(Text.translatable("commands.blossom.value.fruiting.distance", config.value.fruiting.distance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.blossoming.fruiting.tooltip"))));
+
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.fruiting.set", chance, distance), false);
+                                                    return 1;
+                                                })
+                                        )
                                 )
                         )
-                        .then(literal("pollination")
+                        .then(literal("harvesting")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.pollination.query", config.value.pollination.age), false);
-                                    return 1;
-                                })
-                                .then(CommandManager.argument("age", IntegerArgumentType.integer(0, 7))
-                                        .executes(context -> {
-                                            config.value.pollination.age = IntegerArgumentType.getInteger(context, "age");
-                                            saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.pollination.set", config.value.pollination.age), true);
-                                            return 1;
-                                        })
-                                )
-                        )
-                        .then(literal("fruit")
-                                .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.fruit.query", config.value.fruit.bonus, config.value.fruit.chance), false);
+                                    MutableText bonus = Texts.bracketed(Text.translatable("commands.blossom.value.harvesting.bonus", config.value.harvesting.bonus)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.harvesting.bonus.tooltip"))));
+
+                                    MutableText chance = Texts.bracketed(Text.translatable("commands.blossom.value.harvesting.chance", config.value.harvesting.chance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.harvesting.chance.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.harvesting.query", bonus, chance), true);
                                     return 1;
                                 })
                                 .then(CommandManager.argument("bonus", IntegerArgumentType.integer(0))
                                         .then(CommandManager.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
                                                 .executes(context -> {
-                                                    int bonus = IntegerArgumentType.getInteger(context, "bonus");
-                                                    float chance = FloatArgumentType.getFloat(context, "chance");
-                                                    config.value.fruit.bonus = bonus;
-                                                    config.value.fruit.chance = chance;
+                                                    config.value.harvesting.bonus = IntegerArgumentType.getInteger(context, "bonus");
+                                                    config.value.harvesting.chance =  FloatArgumentType.getFloat(context, "chance");
                                                     saveConfig();
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.fruit.set", bonus, chance), true);
+
+                                                    MutableText bonus = Texts.bracketed(Text.translatable("commands.blossom.value.harvesting.bonus", config.value.harvesting.bonus)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.harvesting.bonus.tooltip"))));
+                                                    MutableText chance = Texts.bracketed(Text.translatable("commands.blossom.value.harvesting.chance", config.value.harvesting.chance)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.value.harvesting.chance.tooltip"))));
+
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.value.harvesting.set", bonus, chance), true);
                                                     return 1;
                                                 })
                                         )
@@ -120,17 +137,22 @@ public class BlossomCommand {
                         .requires(source -> source.hasPermissionLevel(4))
                         .then(literal("temperature")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.temperature.query", config.filter.temperature.min, config.filter.temperature.max), false);
+                                    MutableText min = Texts.bracketed(Text.translatable("commands.blossom.filter.temperature.min", config.filter.temperature.min)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.temperature.min.tooltip"))));
+                                    MutableText max = Texts.bracketed(Text.translatable("commands.blossom.filter.temperature.max", config.filter.temperature.max)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.temperature.max.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.temperature.query", min, max), false);
                                     return 1;
                                 })
                                 .then(argument("min", FloatArgumentType.floatArg(-2.0F, 2.0F))
                                         .then(argument("max", FloatArgumentType.floatArg(-2.0F, 2.0F))
                                                 .executes(context -> {
-                                                    float min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
-                                                    float max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
-                                                    config.filter.temperature.min = min;
-                                                    config.filter.temperature.max = max;
+                                                    config.filter.temperature.min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
+                                                    config.filter.temperature.max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
                                                     saveConfig();
+
+                                                    MutableText min = Texts.bracketed(Text.translatable("commands.blossom.filter.temperature.min", config.filter.temperature.min)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.temperature.min.tooltip"))));
+                                                    MutableText max = Texts.bracketed(Text.translatable("commands.blossom.filter.temperature.max", config.filter.temperature.max)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.temperature.max.tooltip"))));
+
                                                     context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.temperature.set", min, max), false);
                                                     return 1;
                                                 })
@@ -139,18 +161,23 @@ public class BlossomCommand {
                         )
                         .then(literal("downfall")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.downfall.query", config.filter.downfall.min, config.filter.downfall.max), false);
+                                    MutableText min = Texts.bracketed(Text.translatable("commands.blossom.filter.downfall.min", config.filter.downfall.min)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.downfall.min.tooltip"))));
+                                    MutableText max = Texts.bracketed(Text.translatable("commands.blossom.filter.downfall.max", config.filter.downfall.max)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.downfall.max.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.temperature.query", min, max), false);
                                     return 1;
                                 })
                                 .then(argument("min", FloatArgumentType.floatArg(0.0F, 1.0F))
                                         .then(argument("max", FloatArgumentType.floatArg(0.0F, 1.0F))
                                                 .executes(context -> {
-                                                    float min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
-                                                    float max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
-                                                    config.filter.downfall.min = min;
-                                                    config.filter.downfall.max = max;
+                                                    config.filter.downfall.min = Math.min(FloatArgumentType.getFloat(context, "min"), FloatArgumentType.getFloat(context, "max"));
+                                                    config.filter.downfall.max = Math.max(FloatArgumentType.getFloat(context, "max"), FloatArgumentType.getFloat(context, "min"));
                                                     saveConfig();
-                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.downfall.set", min, max), false);
+
+                                                    MutableText min = Texts.bracketed(Text.translatable("commands.blossom.filter.downfall.min", config.filter.downfall.min)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.downfall.min.tooltip"))));
+                                                    MutableText max = Texts.bracketed(Text.translatable("commands.blossom.filter.downfall.max", config.filter.downfall.max)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.downfall.max.tooltip"))));
+
+                                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.temperature.set", min, max), false);
                                                     return 1;
                                                 })
                                         )
@@ -159,7 +186,9 @@ public class BlossomCommand {
                         .then(literal("dimension")
                                 .then(literal("whitelist")
                                         .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.whitelist.query", String.join(", ", config.filter.dimension.whitelist)), false);
+                                            MutableText list = Text.translatable("commands.blossom.filter.dimension.whitelist.list", Arrays.toString(config.filter.dimension.whitelist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.dimension.whitelist.list.tooltip"))));
+
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.whitelist.query", list), false);
                                             return 1;
                                         })
                                         .then(literal("add")
@@ -173,6 +202,7 @@ public class BlossomCommand {
                                                                 config.filter.dimension.whitelist = ArrayUtils.add(config.filter.dimension.whitelist, dimension);
                                                                 Arrays.sort(config.filter.dimension.whitelist);
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.whitelist.add", dimension), false);
                                                                 return 1;
                                                             }
@@ -194,6 +224,7 @@ public class BlossomCommand {
                                                                     }
                                                                 }
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.whitelist.remove", dimension), false);
                                                                 return 1;
                                                             }
@@ -203,7 +234,9 @@ public class BlossomCommand {
                                 )
                                 .then(literal("blacklist")
                                         .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.blacklist.query", String.join(", ", config.filter.dimension.blacklist)), false);
+                                            MutableText list = Text.translatable("commands.blossom.filter.dimension.blacklist.list", Arrays.toString(config.filter.dimension.blacklist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.dimension.blacklist.list.tooltip"))));
+
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.blacklist.query", list), false);
                                             return 1;
                                         })
                                         .then(literal("add")
@@ -217,6 +250,7 @@ public class BlossomCommand {
                                                                 config.filter.dimension.blacklist = ArrayUtils.add(config.filter.dimension.blacklist, dimension);
                                                                 Arrays.sort(config.filter.dimension.blacklist);
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.blacklist.add", dimension), false);
                                                                 return 1;
                                                             }
@@ -238,6 +272,7 @@ public class BlossomCommand {
                                                                     }
                                                                 }
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.dimension.blacklist.remove", dimension), false);
                                                                 return 1;
                                                             }
@@ -249,7 +284,9 @@ public class BlossomCommand {
                         .then(literal("biome")
                                 .then(literal("whitelist")
                                         .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.whitelist.query", String.join(", ", config.filter.biome.whitelist)), false);
+                                            MutableText list = Text.translatable("commands.blossom.filter.biome.whitelist.list", Arrays.toString(config.filter.biome.whitelist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.biome.whitelist.list.tooltip"))));
+
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.whitelist.query", list), false);
                                             return 1;
                                         })
                                         .then(literal("add")
@@ -263,6 +300,7 @@ public class BlossomCommand {
                                                                 config.filter.biome.whitelist = ArrayUtils.add(config.filter.biome.whitelist, biome);
                                                                 Arrays.sort(config.filter.biome.whitelist);
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.whitelist.add", biome), false);
                                                                 return 1;
                                                             }
@@ -284,6 +322,7 @@ public class BlossomCommand {
                                                                     }
                                                                 }
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.whitelist.remove", biome), false);
                                                                 return 1;
                                                             }
@@ -293,7 +332,9 @@ public class BlossomCommand {
                                 )
                                 .then(literal("blacklist")
                                         .executes(context -> {
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.blacklist.query", String.join(", ", config.filter.biome.blacklist)), false);
+                                            MutableText list = Text.translatable("commands.blossom.filter.biome.blacklist.list", Arrays.toString(config.filter.biome.blacklist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.filter.biome.blacklist.list.tooltip"))));
+
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.blacklist.query", list), false);
                                             return 1;
                                         })
                                         .then(literal("add")
@@ -307,6 +348,7 @@ public class BlossomCommand {
                                                                 config.filter.biome.blacklist = ArrayUtils.add(config.filter.biome.blacklist, biome);
                                                                 Arrays.sort(config.filter.biome.blacklist);
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.blacklist.add", biome), false);
                                                                 return 1;
                                                             }
@@ -328,6 +370,7 @@ public class BlossomCommand {
                                                                     }
                                                                 }
                                                                 saveConfig();
+
                                                                 context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.filter.biome.blacklist.remove", biome), false);
                                                                 return 1;
                                                             }
@@ -341,28 +384,38 @@ public class BlossomCommand {
                         .requires(source -> source.hasPermissionLevel(4))
                         .then(literal("whitelist")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.whitelist.query", config.toggle.whitelist), false);
+                                    MutableText toggle = Texts.bracketed(Text.translatable("commands.blossom.toggle.whitelist.toggle", config.toggle.whitelist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.toggle.whitelist.toggle.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.whitelist.query", toggle), false);
                                     return 1;
                                 })
                                 .then(argument("value", BoolArgumentType.bool())
                                         .executes(context -> {
                                             config.toggle.whitelist = BoolArgumentType.getBool(context, "value");
                                             saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.whitelist.set", config.toggle.whitelist), false);
+
+                                            MutableText toggle = Texts.bracketed(Text.translatable("commands.blossom.toggle.whitelist.toggle", config.toggle.whitelist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.toggle.whitelist.toggle.tooltip"))));
+
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.whitelist.set", toggle), false);
                                             return 1;
                                         })
                                 )
                         )
                         .then(literal("blacklist")
                                 .executes(context -> {
-                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.blacklist.query", config.toggle.blacklist), false);
+                                    MutableText toggle = Texts.bracketed(Text.translatable("commands.blossom.toggle.blacklist.toggle", config.toggle.blacklist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.toggle.blacklist.toggle.tooltip"))));
+
+                                    context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.blacklist.query", toggle), false);
                                     return 1;
                                 })
                                 .then(argument("value", BoolArgumentType.bool())
                                         .executes(context -> {
                                             config.toggle.blacklist = BoolArgumentType.getBool(context, "value");
                                             saveConfig();
-                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.blacklist.set", config.toggle.blacklist), false);
+
+                                            MutableText toggle = Texts.bracketed(Text.translatable("commands.blossom.toggle.blacklist.toggle", config.toggle.blacklist)).styled(style -> style.withColor(Formatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("commands.blossom.toggle.blacklist.toggle.tooltip"))));
+
+                                            context.getSource().sendFeedback(() -> Text.translatable("commands.blossom.toggle.blacklist.set", toggle), false);
                                             return 1;
                                         })
                                 )

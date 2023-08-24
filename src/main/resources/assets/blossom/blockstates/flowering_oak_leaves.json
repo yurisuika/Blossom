@@ -1,28 +1,45 @@
 {
-    "multipart": [
-        {   "when": { "age": "0" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage0" }
-        },
-        {   "when": { "age": "1" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage1" }
-        },
-        {   "when": { "age": "2" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage2" }
-        },
-        {   "when": { "age": "3" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage3" }
-        },
-        {   "when": { "age": "4" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage4" }
-        },
-        {   "when": { "age": "5" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage5" }
-        },
-        {   "when": { "age": "6" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage6" }
-        },
-        {   "when": { "age": "7" },
-            "apply": { "model": "blossom:block/flowering_oak_leaves_stage7" }
-        }
+  "variants": {
+    "age=0": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage0"
+      }
+    ],
+    "age=1": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage1a"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage1b"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage1c"
+      }
+    ],
+    "age=2": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage2a"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage2b"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage2c"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage2c"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage2a"
+      },
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage2b"
+      }
+    ],
+    "age=3": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage3"
+      }
     ]
+  }
 }

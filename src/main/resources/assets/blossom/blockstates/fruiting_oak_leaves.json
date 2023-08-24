@@ -1,0 +1,44 @@
+{
+  "variants": {
+    "age=0": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage0"
+      }
+    ],
+    "age=1": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage1"
+      }
+    ],
+    "age=2": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage2"
+      }
+    ],
+    "age=3": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage3"
+      }
+    ],
+    "age=4": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage4"
+      }
+    ],
+    "age=5": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage5"
+      }
+    ],
+    "age=6": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage6"
+      }
+    ],
+    "age=7": [
+      {
+        "model": "blossom:block/fruiting_oak_leaves_stage7"
+      }
+    ]
+  }
+}
