@@ -30,7 +30,6 @@ public class BlossomParticle extends SpriteBillboardParticle {
 
     public record Factory(SpriteProvider spriteProvider) implements ParticleFactory<DefaultParticleType> {
 
-        @Override
         public Particle createParticle(DefaultParticleType parameters, ClientWorld world, double x, double y, double z, double r, double g, double b) {
             return new BlossomParticle(world, x, y, z, spriteProvider);
         }
