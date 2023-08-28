@@ -241,8 +241,8 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         config.filter.temperature.min = temperatureMin;
         config.filter.temperature.max = temperatureMax;
 
-        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 2.0F), config.filter.downfall.max), -2.0F);
-        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 2.0F), config.filter.downfall.min), -2.0F);
+        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 1.0F), config.filter.downfall.max), 0.0F);
+        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 1.0F), config.filter.downfall.min), 0.0F);
         config.filter.downfall.min = downfallMin;
         config.filter.downfall.max = downfallMax;
 

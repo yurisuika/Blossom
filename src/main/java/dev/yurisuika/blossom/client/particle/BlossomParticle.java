@@ -27,7 +27,6 @@ public class BlossomParticle extends SpriteBillboardParticle {
         this.velocityMultiplier = 1.0F;
     }
 
-    @Override
     public ParticleTextureSheet getType() {
         return ParticleTextureSheet.PARTICLE_SHEET_OPAQUE;
     }
@@ -42,7 +41,6 @@ public class BlossomParticle extends SpriteBillboardParticle {
 
     }
 
-    @Override
     public void tick() {
         prevPosX = x;
         prevPosY = y;
