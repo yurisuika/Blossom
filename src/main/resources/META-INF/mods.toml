@@ -12,7 +12,7 @@ issueTrackerURL = "https://github.com/yurisuika/Blossom/issues"
 logoFile = "icon.png"
 authors = "yurisuika"
 description = '''
-Fruit blossoms from trees!
+Apples blossom upon leaves by the pollen from bees!
 '''
 
 [[dependencies.blossom]]
