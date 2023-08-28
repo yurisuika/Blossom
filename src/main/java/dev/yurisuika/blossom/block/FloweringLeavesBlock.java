@@ -1,6 +1,5 @@
 package dev.yurisuika.blossom.block;
 
-import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Fertilizable;
@@ -114,7 +113,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             int i = getAge(state);
             if (i < getMaxAge()) {
                 float temperature = world.getBiome(pos).value().getTemperature();
-                float downfall = ((BiomeAccessor)(Object)world.getBiome(pos).value()).getWeather().downfall();
+                float downfall = world.getBiome(pos).value().getDownfall();
                 temperature += 2;
                 float f = (downfall * temperature) / 4;
                 f = ((4 - 1) * f) + 1;

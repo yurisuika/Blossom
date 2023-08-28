@@ -4,7 +4,6 @@ import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.MobEntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.passive.BeeEntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.passive.BeeEntityInvoker;
-import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.ai.goal.Goal;
@@ -56,7 +55,7 @@ public class BlossomGoal extends Goal {
         RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
         RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
         float temperature = biome.value().getTemperature();
-        float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
+        float downfall = biome.value().getDownfall();
 
         AtomicBoolean whitelist = new AtomicBoolean(false);
         if (config.toggle.whitelist) {
