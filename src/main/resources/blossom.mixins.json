@@ -13,6 +13,7 @@
     "entity.EntityAccessor",
     "entity.MobEntityAccessor",
     "entity.ai.goal.GoalInvoker",
+    "entity.passive.BeeEntityAccessor",
     "entity.passive.BeeEntityInvoker",
     "entity.passive.BeeEntityMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
