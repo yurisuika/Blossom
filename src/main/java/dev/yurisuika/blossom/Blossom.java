@@ -302,12 +302,12 @@ public class Blossom {
     public static class CommonForgeEvents {
 
         @SubscribeEvent
-        public static void registerCommands(RegisterCommandsEvent event) {
+        public static void registerCommandsEvents(RegisterCommandsEvent event) {
             BlossomCommand.register(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
         }
 
         @SubscribeEvent
-        public static void registerEntityJoinLevelEvent(EntityJoinLevelEvent event) {
+        public static void entityJoinLevelEvents(EntityJoinLevelEvent event) {
             Entity entity = event.getEntity();
             if (entity instanceof BeeEntity) {
                 ((BeeEntity)entity).getGoalSelector().add(4, new BlossomGoal((BeeEntity)entity));
@@ -330,7 +330,7 @@ public class Blossom {
         }
 
         @SubscribeEvent
-        public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        public static void registerParticleProvidersEvents(RegisterParticleProvidersEvent event) {
             MinecraftClient.getInstance().particleManager.registerFactory(BLOSSOM.get(), BlossomParticle.Factory::new);
         }
 
@@ -366,19 +366,19 @@ public class Blossom {
         }
 
         @SubscribeEvent
-        public static void registerBlockColorProviders(final RegisterColorHandlersEvent.Block color) {
-            color.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FLOWERING_OAK_LEAVES.get());
-            color.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FRUITING_OAK_LEAVES.get());
+        public static void registerBlockColorHandlerEvents(RegisterColorHandlersEvent.Block events) {
+            events.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FLOWERING_OAK_LEAVES.get());
+            events.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FRUITING_OAK_LEAVES.get());
         }
 
         @SubscribeEvent
-        public static void registerItemColorProviders(final RegisterColorHandlersEvent.Item color) {
-            color.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FLOWERING_OAK_LEAVES.get());
-            color.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FRUITING_OAK_LEAVES.get());
+        public static void registerItemColorHandlerEvents(RegisterColorHandlersEvent.Item events) {
+            events.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FLOWERING_OAK_LEAVES.get());
+            events.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FRUITING_OAK_LEAVES.get());
         }
 
         @SubscribeEvent
-        public static void registerCreativeModeTabEvent(BuildCreativeModeTabContentsEvent event) {
+        public static void buildCreativeModeTabContentsEvents(BuildCreativeModeTabContentsEvent event) {
             if(event.getTabKey() == ItemGroups.NATURAL) {
                 event.accept(FLOWERING_OAK_LEAVES);
                 event.getEntries().putAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultStack(), FLOWERING_OAK_LEAVES.get().asItem().getDefaultStack(), ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
