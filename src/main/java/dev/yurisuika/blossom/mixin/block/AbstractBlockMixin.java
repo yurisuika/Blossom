@@ -19,7 +19,7 @@ public abstract class AbstractBlockMixin {
     private void injectGetCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
         Entity entity = null;
         if (context instanceof EntityShapeContext) {
-            entity = ((EntityShapeContext)context).getEntity().orElse(null);
+            entity = ((EntityShapeContext)context).getEntity();
             if (entity instanceof BeeEntity) {
                 if (state.getBlock() instanceof LeavesBlock) {
                     cir.setReturnValue(VoxelShapes.empty());

@@ -1,10 +1,11 @@
 package dev.yurisuika.blossom.mixin.entity.passive;
 
 import dev.yurisuika.blossom.block.FruitingLeavesBlock;
+import dev.yurisuika.blossom.mixin.entity.ai.goal.GoalInvoker;
 import net.minecraft.block.*;
 import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,16 +38,16 @@ public abstract class BeeEntityMixin {
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
         private void injectTick(CallbackInfo ci) {
-            if (entity.getRandom().nextInt(30) != 0) {
+            if (entity.getRandom().nextInt(((GoalInvoker)this).invokeGetTickCount(30)) != 0) {
                 for (int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.getBlockPos().down(i);
-                    BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                    BlockState blockState = entity.getWorld().getBlockState(blockPos);
                     if (blockState.isIn(BlockTags.BEE_GROWABLES)) {
                         if (blockState.getBlock() instanceof FruitingLeavesBlock fruitingLeavesBlock) {
                             if (!fruitingLeavesBlock.isMature(blockState)) {
                                 IntProperty age = fruitingLeavesBlock.getAgeProperty();
-                                entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
-                                entity.getEntityWorld().setBlockState(blockPos, blockState.with(age, blockState.get(age) + 1));
+                                entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                                entity.getWorld().setBlockState(blockPos, blockState.with(age, blockState.get(age) + 1));
                                 ((BeeEntityInvoker)entity).invokeAddCropCounter();
                             }
                         }
@@ -70,7 +71,7 @@ public abstract class BeeEntityMixin {
 
         @Inject(method = "shouldMoveToFlower", at = @At("RETURN"), cancellable = true)
         private void injectTick(CallbackInfoReturnable<Boolean> cir) {
-            cir.setReturnValue(cir.getReturnValue() || (entity.getEntityWorld().getBlockState(entity.getFlowerPos()).isOf(Blocks.OAK_LEAVES) && entity.hasNectar()));
+            cir.setReturnValue(cir.getReturnValue() || (entity.getWorld().getBlockState(entity.getFlowerPos()).isOf(Blocks.OAK_LEAVES) && entity.hasNectar()));
         }
 
     }

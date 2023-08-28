@@ -5,10 +5,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Fertilizable;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShearsItem;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -17,7 +20,6 @@ import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -25,16 +27,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
 
 import java.util.OptionalInt;
-import java.util.Random;
 
 import static dev.yurisuika.blossom.Blossom.*;
 
@@ -45,6 +48,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public static final IntProperty DISTANCE =  Properties.DISTANCE_1_7;
     public static final BooleanProperty PERSISTENT = Properties.PERSISTENT;
+    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     public static final IntProperty AGE = Properties.AGE_3;
     public static final IntProperty RIPENESS = IntProperty.of("ripeness", 0, 7);
 
@@ -52,7 +56,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         super(settings);
         this.shearedBlock = shearedBlock;
         this.pollinatedBlock = pollinatedBlock;
-        setDefaultState(stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(AGE, 0).with(RIPENESS, 0));
+        setDefaultState(stateManager.getDefaultState().with(DISTANCE, 1).with(PERSISTENT, false).with(WATERLOGGED, false).with(AGE, 0).with(RIPENESS, 0));
     }
 
     public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
@@ -99,15 +103,21 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         if (!(Boolean)state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
             dropStacks(state, world, pos);
             world.removeBlock(pos, false);
+        } else if (state.get(WATERLOGGED)) {
+            world.setBlockState(pos, shearedBlock.getDefaultState()
+                    .with(DISTANCE, state.get(DISTANCE))
+                    .with(PERSISTENT, state.get(PERSISTENT))
+                    .with(WATERLOGGED, state.get(WATERLOGGED))
+            );
         } else if (!isMature(state) && world.getBaseLightLevel(pos, 0) >= 9) {
             int i = getAge(state);
             if (i < getMaxAge()) {
-                float temperature = world.getBiome(pos).getTemperature();
-                float downfall = world.getBiome(pos).getDownfall();
+                float temperature = world.getBiome(pos).value().getTemperature();
+                float downfall = world.getBiome(pos).value().getDownfall();
                 temperature += 2;
                 float f = (downfall * temperature) / 4;
                 f = ((4 - 1) * f) + 1;
-                Biome.Precipitation precipitation = world.getBiome(pos).getPrecipitation();
+                Biome.Precipitation precipitation = world.getBiome(pos).value().getPrecipitation();
                 if (world.isRaining() && precipitation == Biome.Precipitation.RAIN) {
                     f = 5.0F;
                 }
@@ -115,6 +125,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
                     world.setBlockState(pos, getDefaultState().with(AGE, i + 1)
                             .with(DISTANCE, state.get(DISTANCE))
                             .with(PERSISTENT, state.get(PERSISTENT))
+                            .with(WATERLOGGED, state.get(WATERLOGGED))
                             .with(RIPENESS, state.get(RIPENESS)), 2);
                 }
             }
@@ -130,6 +141,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             world.setBlockState(pos, shearedBlock.getDefaultState()
                     .with(DISTANCE, state.get(DISTANCE))
                     .with(PERSISTENT, state.get(PERSISTENT))
+                    .with(WATERLOGGED, state.get(WATERLOGGED))
             );
         }
         if (!isMature(state) && state.get(RIPENESS) > 0) {
@@ -150,6 +162,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         world.setBlockState(pos, getDefaultState().with(AGE, i)
                 .with(DISTANCE, state.get(DISTANCE))
                 .with(PERSISTENT, state.get(PERSISTENT))
+                .with(WATERLOGGED, state.get(WATERLOGGED))
                 .with(RIPENESS, state.get(RIPENESS)), 2);
     }
 
@@ -162,9 +175,12 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (state.get(WATERLOGGED)) {
+            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        }
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.get(DISTANCE) != i) {
-            world.getBlockTickScheduler().schedule(pos, this, 1);
+            world.scheduleBlockTick(pos, this, 1);
         }
         return state;
     }
@@ -196,6 +212,10 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         return OptionalInt.empty();
     }
 
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+    }
+
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
         if (random.nextInt(10) != 0) {
@@ -211,14 +231,14 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
     }
 
     public void appendProperties(Builder<Block, BlockState> builder) {
-        builder.add(DISTANCE, PERSISTENT, AGE, RIPENESS);
+        builder.add(DISTANCE, PERSISTENT, WATERLOGGED, AGE, RIPENESS);
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return updateDistanceFromLogs(getDefaultState().with(PERSISTENT, true).with(AGE, 0).with(RIPENESS, 0), ctx.getWorld(), ctx.getBlockPos());
+        return updateDistanceFromLogs(getDefaultState().with(PERSISTENT, true).with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(AGE, 0).with(RIPENESS, 0), ctx.getWorld(), ctx.getBlockPos());
     }
 
-    public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
         return !isMature(state);
     }
 
@@ -245,6 +265,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
             world.setBlockState(pos, shearedBlock.getDefaultState()
                     .with(DISTANCE, state.get(DISTANCE))
                     .with(PERSISTENT, state.get(PERSISTENT))
+                    .with(WATERLOGGED, state.get(WATERLOGGED))
             );
             return ActionResult.SUCCESS;
         } else {

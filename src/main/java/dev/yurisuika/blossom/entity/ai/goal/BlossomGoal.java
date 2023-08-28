@@ -8,10 +8,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -28,7 +32,13 @@ import static net.minecraft.block.LeavesBlock.*;
 public class BlossomGoal extends Goal {
 
     public final BeeEntity entity;
-    public final Predicate<BlockState> targetPredicate = (state) -> state.isOf(Blocks.OAK_LEAVES);
+    public final Predicate<BlockState> targetPredicate = (state) -> {
+        if (state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
+            return false;
+        } else {
+            return state.isOf(Blocks.OAK_LEAVES);
+        }
+    };
     public int blossomingTicks;
     public int lastBlossomingTick;
     public boolean running;
@@ -42,20 +52,34 @@ public class BlossomGoal extends Goal {
     }
 
     public boolean checkFilters() {
-        DimensionType dimension = entity.getEntityWorld().getDimension();
-        Biome biome = entity.getEntityWorld().getBiome(entity.getBlockPos());
-        float temperature = biome.getTemperature();
-        float downfall = biome.getDownfall();
+        RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
+        RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
+        float temperature = biome.value().getTemperature();
+        float downfall = biome.value().getDownfall();
 
         AtomicBoolean whitelist = new AtomicBoolean(false);
         if (config.toggle.whitelist) {
             Arrays.stream(config.filter.dimension.whitelist).forEach(entry -> {
-                if (Objects.equals(entry, entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
+                if (entry.startsWith("#")) {
+                    TagKey<DimensionType> tag = TagKey.of(RegistryKeys.DIMENSION_TYPE, new Identifier(entry.substring(1)));
+                    if (tag != null) {
+                        if (dimension.isIn(tag)) {
+                            whitelist.set(true);
+                        }
+                    }
+                } else if (Objects.equals(entry, dimension.getKey().get().getValue().toString())) {
                     whitelist.set(true);
                 }
             });
             Arrays.stream(config.filter.biome.whitelist).forEach(entry -> {
-                if (Objects.equals(entry, entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
+                if (entry.startsWith("#")) {
+                    TagKey<Biome> tag = TagKey.of(RegistryKeys.BIOME, new Identifier(entry.substring(1)));
+                    if (tag != null) {
+                        if (biome.isIn(tag)) {
+                            whitelist.set(true);
+                        }
+                    }
+                } else if (Objects.equals(entry, biome.getKey().get().getValue().toString())) {
                     whitelist.set(true);
                 }
             });
@@ -64,12 +88,26 @@ public class BlossomGoal extends Goal {
         AtomicBoolean blacklist = new AtomicBoolean(true);
         if (config.toggle.blacklist) {
             Arrays.stream(config.filter.dimension.blacklist).forEach(entry -> {
-                if (Objects.equals(entry, entity.getEntityWorld().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(dimension).toString())) {
+                if (entry.startsWith("#")) {
+                    TagKey<DimensionType> tag = TagKey.of(RegistryKeys.DIMENSION_TYPE, new Identifier(entry.substring(1)));
+                    if (tag != null) {
+                        if (dimension.isIn(tag)) {
+                            blacklist.set(false);
+                        }
+                    }
+                } else if (Objects.equals(entry, dimension.getKey().get().getValue().toString())) {
                     blacklist.set(false);
                 }
             });
             Arrays.stream(config.filter.biome.blacklist).forEach(entry -> {
-                if (Objects.equals(entry, entity.getEntityWorld().getRegistryManager().get(Registry.BIOME_KEY).getId(biome).toString())) {
+                if (entry.startsWith("#")) {
+                    TagKey<Biome> tag = TagKey.of(RegistryKeys.BIOME, new Identifier(entry.substring(1)));
+                    if (tag != null) {
+                        if (biome.isIn(tag)) {
+                            blacklist.set(false);
+                        }
+                    }
+                } else if (Objects.equals(entry, biome.getKey().get().getValue().toString())) {
                     blacklist.set(false);
                 }
             });
@@ -99,7 +137,7 @@ public class BlossomGoal extends Goal {
         if (((EntityAccessor)entity).getRandom().nextFloat() > config.value.blossoming.chance) {
             return false;
         }
-        if (entity.getEntityWorld().isRaining()) {
+        if (entity.getWorld().isRaining()) {
             return false;
         }
         Optional<BlockPos> optional = findTarget();
@@ -132,7 +170,7 @@ public class BlossomGoal extends Goal {
         if (((BeeEntityInvoker)entity).invokeGetCropsGrownSincePollination() >= 10) {
             return false;
         }
-        if (entity.getEntityWorld().isRaining()) {
+        if (entity.getWorld().isRaining()) {
             return false;
         }
         if (completed()) {
@@ -168,12 +206,13 @@ public class BlossomGoal extends Goal {
         if (completed()) {
             BlockPos blockPos = entity.getFlowerPos();
             if (blockPos != null) {
-                BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                BlockState blockState = entity.getWorld().getBlockState(blockPos);
                 if (blockState.getBlock() == Blocks.OAK_LEAVES) {
-                    entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
-                    entity.getEntityWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.get().getDefaultState()
+                    entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                    entity.getWorld().setBlockState(blockPos, FLOWERING_OAK_LEAVES.get().getDefaultState()
                             .with(DISTANCE, blockState.get(DISTANCE))
                             .with(PERSISTENT, blockState.get(PERSISTENT))
+                            .with(WATERLOGGED, blockState.get(WATERLOGGED))
                     );
                     ((BeeEntityInvoker)entity).invokeAddCropCounter();
                 }
@@ -238,7 +277,7 @@ public class BlossomGoal extends Goal {
     }
 
     public boolean isTarget(BlockPos pos) {
-        return entity.getEntityWorld().canSetBlock(pos) && entity.getEntityWorld().getBlockState(pos).isOf(Blocks.OAK_LEAVES);
+        return entity.getWorld().canSetBlock(pos) && entity.getWorld().getBlockState(pos).isOf(Blocks.OAK_LEAVES);
     }
 
     public void moveToNextTarget() {
@@ -261,7 +300,7 @@ public class BlossomGoal extends Goal {
                 for(int k = 0; k <= j; k = k > 0 ? -k : 1 - k) {
                     for(int l = k < j && k > -j ? j : 0; l <= j; l = l > 0 ? -l : 1 - l) {
                         mutable.set(blockPos, k, i - 1, l);
-                        if (blockPos.isWithinDistance(mutable, searchDistance) && predicate.test(entity.getEntityWorld().getBlockState(mutable))) {
+                        if (blockPos.isWithinDistance(mutable, searchDistance) && predicate.test(entity.getWorld().getBlockState(mutable))) {
                             return Optional.of(mutable);
                         }
                     }

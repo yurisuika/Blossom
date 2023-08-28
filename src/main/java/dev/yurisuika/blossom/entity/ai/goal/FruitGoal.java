@@ -19,10 +19,14 @@ import static net.minecraft.block.LeavesBlock.*;
 public class FruitGoal extends BlossomGoal {
 
     public final Predicate<BlockState> targetPredicate = (state) -> {
-        if (state.isOf(FLOWERING_OAK_LEAVES.get())) {
-            return state.get(Properties.AGE_3) >= 3;
-        } else {
+        if (state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
             return false;
+        } else {
+            if (state.isOf(FLOWERING_OAK_LEAVES.get())) {
+                return state.get(Properties.AGE_3) >= 3;
+            } else {
+                return false;
+            }
         }
     };
 
@@ -37,7 +41,7 @@ public class FruitGoal extends BlossomGoal {
         if (((EntityAccessor)entity).getRandom().nextFloat() > config.value.fruiting.chance) {
             return false;
         }
-        if (entity.getEntityWorld().isRaining()) {
+        if (entity.getWorld().isRaining()) {
             return false;
         }
         Optional<BlockPos> optional = findTarget();
@@ -61,13 +65,14 @@ public class FruitGoal extends BlossomGoal {
         if (completed()) {
             BlockPos blockPos = entity.getFlowerPos();
             if (blockPos != null) {
-                BlockState blockState = entity.getEntityWorld().getBlockState(blockPos);
+                BlockState blockState = entity.getWorld().getBlockState(blockPos);
                 if (blockState.getBlock() == FLOWERING_OAK_LEAVES.get()) {
                     if (blockState.get(Properties.AGE_3) >= 3) {
-                        entity.getEntityWorld().syncWorldEvent(2005, blockPos, 0);
-                        entity.getEntityWorld().setBlockState(blockPos, FRUITING_OAK_LEAVES.get().getDefaultState()
+                        entity.getWorld().syncWorldEvent(2005, blockPos, 0);
+                        entity.getWorld().setBlockState(blockPos, FRUITING_OAK_LEAVES.get().getDefaultState()
                                 .with(DISTANCE, blockState.get(DISTANCE))
                                 .with(PERSISTENT, blockState.get(PERSISTENT))
+                                .with(WATERLOGGED, blockState.get(WATERLOGGED))
                         );
                         ((BeeEntityInvoker)entity).invokeAddCropCounter();
                     }
@@ -79,7 +84,7 @@ public class FruitGoal extends BlossomGoal {
     }
 
     public boolean isTarget(BlockPos pos) {
-        return entity.getEntityWorld().canSetBlock(pos) && entity.getEntityWorld().getBlockState(pos).getBlock() instanceof FloweringLeavesBlock;
+        return entity.getWorld().canSetBlock(pos) && entity.getWorld().getBlockState(pos).getBlock() instanceof FloweringLeavesBlock;
     }
 
     public Optional<BlockPos> findTarget() {
