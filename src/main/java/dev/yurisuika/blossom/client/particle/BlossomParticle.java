@@ -21,7 +21,7 @@ public class BlossomParticle extends SpriteBillboardParticle {
         this.gravityStrength = 7.5E-4F;
         this.scale = f = random.nextBoolean() ? 0.05F : 0.075F;
         this.setBoundingBoxSpacing(f, f);
-        this.velocityMultiplier = 1.0F;
+        this.field_28786 = 1.0F;
     }
 
     public ParticleTextureSheet getType() {
@@ -63,9 +63,9 @@ public class BlossomParticle extends SpriteBillboardParticle {
         if (dead) {
             return;
         }
-        velocityX *= velocityMultiplier;
-        velocityY *= velocityMultiplier;
-        velocityZ *= velocityMultiplier;
+        velocityX *= field_28786;
+        velocityY *= field_28786;
+        velocityZ *= field_28786;
     }
 
 }

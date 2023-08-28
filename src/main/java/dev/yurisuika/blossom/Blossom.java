@@ -27,21 +27,20 @@ import net.minecraft.particle.ParticleType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -285,7 +284,7 @@ public class Blossom {
 
     public static <T extends Block> RegistryObject<T> register(String name, Supplier<T> supplier, Item.Settings settings) {
         RegistryObject<T> block = BLOCKS.register(name, supplier);
-        ITEMS.register(name, () -> new BlockItem(block.get(), settings));
+        ITEMS.register(name, () -> new BlockItem(block.get(), settings.group(ItemGroup.DECORATIONS)));
         return block;
     }
 
@@ -294,11 +293,11 @@ public class Blossom {
 
         @SubscribeEvent
         public static void registerCommandsEvents(RegisterCommandsEvent event) {
-            BlossomCommand.register(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
+            BlossomCommand.register(event.getDispatcher(), event.getEnvironment());
         }
 
         @SubscribeEvent
-        public static void entityJoinLevelEvents(EntityJoinLevelEvent event) {
+        public static void entityJoinWorldEvents(EntityJoinWorldEvent event) {
             Entity entity = event.getEntity();
             if (entity instanceof BeeEntity) {
                 ((BeeEntity)entity).getGoalSelector().add(4, new BlossomGoal((BeeEntity)entity));
@@ -321,7 +320,7 @@ public class Blossom {
         }
 
         @SubscribeEvent
-        public static void registerParticleProvidersEvents(RegisterParticleProvidersEvent event) {
+        public static void particleFactoryRegisterEvents(ParticleFactoryRegisterEvent event) {
             MinecraftClient.getInstance().particleManager.registerFactory(BLOSSOM.get(), BlossomParticle.Factory::new);
         }
 
@@ -357,25 +356,15 @@ public class Blossom {
         }
 
         @SubscribeEvent
-        public static void registerBlockColorHandlersEvents(RegisterColorHandlersEvent.Block event) {
+        public static void blockColorHandlerEvents(ColorHandlerEvent.Block event) {
             event.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FLOWERING_OAK_LEAVES.get());
             event.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FRUITING_OAK_LEAVES.get());
         }
 
         @SubscribeEvent
-        public static void registerItemColorHandlersEvents(RegisterColorHandlersEvent.Item event) {
-            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FLOWERING_OAK_LEAVES.get());
+        public static void itemColorHandlerEvents(ColorHandlerEvent.Item event) {
+            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), Blossom.FLOWERING_OAK_LEAVES.get());
             event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FRUITING_OAK_LEAVES.get());
-        }
-
-        @SubscribeEvent
-        public static void registerCreativeModeTabEvents(CreativeModeTabEvent.BuildContents event) {
-            if(event.getTab() == ItemGroups.NATURAL) {
-                event.accept(FLOWERING_OAK_LEAVES);
-                event.getEntries().putAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultStack(), FLOWERING_OAK_LEAVES.get().asItem().getDefaultStack(), ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
-                event.accept(FRUITING_OAK_LEAVES);
-                event.getEntries().putAfter(FLOWERING_OAK_LEAVES.get().asItem().getDefaultStack(), FRUITING_OAK_LEAVES.get().asItem().getDefaultStack(), ItemGroup.StackVisibility.PARENT_AND_SEARCH_TABS);
-            }
         }
 
     }
