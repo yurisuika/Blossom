@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom.block;
 
+import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Fertilizable;
@@ -13,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShearsItem;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -21,7 +23,6 @@ import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -35,6 +36,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.GameEvent;
 
@@ -115,7 +117,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements Fertilizable {
             int i = getAge(state);
             if (i < getMaxAge()) {
                 float temperature = world.getBiome(pos).value().getTemperature();
-                float downfall = world.getBiome(pos).value().getDownfall();
+                float downfall = ((BiomeAccessor)(Object)world.getBiome(pos).value()).getWeather().downfall();
                 temperature += 2;
                 float f = (downfall * temperature) / 4;
                 f = ((4 - 1) * f) + 1;
@@ -179,11 +181,11 @@ public class FruitingLeavesBlock extends LeavesBlock implements Fertilizable {
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(WATERLOGGED)) {
-            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.get(DISTANCE) != i) {
-            world.createAndScheduleBlockTick(pos, this, 1);
+            world.scheduleBlockTick(pos, this, 1);
         }
         return state;
     }
@@ -231,7 +233,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements Fertilizable {
         return updateDistanceFromLogs(getDefaultState().with(PERSISTENT, true).with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(AGE, 0).with(RIPENESS, 0), ctx.getWorld(), ctx.getBlockPos());
     }
 
-    public boolean isFertilizable(BlockView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
         return !isMature(state);
     }
 
