@@ -7,6 +7,7 @@ import dev.yurisuika.blossom.block.FruitingLeavesBlock;
 import dev.yurisuika.blossom.client.particle.BlossomParticle;
 import dev.yurisuika.blossom.entity.ai.goal.BlossomGoal;
 import dev.yurisuika.blossom.entity.ai.goal.FruitGoal;
+import dev.yurisuika.blossom.mixin.block.BlocksInvoker;
 import dev.yurisuika.blossom.mixin.block.ComposterBlockInvoker;
 import dev.yurisuika.blossom.mixin.block.FireBlockInvoker;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
@@ -248,8 +249,8 @@ public class Blossom {
         config.filter.temperature.min = temperatureMin;
         config.filter.temperature.max = temperatureMax;
 
-        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 2.0F), config.filter.downfall.max), -2.0F);
-        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 2.0F), config.filter.downfall.min), -2.0F);
+        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 1.0F), config.filter.downfall.max), 0.0F);
+        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 1.0F), config.filter.downfall.min), 0.0F);
         config.filter.downfall.min = downfallMin;
         config.filter.downfall.max = downfallMax;
 
@@ -271,24 +272,24 @@ public class Blossom {
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
-            .allowsSpawning((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
-            .suffocates((state, world, pos) -> false)
-            .blockVision((state, world, pos) -> false)
+            .allowsSpawning(BlocksInvoker::invokeCanSpawnOnLeaves)
+            .suffocates(BlocksInvoker::invokeNever)
+            .blockVision(BlocksInvoker::invokeNever)
             .burnable()
             .pistonBehavior(PistonBehavior.DESTROY)
-            .solidBlock((state, world, pos) -> false)), new Item.Settings());
+            .solidBlock(BlocksInvoker::invokeNever)), new Item.Settings());
     public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES.get(), AbstractBlock.Settings.create()
             .mapColor(MapColor.DARK_GREEN)
             .strength(0.2f)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
-            .allowsSpawning((state, world, pos, type) -> type == EntityType.OCELOT || type == EntityType.PARROT)
-            .suffocates((state, world, pos) -> false)
-            .blockVision((state, world, pos) -> false)
+            .allowsSpawning(BlocksInvoker::invokeCanSpawnOnLeaves)
+            .suffocates(BlocksInvoker::invokeNever)
+            .blockVision(BlocksInvoker::invokeNever)
             .burnable()
             .pistonBehavior(PistonBehavior.DESTROY)
-            .solidBlock((state, world, pos) -> false)), new Item.Settings());
+            .solidBlock(BlocksInvoker::invokeNever)), new Item.Settings());
 
     public static RegistryObject<DefaultParticleType> BLOSSOM = PARTICLES.register("blossom", () -> new DefaultParticleType(false));
 
