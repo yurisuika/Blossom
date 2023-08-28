@@ -4,18 +4,19 @@ import dev.yurisuika.blossom.mixin.entity.EntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.MobEntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.passive.BeeEntityAccessor;
 import dev.yurisuika.blossom.mixin.entity.passive.BeeEntityInvoker;
+import dev.yurisuika.blossom.mixin.world.biome.BiomeAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -55,13 +56,13 @@ public class BlossomGoal extends Goal {
         RegistryEntry<DimensionType> dimension = entity.getWorld().getDimensionEntry();
         RegistryEntry<Biome> biome = entity.getWorld().getBiome(entity.getBlockPos());
         float temperature = biome.value().getTemperature();
-        float downfall = biome.value().getDownfall();
+        float downfall = ((BiomeAccessor)(Object)biome.value()).getWeather().downfall();
 
         AtomicBoolean whitelist = new AtomicBoolean(false);
         if (config.toggle.whitelist) {
             Arrays.stream(config.filter.dimension.whitelist).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<DimensionType> tag = TagKey.of(Registry.DIMENSION_TYPE_KEY, new Identifier(entry.substring(1)));
+                    TagKey<DimensionType> tag = TagKey.of(RegistryKeys.DIMENSION_TYPE, new Identifier(entry.substring(1)));
                     if (tag != null) {
                         if (dimension.isIn(tag)) {
                             whitelist.set(true);
@@ -73,7 +74,7 @@ public class BlossomGoal extends Goal {
             });
             Arrays.stream(config.filter.biome.whitelist).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<Biome> tag = TagKey.of(Registry.BIOME_KEY, new Identifier(entry.substring(1)));
+                    TagKey<Biome> tag = TagKey.of(RegistryKeys.BIOME, new Identifier(entry.substring(1)));
                     if (tag != null) {
                         if (biome.isIn(tag)) {
                             whitelist.set(true);
@@ -89,7 +90,7 @@ public class BlossomGoal extends Goal {
         if (config.toggle.blacklist) {
             Arrays.stream(config.filter.dimension.blacklist).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<DimensionType> tag = TagKey.of(Registry.DIMENSION_TYPE_KEY, new Identifier(entry.substring(1)));
+                    TagKey<DimensionType> tag = TagKey.of(RegistryKeys.DIMENSION_TYPE, new Identifier(entry.substring(1)));
                     if (tag != null) {
                         if (dimension.isIn(tag)) {
                             blacklist.set(false);
@@ -101,7 +102,7 @@ public class BlossomGoal extends Goal {
             });
             Arrays.stream(config.filter.biome.blacklist).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<Biome> tag = TagKey.of(Registry.BIOME_KEY, new Identifier(entry.substring(1)));
+                    TagKey<Biome> tag = TagKey.of(RegistryKeys.BIOME, new Identifier(entry.substring(1)));
                     if (tag != null) {
                         if (biome.isIn(tag)) {
                             blacklist.set(false);

@@ -2,10 +2,9 @@ package dev.yurisuika.blossom.server.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.*;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.DimensionArgumentType;
-import net.minecraft.command.argument.RegistryPredicateArgumentType;
+import net.minecraft.command.argument.RegistryEntryPredicateArgumentType;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.HoverEvent;
@@ -13,7 +12,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -194,9 +192,9 @@ public class BlossomCommand {
                                             return 1;
                                         })
                                         .then(literal("add")
-                                                .then(argument("dimension", DimensionArgumentType.dimension())
+                                                .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
                                                             if (Arrays.stream(config.filter.dimension.whitelist).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.dimension.whitelist.add.failed", dimension));
                                                                 return 0;
@@ -212,9 +210,9 @@ public class BlossomCommand {
                                                 )
                                         )
                                         .then(literal("remove")
-                                                .then(argument("dimension", DimensionArgumentType.dimension())
+                                                .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
                                                             if (Arrays.stream(config.filter.dimension.whitelist).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.dimension.whitelist.remove.failed", dimension));
                                                                 return 0;
@@ -242,9 +240,9 @@ public class BlossomCommand {
                                             return 1;
                                         })
                                         .then(literal("add")
-                                                .then(argument("dimension", DimensionArgumentType.dimension())
+                                                .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
                                                             if (Arrays.stream(config.filter.dimension.blacklist).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.biome.blacklist.add.failed", dimension));
                                                                 return 0;
@@ -260,9 +258,9 @@ public class BlossomCommand {
                                                 )
                                         )
                                         .then(literal("remove")
-                                                .then(argument("dimension", DimensionArgumentType.dimension())
+                                                .then(argument("dimension", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.DIMENSION_TYPE))
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "dimension", RegistryKeys.DIMENSION_TYPE).asString();
                                                             if (Arrays.stream(config.filter.dimension.blacklist).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.dimension.blacklist.remove.failed", dimension));
                                                                 return 0;
@@ -292,9 +290,9 @@ public class BlossomCommand {
                                             return 1;
                                         })
                                         .then(literal("add")
-                                                .then(argument("biome", RegistryPredicateArgumentType.registryPredicate(Registry.BIOME_KEY))
+                                                .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
-                                                            String biome = RegistryPredicateArgumentType.getPredicate(context, "biome", Registry.BIOME_KEY, new DynamicCommandExceptionType(id -> Text.translatable("commands.locate.biome.invalid", id))).asString();
+                                                            String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
                                                             if (Arrays.stream(config.filter.biome.whitelist).anyMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.biome.whitelist.add.failed", biome));
                                                                 return 0;
@@ -310,9 +308,9 @@ public class BlossomCommand {
                                                 )
                                         )
                                         .then(literal("remove")
-                                                .then(argument("biome", RegistryPredicateArgumentType.registryPredicate(Registry.BIOME_KEY))
+                                                .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
-                                                            String biome = RegistryPredicateArgumentType.getPredicate(context, "biome", Registry.BIOME_KEY, new DynamicCommandExceptionType(id -> Text.translatable("commands.locate.biome.invalid", id))).asString();
+                                                            String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
                                                             if (Arrays.stream(config.filter.biome.whitelist).noneMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.biome.whitelist.remove.failed", biome));
                                                                 return 0;
@@ -340,9 +338,9 @@ public class BlossomCommand {
                                             return 1;
                                         })
                                         .then(literal("add")
-                                                .then(argument("biome", RegistryPredicateArgumentType.registryPredicate(Registry.BIOME_KEY))
+                                                .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
-                                                            String biome = RegistryPredicateArgumentType.getPredicate(context, "biome", Registry.BIOME_KEY, new DynamicCommandExceptionType(id -> Text.translatable("commands.locate.biome.invalid", id))).asString();
+                                                            String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
                                                             if (Arrays.stream(config.filter.biome.blacklist).anyMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.biome.blacklist.add.failed", biome));
                                                                 return 0;
@@ -358,9 +356,9 @@ public class BlossomCommand {
                                                 )
                                         )
                                         .then(literal("remove")
-                                                .then(argument("biome", RegistryPredicateArgumentType.registryPredicate(Registry.BIOME_KEY))
+                                                .then(argument("biome", RegistryEntryPredicateArgumentType.registryEntryPredicate(registryAccess, RegistryKeys.BIOME))
                                                         .executes(context -> {
-                                                            String biome = RegistryPredicateArgumentType.getPredicate(context, "biome", Registry.BIOME_KEY, new DynamicCommandExceptionType(id -> Text.translatable("commands.locate.biome.invalid", id))).asString();
+                                                            String biome = RegistryEntryPredicateArgumentType.getRegistryEntryPredicate(context, "biome", RegistryKeys.BIOME).asString();
                                                             if (Arrays.stream(config.filter.biome.blacklist).noneMatch(biome::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(Text.translatable("commands.blossom.filter.biome.blacklist.remove.failed", biome));
                                                                 return 0;

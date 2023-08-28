@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
@@ -33,9 +34,10 @@ import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -272,17 +274,17 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static final DefaultParticleType BLOSSOM = FabricParticleTypes.simple(false);
 
     public static void registerBlocks() {
-        Registry.register(Registry.BLOCK, new Identifier("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
-        Registry.register(Registry.BLOCK, new Identifier("blossom", "fruiting_oak_leaves"), FRUITING_OAK_LEAVES);
+        Registry.register(Registries.BLOCK, new Identifier("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
+        Registry.register(Registries.BLOCK, new Identifier("blossom", "fruiting_oak_leaves"), FRUITING_OAK_LEAVES);
     }
 
     public static void registerItems() {
-        Registry.register(Registry.ITEM, new Identifier("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings().group(ItemGroup.DECORATIONS)));
-        Registry.register(Registry.ITEM, new Identifier("blossom", "fruiting_oak_leaves"), new BlockItem(FRUITING_OAK_LEAVES, new Item.Settings().group(ItemGroup.DECORATIONS)));
+        Registry.register(Registries.ITEM, new Identifier("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Settings()));
+        Registry.register(Registries.ITEM, new Identifier("blossom", "fruiting_oak_leaves"), new BlockItem(FRUITING_OAK_LEAVES, new Item.Settings()));
     }
 
     public static void registerParticles() {
-        Registry.register(Registry.PARTICLE_TYPE, new Identifier("blossom", "blossom"), BLOSSOM);
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier("blossom", "blossom"), BLOSSOM);
     }
 
     public static void registerCompostables() {
@@ -293,6 +295,13 @@ public class Blossom implements ModInitializer, ClientModInitializer {
     public static void registerFlammables() {
         FlammableBlockRegistry.getDefaultInstance().add(FLOWERING_OAK_LEAVES, 30, 60);
         FlammableBlockRegistry.getDefaultInstance().add(FRUITING_OAK_LEAVES, 30, 60);
+    }
+
+    public static void registerItemGroupEvents() {
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES.asItem());
+            content.addAfter(FLOWERING_OAK_LEAVES.asItem(), FRUITING_OAK_LEAVES.asItem());
+        });
     }
 
     public static void registerServerEntityEvents() {
@@ -362,6 +371,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
         registerParticles();
         registerFlammables();
         registerCompostables();
+        registerItemGroupEvents();
         registerServerEntityEvents();
         registerCommands();
     }
