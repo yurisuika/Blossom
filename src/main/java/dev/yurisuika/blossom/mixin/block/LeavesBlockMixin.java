@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static net.minecraft.block.LeavesBlock.DISTANCE;
 
 @Mixin(LeavesBlock.class)
-public class LeavesBlockMixin {
+public abstract class LeavesBlockMixin {
 
     @Inject(method = "getDistanceFromLog(Lnet/minecraft/block/BlockState;)I", at = @At("RETURN"), cancellable = true)
     private static void injectDistance(BlockState state, CallbackInfoReturnable<Integer> info) {
