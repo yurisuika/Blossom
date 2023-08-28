@@ -10,6 +10,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -192,7 +193,7 @@ public class BlossomCommand {
                                         .then(literal("add")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = context.getSource().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(DimensionArgumentType.getDimensionArgument(context, "dimension").getDimension()).toString();
                                                             if (Arrays.stream(config.filter.dimension.whitelist).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.dimension.whitelist.add.failed", dimension));
                                                                 return 0;
@@ -210,7 +211,7 @@ public class BlossomCommand {
                                         .then(literal("remove")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = context.getSource().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(DimensionArgumentType.getDimensionArgument(context, "dimension").getDimension()).toString();
                                                             if (Arrays.stream(config.filter.dimension.whitelist).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.dimension.whitelist.remove.failed", dimension));
                                                                 return 0;
@@ -240,7 +241,7 @@ public class BlossomCommand {
                                         .then(literal("add")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = context.getSource().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(DimensionArgumentType.getDimensionArgument(context, "dimension").getDimension()).toString();
                                                             if (Arrays.stream(config.filter.dimension.blacklist).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.biome.blacklist.add.failed", dimension));
                                                                 return 0;
@@ -258,7 +259,7 @@ public class BlossomCommand {
                                         .then(literal("remove")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = context.getSource().getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).getId(DimensionArgumentType.getDimensionArgument(context, "dimension").getDimension()).toString();
                                                             if (Arrays.stream(config.filter.dimension.blacklist).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.dimension.blacklist.remove.failed", dimension));
                                                                 return 0;
