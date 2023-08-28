@@ -1,7 +1,0 @@
-{
-    "parent": "blossom:block/flowering_leaves",
-    "textures": {
-        "all": "minecraft:block/oak_leaves",
-        "flowers": "blossom:block/flowering_oak_leaves_stage5"
-    }
-}
