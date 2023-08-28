@@ -5,13 +5,18 @@
   "refmap": "blossom.refmap.json",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "block.AbstractBlockMixin",
+    "block.BlocksInvoker",
     "block.ComposterBlockInvoker",
     "block.FireBlockInvoker",
     "block.LeavesBlockMixin",
+    "entity.EntityAccessor",
+    "entity.MobEntityAccessor",
+    "entity.passive.BeeEntityAccessor",
     "entity.passive.BeeEntityInvoker",
     "entity.passive.BeeEntityMixin",
     "entity.passive.BeeEntityMixin$GrowCropsGoalMixin",
-    "entity.passive.BeeEntityMixin$PollinateGoalMixin"
+    "entity.passive.BeeEntityMixin$MoveToFlowerGoalMixin"
   ],
   "client": [
   ],

@@ -3,6 +3,11 @@ package dev.yurisuika.blossom;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.block.FloweringLeavesBlock;
+import dev.yurisuika.blossom.block.FruitingLeavesBlock;
+import dev.yurisuika.blossom.client.particle.BlossomParticle;
+import dev.yurisuika.blossom.entity.ai.goal.BlossomGoal;
+import dev.yurisuika.blossom.entity.ai.goal.FruitGoal;
+import dev.yurisuika.blossom.mixin.block.BlocksInvoker;
 import dev.yurisuika.blossom.mixin.block.ComposterBlockInvoker;
 import dev.yurisuika.blossom.mixin.block.FireBlockInvoker;
 import dev.yurisuika.blossom.server.command.BlossomCommand;
@@ -13,13 +18,20 @@ import net.minecraft.client.color.world.FoliageColors;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.ParticleType;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -46,10 +58,9 @@ public class Blossom {
     public static class Config {
 
         public Value value = new Value(
-                new Value.Propagation(0.2F),
-                new Value.Fertilization(0.06666667F),
-                new Value.Pollination(1),
-                new Value.Fruit(3, 0.5714286F)
+                new Value.Blossoming(0.2F, 10.0D),
+                new Value.Fruiting(0.2F, 10.0D),
+                new Value.Harvesting(3, 0.5714286F)
         );
         public Filter filter = new Filter(
                 new Filter.Temperature(-2.0F, 2.0F),
@@ -66,54 +77,46 @@ public class Blossom {
 
     public static class Value {
 
-        public Propagation propagation;
-        public Fertilization fertilization;
-        public Pollination pollination;
-        public Fruit fruit;
+        public Blossoming blossoming;
+        public Fruiting fruiting;
+        public Harvesting harvesting;
 
-        public Value(Propagation propagation, Fertilization fertilization, Pollination pollination, Fruit fruit) {
-            this.propagation = propagation;
-            this.fertilization = fertilization;
-            this.pollination = pollination;
-            this.fruit = fruit;
+        public Value(Blossoming blossoming, Fruiting fruiting, Harvesting harvesting) {
+            this.blossoming = blossoming;
+            this.fruiting = fruiting;
+            this.harvesting = harvesting;
         }
 
-        public static class Propagation {
+        public static class Blossoming {
 
             public float chance;
+            public double distance;
 
-            public Propagation(float chance) {
+            public Blossoming(float chance, double distance) {
                 this.chance = chance;
+                this.distance = distance;
             }
 
         }
 
-        public static class Fertilization {
+        public static class Fruiting {
 
             public float chance;
+            public double distance;
 
-            public Fertilization(float chance) {
+            public Fruiting(float chance, double distance) {
                 this.chance = chance;
+                this.distance = distance;
             }
 
         }
 
-        public static class Pollination {
-
-            public int age;
-
-            public Pollination(int age) {
-                this.age = age;
-            }
-
-        }
-
-        public static class Fruit {
+        public static class Harvesting {
 
             public int bonus;
             public float chance;
 
-            public Fruit(int bonus, float chance) {
+            public Harvesting(int bonus, float chance) {
                 this.bonus = bonus;
                 this.chance = chance;
             }
@@ -231,19 +234,20 @@ public class Blossom {
     }
 
     public static void checkBounds() {
-        config.value.propagation.chance = Math.max(Math.min(config.value.propagation.chance, 1.0F), 0.0F);
-        config.value.fertilization.chance = Math.max(Math.min(config.value.fertilization.chance, 1.0F), 0.0F);
-        config.value.pollination.age = Math.max(Math.min(config.value.pollination.age, 7), 0);
-        config.value.fruit.bonus = Math.max(config.value.fruit.bonus, 0);
-        config.value.fruit.chance = Math.max(Math.min(config.value.fruit.chance, 1.0F), 0.0F);
+        config.value.blossoming.chance = Math.max(Math.min(config.value.blossoming.chance, 1.0F), 0.0F);
+        config.value.blossoming.distance = Math.max(config.value.blossoming.distance, 0.0D);
+        config.value.fruiting.chance = Math.max(Math.min(config.value.fruiting.chance, 1.0F), 0.0F);
+        config.value.fruiting.distance = Math.max(config.value.fruiting.distance, 0.0D);
+        config.value.harvesting.bonus = Math.max(config.value.harvesting.bonus, 0);
+        config.value.harvesting.chance = Math.max(Math.min(config.value.harvesting.chance, 1.0F), 0.0F);
 
         float temperatureMin = Math.max(Math.min(Math.min(config.filter.temperature.min, 2.0F), config.filter.temperature.max), -2.0F);
         float temperatureMax = Math.max(Math.max(Math.min(config.filter.temperature.max, 2.0F), config.filter.temperature.min), -2.0F);
         config.filter.temperature.min = temperatureMin;
         config.filter.temperature.max = temperatureMax;
 
-        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 2.0F), config.filter.downfall.max), -2.0F);
-        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 2.0F), config.filter.downfall.min), -2.0F);
+        float downfallMin = Math.max(Math.min(Math.min(config.filter.downfall.min, 1.0F), config.filter.downfall.max), 0.0F);
+        float downfallMax = Math.max(Math.max(Math.min(config.filter.downfall.max, 1.0F), config.filter.downfall.min), 0.0F);
         config.filter.downfall.min = downfallMin;
         config.filter.downfall.max = downfallMax;
 
@@ -257,8 +261,26 @@ public class Blossom {
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "blossom");
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "blossom");
+    public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, "blossom");
 
-    public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, AbstractBlock.Settings.copy(Blocks.OAK_LEAVES)), new Item.Settings());
+    public static final RegistryObject<Block> FRUITING_OAK_LEAVES = register("fruiting_oak_leaves", () -> new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, AbstractBlock.Settings.of(Material.LEAVES)
+            .strength(0.2f)
+            .ticksRandomly()
+            .sounds(BlockSoundGroup.GRASS)
+            .nonOpaque()
+            .allowsSpawning(BlocksInvoker::invokeCanSpawnOnLeaves)
+            .suffocates(BlocksInvoker::invokeNever)
+            .blockVision(BlocksInvoker::invokeNever)), new Item.Settings());
+    public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES.get(), AbstractBlock.Settings.of(Material.LEAVES)
+            .strength(0.2f)
+            .ticksRandomly()
+            .sounds(BlockSoundGroup.GRASS)
+            .nonOpaque()
+            .allowsSpawning(BlocksInvoker::invokeCanSpawnOnLeaves)
+            .suffocates(BlocksInvoker::invokeNever)
+            .blockVision(BlocksInvoker::invokeNever)), new Item.Settings());
+
+    public static RegistryObject<DefaultParticleType> BLOSSOM = PARTICLES.register("blossom", () -> new DefaultParticleType(false));
 
     public static <T extends Block> RegistryObject<T> register(String name, Supplier<T> supplier, Item.Settings settings) {
         RegistryObject<T> block = BLOCKS.register(name, supplier);
@@ -270,8 +292,17 @@ public class Blossom {
     public static class CommonForgeEvents {
 
         @SubscribeEvent
-        public static void registerCommands(RegisterCommandsEvent event) {
+        public static void registerCommandsEvents(RegisterCommandsEvent event) {
             BlossomCommand.register(event.getDispatcher(), event.getEnvironment());
+        }
+
+        @SubscribeEvent
+        public static void entityJoinWorldEvents(EntityJoinWorldEvent event) {
+            Entity entity = event.getEntity();
+            if (entity instanceof BeeEntity) {
+                ((BeeEntity)entity).getGoalSelector().add(4, new BlossomGoal((BeeEntity)entity));
+                ((BeeEntity)entity).getGoalSelector().add(4, new FruitGoal((BeeEntity)entity));
+            }
         }
 
     }
@@ -282,8 +313,15 @@ public class Blossom {
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
             ComposterBlockInvoker.invokeRegisterComposableItem(0.3F, Blossom.FLOWERING_OAK_LEAVES.get());
+            ComposterBlockInvoker.invokeRegisterComposableItem(0.3F, Blossom.FRUITING_OAK_LEAVES.get());
 
             ((FireBlockInvoker)Blocks.FIRE).invokeRegisterFlammableBlock(Blossom.FLOWERING_OAK_LEAVES.get(), 30, 60);
+            ((FireBlockInvoker) Blocks.FIRE).invokeRegisterFlammableBlock(Blossom.FRUITING_OAK_LEAVES.get(), 30, 60);
+        }
+
+        @SubscribeEvent
+        public static void particleFactoryRegisterEvents(ParticleFactoryRegisterEvent event) {
+            MinecraftClient.getInstance().particleManager.registerFactory(BLOSSOM.get(), BlossomParticle.Factory::new);
         }
 
     }
@@ -295,8 +333,18 @@ public class Blossom {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event) {
             RenderLayers.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderLayer.getCutout());
+            RenderLayers.setRenderLayer(Blossom.FRUITING_OAK_LEAVES.get(), RenderLayer.getCutout());
 
             ModelPredicateProviderRegistry.register(FLOWERING_OAK_LEAVES.get().asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
+                NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
+                try {
+                    if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
+                        return (float)Integer.parseInt(nbtCompound.get(FloweringLeavesBlock.AGE.getName()).asString()) / 4.0F;
+                    }
+                } catch (NumberFormatException ignored) {}
+                return 0.0F;
+            });
+            ModelPredicateProviderRegistry.register(FRUITING_OAK_LEAVES.get().asItem(), new Identifier("age"), (stack, world, entity, seed) -> {
                 NbtCompound nbtCompound = stack.getSubNbt("BlockStateTag");
                 try {
                     if (nbtCompound != null && nbtCompound.get(FloweringLeavesBlock.AGE.getName()) != null) {
@@ -308,13 +356,15 @@ public class Blossom {
         }
 
         @SubscribeEvent
-        public static void registerBlockColorProviders(final ColorHandlerEvent.Block color) {
-            color.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FLOWERING_OAK_LEAVES.get());
+        public static void blockColorHandlerEvents(ColorHandlerEvent.Block event) {
+            event.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FLOWERING_OAK_LEAVES.get());
+            event.getBlockColors().registerColorProvider((state, world, pos, tintIndex) -> world != null && pos != null ? BiomeColors.getFoliageColor(world, pos) : FoliageColors.getColor(0.5, 1.0), Blossom.FRUITING_OAK_LEAVES.get());
         }
 
         @SubscribeEvent
-        public static void registerItemColorProviders(final ColorHandlerEvent.Item color) {
-            color.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), Blossom.FLOWERING_OAK_LEAVES.get());
+        public static void itemColorHandlerEvents(ColorHandlerEvent.Item event) {
+            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), Blossom.FLOWERING_OAK_LEAVES.get());
+            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : MinecraftClient.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().getDefaultState(), null, null, tintIndex), FRUITING_OAK_LEAVES.get());
         }
 
     }
@@ -329,6 +379,7 @@ public class Blossom {
 
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        PARTICLES.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
 }
