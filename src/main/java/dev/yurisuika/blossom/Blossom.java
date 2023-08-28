@@ -307,8 +307,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static void registerItemGroupEvents() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
-            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES.asItem());
-            content.addAfter(FLOWERING_OAK_LEAVES.asItem(), FRUITING_OAK_LEAVES.asItem());
+            content.addAfter(Items.FLOWERING_AZALEA_LEAVES, FLOWERING_OAK_LEAVES.asItem(), FRUITING_OAK_LEAVES.asItem());
         });
     }
 
