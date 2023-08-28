@@ -1,0 +1,7 @@
+{
+  "parent": "blossom:block/fruiting_leaves",
+  "textures": {
+    "all": "minecraft:block/oak_leaves",
+    "fruit": "blossom:block/fruiting_oak_leaves_stage3"
+  }
+}
