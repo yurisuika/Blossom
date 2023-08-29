@@ -21,7 +21,7 @@ public abstract class BeeEntityMixin {
     @Inject(method = "getPathfindingFavor", at = @At("HEAD"), cancellable = true)
     private void injectGetPathfindingFavor(BlockPos pos, WorldView world, CallbackInfoReturnable<Float> cir) {
         if (world.getBlockState(pos).getBlock() instanceof LeavesBlock) {
-            cir.setReturnValue(0.0F);
+            cir.setReturnValue(2.0F);
         }
     }
 
