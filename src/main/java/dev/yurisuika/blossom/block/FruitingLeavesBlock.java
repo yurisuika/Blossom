@@ -39,7 +39,7 @@ import java.util.OptionalInt;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static dev.yurisuika.blossom.Blossom.*;
+import static dev.yurisuika.blossom.client.option.BlossomConfig.*;
 
 public class FruitingLeavesBlock extends LeavesBlock implements Fertilizable {
 
