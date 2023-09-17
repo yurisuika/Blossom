@@ -16,7 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 
-import static dev.yurisuika.blossom.Blossom.*;
+import static dev.yurisuika.blossom.client.option.BlossomConfig.*;
 import static net.minecraft.server.command.CommandManager.*;
 
 public class BlossomCommand {
@@ -35,18 +35,18 @@ public class BlossomCommand {
                         )
                         .then(literal("reset")
                                 .executes(context -> {
-                                    config.value = new Value(
-                                            new Value.Blossoming(0.2F, 10.0D),
-                                            new Value.Fruiting(0.2F, 10.0D),
-                                            new Value.Harvesting(3, 0.5714286F)
+                                    config.value = new Config.Value(
+                                            new Config.Value.Blossoming(0.2F, 10.0D),
+                                            new Config.Value.Fruiting(0.2F, 10.0D),
+                                            new Config.Value.Harvesting(3, 0.5714286F)
                                     );
-                                    config.filter = new Filter(
-                                            new Filter.Temperature(-2.0F, 2.0F),
-                                            new Filter.Downfall(0.0F, 1.0F),
-                                            new Filter.Dimension(new String[]{"minecraft:overworld"}, new String[]{"minecraft:the_nether", "minecraft:the_end"}),
-                                            new Filter.Biome(new String[]{"minecraft:forest"}, new String[]{"minecraft:the_void"})
+                                    config.filter = new Config.Filter(
+                                            new Config.Filter.Temperature(-2.0F, 2.0F),
+                                            new Config.Filter.Downfall(0.0F, 1.0F),
+                                            new Config.Filter.Dimension(new String[]{"minecraft:overworld"}, new String[]{"minecraft:the_nether", "minecraft:the_end"}),
+                                            new Config.Filter.Biome(new String[]{"minecraft:forest"}, new String[]{"minecraft:the_void"})
                                     );
-                                    config.toggle = new Toggle(
+                                    config.toggle = new Config.Toggle(
                                             false,
                                             false
                                     );
