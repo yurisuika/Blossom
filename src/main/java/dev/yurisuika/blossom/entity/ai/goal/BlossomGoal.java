@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import static dev.yurisuika.blossom.Blossom.*;
+import static dev.yurisuika.blossom.client.option.BlossomConfig.*;
 import static net.minecraft.block.LeavesBlock.*;
 
 public class BlossomGoal extends Goal {
