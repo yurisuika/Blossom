@@ -13,7 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 
-import static dev.yurisuika.blossom.Blossom.*;
+import static dev.yurisuika.blossom.client.option.BlossomConfig.*;
 import static net.minecraft.server.command.CommandManager.*;
 
 public class BlossomCommand {
@@ -32,18 +32,18 @@ public class BlossomCommand {
                         )
                         .then(literal("reset")
                                 .executes(context -> {
-                                    config.value = new Value(
-                                            new Value.Blossoming(0.2F, 10.0D),
-                                            new Value.Fruiting(0.2F, 10.0D),
-                                            new Value.Harvesting(3, 0.5714286F)
+                                    config.value = new Config.Value(
+                                            new Config.Value.Blossoming(0.2F, 10.0D),
+                                            new Config.Value.Fruiting(0.2F, 10.0D),
+                                            new Config.Value.Harvesting(3, 0.5714286F)
                                     );
-                                    config.filter = new Filter(
-                                            new Filter.Temperature(-2.0F, 2.0F),
-                                            new Filter.Downfall(0.0F, 1.0F),
-                                            new Filter.Dimension(new String[]{"minecraft:overworld"}, new String[]{"minecraft:the_nether", "minecraft:the_end"}),
-                                            new Filter.Biome(new String[]{"minecraft:forest"}, new String[]{"minecraft:the_void"})
+                                    config.filter = new Config.Filter(
+                                            new Config.Filter.Temperature(-2.0F, 2.0F),
+                                            new Config.Filter.Downfall(0.0F, 1.0F),
+                                            new Config.Filter.Dimension(new String[]{"minecraft:overworld"}, new String[]{"minecraft:the_nether", "minecraft:the_end"}),
+                                            new Config.Filter.Biome(new String[]{"minecraft:forest"}, new String[]{"minecraft:the_void"})
                                     );
-                                    config.toggle = new Toggle(
+                                    config.toggle = new Config.Toggle(
                                             false,
                                             false
                                     );
@@ -191,7 +191,7 @@ public class BlossomCommand {
                                         .then(literal("add")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").method_40134().getKey().get().getValue().toString();
                                                             if (Arrays.stream(config.filter.dimension.whitelist).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.dimension.whitelist.add.failed", dimension));
                                                                 return 0;
@@ -209,7 +209,7 @@ public class BlossomCommand {
                                         .then(literal("remove")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").method_40134().getKey().get().getValue().toString();
                                                             if (Arrays.stream(config.filter.dimension.whitelist).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.dimension.whitelist.remove.failed", dimension));
                                                                 return 0;
@@ -239,7 +239,7 @@ public class BlossomCommand {
                                         .then(literal("add")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").method_40134().getKey().get().getValue().toString();
                                                             if (Arrays.stream(config.filter.dimension.blacklist).anyMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.biome.blacklist.add.failed", dimension));
                                                                 return 0;
@@ -257,7 +257,7 @@ public class BlossomCommand {
                                         .then(literal("remove")
                                                 .then(argument("dimension", DimensionArgumentType.dimension())
                                                         .executes(context -> {
-                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").toString();
+                                                            String dimension = DimensionArgumentType.getDimensionArgument(context, "dimension").method_40134().getKey().get().getValue().toString();
                                                             if (Arrays.stream(config.filter.dimension.blacklist).noneMatch(dimension::equalsIgnoreCase)) {
                                                                 context.getSource().sendError(new TranslatableText("commands.blossom.filter.dimension.blacklist.remove.failed", dimension));
                                                                 return 0;
