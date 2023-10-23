@@ -234,7 +234,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements Fertilizable {
         return updateDistanceFromLogs(getDefaultState().with(PERSISTENT, true).with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER).with(AGE, 0).with(RIPENESS, 0), ctx.getWorld(), ctx.getBlockPos());
     }
 
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state, boolean isClient) {
+    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state) {
         return !isMature(state);
     }
 
