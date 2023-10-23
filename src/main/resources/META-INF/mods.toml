@@ -18,7 +18,7 @@ Apples blossom upon leaves by the pollen from bees!
 [[dependencies.blossom]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20,1.21)"
+versionRange = "[1.20,1.20.2)"
 ordering = "NONE"
 side = "BOTH"
 
