@@ -42,7 +42,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
 
     public static final Block FRUITING_OAK_LEAVES = new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, FabricBlockSettings.create()
             .mapColor(MapColor.DARK_GREEN)
-            .strength(0.2f)
+            .strength(0.2F)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
@@ -54,7 +54,7 @@ public class Blossom implements ModInitializer, ClientModInitializer {
             .solidBlock(Blocks::never));
     public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES, FabricBlockSettings.create()
             .mapColor(MapColor.DARK_GREEN)
-            .strength(0.2f)
+            .strength(0.2F)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
