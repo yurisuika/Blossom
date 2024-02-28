@@ -54,7 +54,7 @@ public class Blossom {
 
     public static final RegistryObject<Block> FRUITING_OAK_LEAVES = register("fruiting_oak_leaves", () -> new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, AbstractBlock.Settings.create()
             .mapColor(MapColor.DARK_GREEN)
-            .strength(0.2f)
+            .strength(0.2F)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
@@ -66,7 +66,7 @@ public class Blossom {
             .solidBlock(BlocksInvoker::invokeNever)), new Item.Settings());
     public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES.get(), AbstractBlock.Settings.create()
             .mapColor(MapColor.DARK_GREEN)
-            .strength(0.2f)
+            .strength(0.2F)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
