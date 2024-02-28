@@ -52,7 +52,7 @@ public class Blossom {
     public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, "blossom");
 
     public static final RegistryObject<Block> FRUITING_OAK_LEAVES = register("fruiting_oak_leaves", () -> new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, AbstractBlock.Settings.of(Material.LEAVES)
-            .strength(0.2f)
+            .strength(0.2F)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
@@ -60,7 +60,7 @@ public class Blossom {
             .suffocates(BlocksInvoker::invokeNever)
             .blockVision(BlocksInvoker::invokeNever)), new Item.Settings());
     public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = register("flowering_oak_leaves", () -> new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES.get(), AbstractBlock.Settings.of(Material.LEAVES)
-            .strength(0.2f)
+            .strength(0.2F)
             .ticksRandomly()
             .sounds(BlockSoundGroup.GRASS)
             .nonOpaque()
