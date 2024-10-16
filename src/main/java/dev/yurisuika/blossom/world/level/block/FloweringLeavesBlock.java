@@ -36,7 +36,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.OptionalInt;
 import java.util.Random;
 
-
 public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlock {
 
     public final Block shearedBlock;
