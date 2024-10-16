@@ -63,7 +63,7 @@ public class BlossomGoal extends Goal {
         if (Option.getWhitelist()) {
             Arrays.stream(Option.getDimensionWhitelist()).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<DimensionType> tag = TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(entry.substring(1)));
+                    TagKey<DimensionType> tag = TagKey.create(Registries.DIMENSION_TYPE, ResourceLocation.tryParse(entry.substring(1)));
                     if (Objects.nonNull(tag)) {
                         if (dimension.is(tag)) {
                             whitelist.set(true);
@@ -75,7 +75,7 @@ public class BlossomGoal extends Goal {
             });
             Arrays.stream(Option.getBiomeWhitelist()).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<Biome> tag = TagKey.create(Registries.BIOME, new ResourceLocation(entry.substring(1)));
+                    TagKey<Biome> tag = TagKey.create(Registries.BIOME, ResourceLocation.tryParse(entry.substring(1)));
                     if (Objects.nonNull(tag)) {
                         if (biome.is(tag)) {
                             whitelist.set(true);
@@ -91,7 +91,7 @@ public class BlossomGoal extends Goal {
         if (Option.getBlacklist()) {
             Arrays.stream(Option.getDimensionBlacklist()).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<DimensionType> tag = TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(entry.substring(1)));
+                    TagKey<DimensionType> tag = TagKey.create(Registries.DIMENSION_TYPE, ResourceLocation.tryParse(entry.substring(1)));
                     if (Objects.nonNull(tag)) {
                         if (dimension.is(tag)) {
                             blacklist.set(false);
@@ -103,7 +103,7 @@ public class BlossomGoal extends Goal {
             });
             Arrays.stream(Option.getBiomeBlacklist()).forEach(entry -> {
                 if (entry.startsWith("#")) {
-                    TagKey<Biome> tag = TagKey.create(Registries.BIOME, new ResourceLocation(entry.substring(1)));
+                    TagKey<Biome> tag = TagKey.create(Registries.BIOME, ResourceLocation.tryParse(entry.substring(1)));
                     if (Objects.nonNull(tag)) {
                         if (biome.is(tag)) {
                             blacklist.set(false);

@@ -5,6 +5,7 @@ import dev.yurisuika.blossom.util.config.Option;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -260,7 +261,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
-                dropFruit(level, pos, shearedItem, (itemStack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(itemStack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FORTUNE, itemStack) : 0);
+                dropFruit(level, pos, shearedItem, (itemStack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(itemStack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), itemStack) : 0);
                 itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
                 if (!level.isClientSide()) {
                     player.awardStat(Stats.ITEM_USED.get(item));

@@ -76,17 +76,17 @@ public class Blossom implements ModInitializer {
     public static final SimpleParticleType BLOSSOM = FabricParticleTypes.simple(false);
 
     public static void registerBlocks() {
-        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
-        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation("blossom", "fruiting_oak_leaves"), FRUITING_OAK_LEAVES);
+        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), FLOWERING_OAK_LEAVES);
+        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"), FRUITING_OAK_LEAVES);
     }
 
     public static void registerItems() {
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Properties()));
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("blossom", "fruiting_oak_leaves"), new BlockItem(FRUITING_OAK_LEAVES, new Item.Properties()));
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), new BlockItem(FLOWERING_OAK_LEAVES, new Item.Properties()));
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"), new BlockItem(FRUITING_OAK_LEAVES, new Item.Properties()));
     }
 
     public static void registerParticles() {
-        Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation("blossom", "blossom"), BLOSSOM);
+        Registry.register(BuiltInRegistries.PARTICLE_TYPE, ResourceLocation.fromNamespaceAndPath("blossom", "blossom"), BLOSSOM);
     }
 
     public static void registerCompostables() {
@@ -157,7 +157,7 @@ public class Blossom implements ModInitializer {
 
         @Environment(EnvType.CLIENT)
         public static void registerModelPredicateProviders() {
-            ItemProperties.register(FLOWERING_OAK_LEAVES.asItem(), new ResourceLocation("age"), (stack, world, entity, seed) -> {
+            ItemProperties.register(FLOWERING_OAK_LEAVES.asItem(), ResourceLocation.parse("age"), (stack, world, entity, seed) -> {
                 BlockItemStateProperties blockItemStateProperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
                 Integer integer = blockItemStateProperties.get(FloweringLeavesBlock.AGE);
                 if (Objects.nonNull(integer)) {
@@ -165,7 +165,7 @@ public class Blossom implements ModInitializer {
                 }
                 return 0.0F;
             });
-            ItemProperties.register(FRUITING_OAK_LEAVES.asItem(), new ResourceLocation("age"), (stack, world, entity, seed) -> {
+            ItemProperties.register(FRUITING_OAK_LEAVES.asItem(), ResourceLocation.parse("age"), (stack, world, entity, seed) -> {
                 BlockItemStateProperties blockItemStateProperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
                 Integer integer = blockItemStateProperties.get(FruitingLeavesBlock.AGE);
                 if (Objects.nonNull(integer)) {
