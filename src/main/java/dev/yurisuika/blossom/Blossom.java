@@ -137,7 +137,7 @@ public class Blossom {
             ItemBlockRenderTypes.setRenderLayer(Blossom.FLOWERING_OAK_LEAVES.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(Blossom.FRUITING_OAK_LEAVES.get(), RenderType.cutout());
 
-            ItemProperties.register(FLOWERING_OAK_LEAVES.get().asItem(), new ResourceLocation("age"), (stack, world, entity, seed) -> {
+            ItemProperties.register(FLOWERING_OAK_LEAVES.get().asItem(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
                 BlockItemStateProperties blockItemStateProperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
                 Integer integer = blockItemStateProperties.get(FloweringLeavesBlock.AGE);
                 if (Objects.nonNull(integer)) {
@@ -145,7 +145,7 @@ public class Blossom {
                 }
                 return 0.0F;
             });
-            ItemProperties.register(FRUITING_OAK_LEAVES.get().asItem(), new ResourceLocation("age"), (stack, world, entity, seed) -> {
+            ItemProperties.register(FRUITING_OAK_LEAVES.get().asItem(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
                 BlockItemStateProperties blockItemStateProperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
                 Integer integer = blockItemStateProperties.get(FruitingLeavesBlock.AGE);
                 if (Objects.nonNull(integer)) {
