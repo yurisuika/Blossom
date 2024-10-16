@@ -16,13 +16,14 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -137,21 +138,19 @@ public class Blossom {
             ItemBlockRenderTypes.setRenderLayer(Blossom.FRUITING_OAK_LEAVES.get(), RenderType.cutout());
 
             ItemProperties.register(FLOWERING_OAK_LEAVES.get().asItem(), new ResourceLocation("age"), (stack, world, entity, seed) -> {
-                CompoundTag tag = stack.getTagElement("BlockStateTag");
-                try {
-                    if (Objects.nonNull(tag) && Objects.nonNull(tag.get(FloweringLeavesBlock.AGE.getName()))) {
-                        return Integer.parseInt(tag.get(FloweringLeavesBlock.AGE.getName()).getAsString()) / 4.0F;
-                    }
-                } catch (NumberFormatException ignored) {}
+                BlockItemStateProperties blockItemStateProperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
+                Integer integer = blockItemStateProperties.get(FloweringLeavesBlock.AGE);
+                if (Objects.nonNull(integer)) {
+                    return integer.intValue() / 4.0F;
+                }
                 return 0.0F;
             });
             ItemProperties.register(FRUITING_OAK_LEAVES.get().asItem(), new ResourceLocation("age"), (stack, world, entity, seed) -> {
-                CompoundTag tag = stack.getTagElement("BlockStateTag");
-                try {
-                    if (Objects.nonNull(tag) && Objects.nonNull(tag.get(FloweringLeavesBlock.AGE.getName()))) {
-                        return Integer.parseInt(tag.get(FloweringLeavesBlock.AGE.getName()).getAsString()) / 8.0F;
-                    }
-                } catch (NumberFormatException ignored) {}
+                BlockItemStateProperties blockItemStateProperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
+                Integer integer = blockItemStateProperties.get(FruitingLeavesBlock.AGE);
+                if (Objects.nonNull(integer)) {
+                    return integer.intValue() / 8.0F;
+                }
                 return 0.0F;
             });
         }
