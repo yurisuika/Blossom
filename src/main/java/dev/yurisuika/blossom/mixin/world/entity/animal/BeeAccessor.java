@@ -11,7 +11,4 @@ public interface BeeAccessor {
     @Accessor("savedFlowerPos")
     void setSavedFlowerPos(BlockPos savedFlowerPos);
 
-    @Accessor
-    Bee.BeePollinateGoal getBeePollinateGoal();
-
 }

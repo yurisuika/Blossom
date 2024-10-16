@@ -18,12 +18,4 @@ public interface BeeInvoker {
     @Invoker("getCropsGrownSincePollination")
     int invokeGetCropsGrownSincePollination();
 
-    @Mixin(Bee.BeePollinateGoal.class)
-    interface BeePollinateGoalInvoker {
-
-        @Invoker("isPollinating")
-        boolean invokeIsPollinating();
-
-    }
-
 }
