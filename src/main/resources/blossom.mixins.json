@@ -13,6 +13,7 @@
     "world.entity.animal.BeeMixin$BeeGoToKnownFlowerGoalMixin",
     "world.entity.animal.BeeMixin$BeeGrowCropGoalMixin",
     "world.level.biome.BiomeAccessor",
+    "world.level.block.BlocksInvoker",
     "world.level.block.state.BlockBehaviourMixin"
   ],
   "client": [

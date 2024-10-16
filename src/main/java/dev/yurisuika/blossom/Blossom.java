@@ -1,6 +1,7 @@
 package dev.yurisuika.blossom;
 
 import dev.yurisuika.blossom.client.particle.BlossomParticle;
+import dev.yurisuika.blossom.mixin.world.level.block.BlocksInvoker;
 import dev.yurisuika.blossom.server.commands.BlossomCommand;
 import dev.yurisuika.blossom.util.Validate;
 import dev.yurisuika.blossom.util.config.Config;
@@ -18,7 +19,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -41,6 +41,7 @@ import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
@@ -48,30 +49,30 @@ import java.util.Objects;
 
 public class Blossom implements ModInitializer {
 
-    public static final Block FRUITING_OAK_LEAVES = new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, FabricBlockSettings.create()
+    public static final Block FRUITING_OAK_LEAVES = new FruitingLeavesBlock(Blocks.OAK_LEAVES, Items.APPLE, BlockBehaviour.Properties.of()
             .mapColor(MapColor.PLANT)
             .strength(0.2F)
-            .ticksRandomly()
-            .sounds(SoundType.GRASS)
-            .nonOpaque()
-            .allowsSpawning(Blocks::ocelotOrParrot)
-            .suffocates(Blocks::never)
-            .blockVision(Blocks::never)
-            .burnable()
-            .pistonBehavior(PushReaction.DESTROY)
-            .solidBlock(Blocks::never));
-    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES, FabricBlockSettings.create()
+            .randomTicks()
+            .sound(SoundType.GRASS)
+            .noOcclusion()
+            .isValidSpawn(BlocksInvoker::invokeOcelotOrParrot)
+            .isSuffocating(BlocksInvoker::invokeNever)
+            .isViewBlocking(BlocksInvoker::invokeNever)
+            .ignitedByLava()
+            .pushReaction(PushReaction.DESTROY)
+            .isRedstoneConductor(BlocksInvoker::invokeNever));
+    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(Blocks.OAK_LEAVES, Blossom.FRUITING_OAK_LEAVES, BlockBehaviour.Properties.of()
             .mapColor(MapColor.PLANT)
             .strength(0.2F)
-            .ticksRandomly()
-            .sounds(SoundType.GRASS)
-            .nonOpaque()
-            .allowsSpawning(Blocks::ocelotOrParrot)
-            .suffocates(Blocks::never)
-            .blockVision(Blocks::never)
-            .burnable()
-            .pistonBehavior(PushReaction.DESTROY)
-            .solidBlock(Blocks::never));
+            .randomTicks()
+            .sound(SoundType.GRASS)
+            .noOcclusion()
+            .isValidSpawn(BlocksInvoker::invokeOcelotOrParrot)
+            .isSuffocating(BlocksInvoker::invokeNever)
+            .isViewBlocking(BlocksInvoker::invokeNever)
+            .ignitedByLava()
+            .pushReaction(PushReaction.DESTROY)
+            .isRedstoneConductor(BlocksInvoker::invokeNever));
 
     public static final SimpleParticleType BLOSSOM = FabricParticleTypes.simple(false);
 

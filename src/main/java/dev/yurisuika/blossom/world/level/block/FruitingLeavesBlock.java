@@ -121,7 +121,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                 temperature += 2;
                 float f = (downfall * temperature) / 4;
                 f = ((4 - 1) * f) + 1;
-                Precipitation precipitation = level.getBiome(pos).value().getPrecipitationAt(pos);
+                Precipitation precipitation = level.getBiome(pos).value().getPrecipitationAt(pos, level.getSeaLevel());
                 if (level.isRaining() && precipitation == Precipitation.RAIN) {
                     f = 5.0F;
                 }
