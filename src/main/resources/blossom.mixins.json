@@ -12,10 +12,10 @@
     "world.entity.animal.BeeMixin",
     "world.entity.animal.BeeMixin$BeeGrowCropGoalMixin",
     "world.entity.animal.BeeMixin$BeeGoToKnownFlowerGoalMixin",
-    "world.level.block.state.BlockBehaviourMixin",
     "world.level.block.BlocksInvoker",
     "world.level.block.EntityCollisionContextMixin",
-    "world.level.block.LeavesBlockMixin"
+    "world.level.block.LeavesBlockMixin",
+    "world.level.block.state.BlockBehaviourMixin"
   ],
   "client": [
   ],
