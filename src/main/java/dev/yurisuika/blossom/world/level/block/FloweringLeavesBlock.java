@@ -15,6 +15,7 @@ import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -247,12 +248,12 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         applyGrowth(level, pos, state);
     }
 
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useItemOn(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
         Item item = itemStack.getItem();
         if (item instanceof ShearsItem) {
             level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
-            itemStack.hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(hand));
+            itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             if (!level.isClientSide()) {
                 player.awardStat(Stats.ITEM_USED.get(item));
             }

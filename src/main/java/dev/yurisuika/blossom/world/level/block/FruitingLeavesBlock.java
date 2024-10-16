@@ -14,6 +14,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -253,14 +254,14 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
         popResource(level, pos, new ItemStack(item, count));
     }
 
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useItemOn(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isMaxAge(state)) {
             Item item = itemStack.getItem();
             if (item instanceof ShearsItem) {
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
-                dropFruit(level, pos, shearedItem, (itemStack.isEnchanted() && EnchantmentHelper.getEnchantments(itemStack).containsKey(Enchantments.BLOCK_FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, itemStack) : 0);
-                itemStack.hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(hand));
+                dropFruit(level, pos, shearedItem, (itemStack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(itemStack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FORTUNE, itemStack) : 0);
+                itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
                 if (!level.isClientSide()) {
                     player.awardStat(Stats.ITEM_USED.get(item));
                 }
