@@ -121,7 +121,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                 if (level.isRaining() && precipitation == Precipitation.RAIN) {
                     f = 5.0F;
                 }
-                if (random.nextInt((int)(25.0F / f) + 1) == 0) {
+                if (random.nextInt((int) (25.0F / f) + 1) == 0) {
                     level.setBlock(pos,  defaultBlockState().setValue(AGE, i + 1)
                             .setValue(DISTANCE, state.getValue(DISTANCE))
                             .setValue(PERSISTENT, state.getValue(PERSISTENT))
