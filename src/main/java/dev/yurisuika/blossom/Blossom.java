@@ -179,15 +179,15 @@ public class Blossom {
 
     }
 
-    public Blossom() {
+    public Blossom(FMLJavaModLoadingContext context) {
         Config.loadConfig();
         Validate.checkBounds();
 
         MinecraftForge.EVENT_BUS.register(this);
 
-        BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        PARTICLES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        BLOCKS.register(context.getModEventBus());
+        ITEMS.register(context.getModEventBus());
+        PARTICLES.register(context.getModEventBus());
     }
 
 }

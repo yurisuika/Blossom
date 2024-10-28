@@ -14,7 +14,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -125,7 +125,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                 if (level.isRaining() && precipitation == Precipitation.RAIN) {
                     f = 5.0F;
                 }
-                if (random.nextInt((int)(25.0F / f) + 1) == 0) {
+                if (random.nextInt((int) (25.0F / f) + 1) == 0) {
                     level.setBlock(pos,  defaultBlockState().setValue(AGE, i + 1)
                             .setValue(DISTANCE, state.getValue(DISTANCE))
                             .setValue(PERSISTENT, state.getValue(PERSISTENT))
@@ -255,7 +255,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
         popResource(level, pos, new ItemStack(item, count));
     }
 
-    public InteractionResult useItemOn(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isMaxAge(state)) {
             Item item = itemStack.getItem();
@@ -273,9 +273,9 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                         .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
                 );
             }
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         } else {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
     }
 
