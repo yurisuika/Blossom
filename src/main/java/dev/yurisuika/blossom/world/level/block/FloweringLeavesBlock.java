@@ -1,6 +1,6 @@
 package dev.yurisuika.blossom.world.level.block;
 
-import dev.yurisuika.blossom.Blossom;
+import dev.yurisuika.blossom.core.particles.BlossomParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
@@ -53,6 +53,14 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         registerDefaultState(stateDefinition.any().setValue(DISTANCE, 1).setValue(PERSISTENT, false).setValue(AGE, 0).setValue(RIPENESS, 0));
     }
 
+    public Block getShearedBlock() {
+        return shearedBlock;
+    }
+
+    public Block getPollinatedBlock() {
+        return pollinatedBlock;
+    }
+
     public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
@@ -86,10 +94,10 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
     }
 
     public int getRipeness(BlockState state) {
-        return  state.getValue(getRipenessProperty());
+        return state.getValue(getRipenessProperty());
     }
 
-    public boolean isRipe(BlockState state) {
+    public boolean isMaxRipeness(BlockState state) {
         return state.getValue(getRipenessProperty()) >= getMaxRipeness();
     }
 
@@ -119,19 +127,19 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         } else if (isMaxAge(state)) {
             int i = getRipeness(state);
             if (i < getMaxRipeness()) {
-                if (random.nextInt((int)(25.0F) + 1) == 0) {
-                    level.setBlock(pos, defaultBlockState().setValue(RIPENESS, i + 1), 2);
+                if (random.nextInt(25 + 1) == 0) {
+                    level.setBlock(pos, state.setValue(RIPENESS, i + 1), 2);
                 }
             }
         }
-        if (isRipe(state)) {
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+        if (isMaxRipeness(state)) {
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
             );
         }
         if (!isMaxAge(state) && state.getValue(RIPENESS) > 0) {
-            level.setBlock(pos, defaultBlockState().setValue(RIPENESS, 0), 2);
+            level.setBlock(pos, state.setValue(RIPENESS, 0), 2);
         }
     }
 
@@ -145,10 +153,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         if (i > j) {
             i = j;
         }
-        level.setBlock(pos, defaultBlockState().setValue(AGE, i)
-                .setValue(DISTANCE, state.getValue(DISTANCE))
-                .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                .setValue(RIPENESS, state.getValue(RIPENESS)), 2);
+        level.setBlock(pos, state.setValue(AGE, i), 2);
     }
 
     public int getGrowthAmount(Level level) {
@@ -196,7 +201,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
 
     public void animateTick(BlockState state, Level level, BlockPos pos, Random random) {
         super.animateTick(state, level, pos, random);
-        if (random.nextInt(10) != 0) {
+        if (random.nextInt(10 * (4 - getAge(state))) != 0) {
             return;
         }
         if (FloweringLeavesBlock.isFaceFull(level.getBlockState(pos.below()).getCollisionShape(level, pos.below()), Direction.UP)) {
@@ -205,7 +210,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         double d = pos.getX() + random.nextDouble();
         double e = pos.getY() - 0.05D;
         double f = pos.getZ() + random.nextDouble();
-        level.addParticle(Blossom.BLOSSOM.get(), d, e, f, 0.0D, 0.0D, 0.0D);
+        level.addParticle(BlossomParticleTypes.FLOWERING_OAK_LEAVES.get(), d, e, f, 0.0D, 0.0D, 0.0D);
     }
 
     public void createBlockStateDefinition(Builder<Block, BlockState> builder) {
@@ -238,14 +243,13 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
                 player.awardStat(Stats.ITEM_USED.get(item));
             }
             level.gameEvent(player, GameEvent.SHEAR, pos);
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
             );
             return InteractionResult.SUCCESS;
-        } else {
-            return InteractionResult.PASS;
         }
+        return InteractionResult.PASS;
     }
 
 }
