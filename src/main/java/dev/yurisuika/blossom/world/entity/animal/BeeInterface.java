@@ -24,6 +24,4 @@ public interface BeeInterface {
 
     void dropLeaves();
 
-    boolean areLeavesValid(BlockPos pos);
-
 }

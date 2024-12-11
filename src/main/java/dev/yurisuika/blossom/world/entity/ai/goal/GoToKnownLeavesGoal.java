@@ -22,7 +22,7 @@ public class GoToKnownLeavesGoal extends Goal {
     }
 
     public boolean canUse() {
-        return ((BeeInterface) entity).getSavedLeavesPos() != null && !entity.hasRestriction() && entity.hasNectar() && ((BeeInterface) entity).areLeavesValid(((BeeInterface) entity).getSavedLeavesPos()) && !((BeeInvoker) entity).invokeCloserThan(((BeeInterface) entity).getSavedLeavesPos(), 2) && !entity.isAngry();
+        return ((BeeInterface) entity).getSavedLeavesPos() != null && !entity.hasRestriction() && entity.hasNectar() && !((BeeInvoker) entity).invokeCloserThan(((BeeInterface) entity).getSavedLeavesPos(), 2) && !entity.isAngry();
     }
 
     public boolean canContinueToUse() {

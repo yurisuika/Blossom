@@ -5,11 +5,13 @@ import dev.yurisuika.blossom.mixin.world.entity.ai.goal.GoalInvoker;
 import dev.yurisuika.blossom.world.entity.ai.goal.BlossomLeavesGoal;
 import dev.yurisuika.blossom.world.entity.ai.goal.FruitLeavesGoal;
 import dev.yurisuika.blossom.world.entity.ai.goal.GoToKnownLeavesGoal;
+import dev.yurisuika.blossom.world.entity.ai.goal.ValidateLeavesGoal;
 import dev.yurisuika.blossom.world.entity.animal.BeeInterface;
 import dev.yurisuika.blossom.world.level.block.FruitingLeavesBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -47,6 +49,7 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         blossomLeavesGoal = new BlossomLeavesGoal(bee);
         fruitLeavesGoal = new FruitLeavesGoal(bee);
         goToKnownLeavesGoal = new GoToKnownLeavesGoal(bee);
+        bee.getGoalSelector().addGoal(3, new ValidateLeavesGoal(bee));
         bee.getGoalSelector().addGoal(4, getBlossomLeavesGoal());
         bee.getGoalSelector().addGoal(4, getFruitLeavesGoal());
         bee.getGoalSelector().addGoal(6, getGoToKnownLeavesGoal());
@@ -88,16 +91,10 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         remainingCooldownBeforeLocatingNewLeaves = Mth.nextInt(random, 20, 60);
     }
 
-    @Unique
-    public boolean areLeavesValid(BlockPos pos) {
-        return level().isLoaded(pos) && level().getBlockState(getSavedLeavesPos()).is(BlockTags.LEAVES);
-    }
-
     @Inject(method = "<init>", at = @At("RETURN"))
     private void injectInit(EntityType entityType, Level level, CallbackInfo ci) {
         remainingCooldownBeforeLocatingNewLeaves = Mth.nextInt(random, 20, 60);
     }
-
 
     @Inject(method = "getWalkTargetValue", at = @At("HEAD"), cancellable = true)
     private void injectGetWalkTargetValue(BlockPos pos, LevelReader level, CallbackInfoReturnable<Float> cir) {
@@ -139,8 +136,8 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         }
     }
 
-    @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Animal;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    private void injectHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "hurtServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Animal;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+    private void injectHurt(ServerLevel level, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!level().isClientSide()) {
             getBlossomLeavesGoal().stopBlossoming();
             getFruitLeavesGoal().stopBlossoming();
