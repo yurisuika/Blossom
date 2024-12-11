@@ -1,6 +1,6 @@
-package dev.yurisuika.blossom.mixin.world.level.block;
+package dev.yurisuika.blossom.mixin.world.phys.shapes;
 
-import dev.yurisuika.blossom.world.level.block.EntityCollisionContextInterface;
+import dev.yurisuika.blossom.world.phys.shapes.EntityCollisionContextInterface;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import org.spongepowered.asm.mixin.Mixin;

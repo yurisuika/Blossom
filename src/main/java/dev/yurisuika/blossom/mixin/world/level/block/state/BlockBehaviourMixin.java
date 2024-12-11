@@ -1,6 +1,6 @@
 package dev.yurisuika.blossom.mixin.world.level.block.state;
 
-import dev.yurisuika.blossom.world.level.block.EntityCollisionContextInterface;
+import dev.yurisuika.blossom.world.phys.shapes.EntityCollisionContextInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.BlockGetter;
