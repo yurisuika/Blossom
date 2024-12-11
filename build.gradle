@@ -12,6 +12,7 @@ group = project.maven_group
 
 repositories {
     maven { url "https://maven.parchmentmc.org/" }
+    maven { url "https://maven.neoforged.net/releases/" }
 }
 
 dependencies {
@@ -20,7 +21,7 @@ dependencies {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
     }
-    forge "net.minecraftforge:forge:${project.forge_version}"
+    neoForge "net.neoforged:neoforge:${project.neo_version}"
 }
 
 processResources {
@@ -37,12 +38,6 @@ tasks.withType(JavaCompile) {
 }
 
 loom {
-    forge {
-        mixinConfigs = [
-                "${project.archives_base_name}.mixins.json"
-        ]
-    }
-
     mixin {
         useLegacyMixinAp = true
         defaultRefmapName = "${project.archives_base_name}.refmap.json"
@@ -55,10 +50,10 @@ java {
 
 jar {
     from("LICENSE")
-    jar.archiveAppendix.set("forge-${project.minecraft_version}")
-    sourcesJar.archiveAppendix.set("forge-${project.minecraft_version}")
-    remapJar.archiveAppendix.set("forge-${project.minecraft_version}")
-    remapSourcesJar.archiveAppendix.set("forge-${project.minecraft_version}")
+    jar.archiveAppendix.set("neoforge-${project.minecraft_version}")
+    sourcesJar.archiveAppendix.set("neoforge-${project.minecraft_version}")
+    remapJar.archiveAppendix.set("neoforge-${project.minecraft_version}")
+    remapSourcesJar.archiveAppendix.set("neoforge-${project.minecraft_version}")
 }
 
 publishing {

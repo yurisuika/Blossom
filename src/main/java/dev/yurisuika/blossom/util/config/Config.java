@@ -3,7 +3,7 @@ package dev.yurisuika.blossom.util.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.yurisuika.blossom.config.Options;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.FileWriter;
