@@ -39,33 +39,12 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "condition": "minecraft:all_of",
-                  "terms": [
-                    {
-                      "condition": "minecraft:match_tool",
-                      "predicate": {
-                        "items": [
-                          "minecraft:shears"
-                        ]
-                      }
-                    },
-                    {
-                      "condition": "minecraft:inverted",
-                      "term": {
-                        "condition": "minecraft:match_tool",
-                        "predicate": {
-                          "enchantments": [
-                            {
-                              "enchantment": "minecraft:silk_touch",
-                              "levels": {
-                                "min": 1
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  ]
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "minecraft:shears"
+                    ]
+                  }
                 }
               ],
               "name": "minecraft:oak_leaves"
@@ -98,22 +77,19 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "condition": "minecraft:any_of",
-          "terms": [
-            {
-              "condition": "minecraft:inverted",
-              "term": {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:any_of",
+            "terms": [
+              {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "items": [
                     "minecraft:shears"
                   ]
                 }
-              }
-            },
-            {
-              "condition": "minecraft:inverted",
-              "term": {
+              },
+              {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "enchantments": [
@@ -126,8 +102,8 @@
                   ]
                 }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "entries": [
@@ -216,5 +192,6 @@
       ],
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "blossom:fruiting_oak_leaves"
 }
