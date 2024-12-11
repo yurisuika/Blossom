@@ -14,9 +14,9 @@ import dev.yurisuika.blossom.util.config.options.value.Harvesting;
 public class Options {
 
     public Value value = new Value(
-            new Blossoming(0.2F, 10.0D),
-            new Fruiting(0.2F, 10.0D),
-            new Harvesting(3, 0.5714286F)
+            new Blossoming(0.2F),
+            new Fruiting(0.2F),
+            new Harvesting(0.5714286F, 3)
     );
     public Filter filter = new Filter(
             new Temperature(-2.0F, 2.0F),
