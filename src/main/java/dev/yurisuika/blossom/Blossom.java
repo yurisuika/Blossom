@@ -7,8 +7,6 @@ import dev.yurisuika.blossom.util.Validate;
 import dev.yurisuika.blossom.util.config.Config;
 import dev.yurisuika.blossom.world.entity.animal.BeeInterface;
 import dev.yurisuika.blossom.world.level.block.BlossomBlocks;
-import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
-import dev.yurisuika.blossom.world.level.block.FruitingLeavesBlock;
 import dev.yurisuika.blossom.world.level.item.BlossomItems;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -20,20 +18,12 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.FoliageColor;
-
-import java.util.Objects;
 
 public class Blossom implements ModInitializer {
 
@@ -63,7 +53,6 @@ public class Blossom implements ModInitializer {
         });
     }
 
-    @Override
     public void onInitialize() {
         Config.loadConfig();
         Validate.checkBounds();
@@ -94,29 +83,10 @@ public class Blossom implements ModInitializer {
             ColorProviderRegistry.BLOCK.register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FLOWERING_OAK_LEAVES);
         }
 
-        public static void registerItemColors() {
-            ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FRUITING_OAK_LEAVES);
-            ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FLOWERING_OAK_LEAVES);
-        }
-
-        public static void registerItemProperties() {
-            ItemProperties.register(BlossomItems.FRUITING_OAK_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
-                return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
-            });
-            ItemProperties.register(BlossomItems.FLOWERING_OAK_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
-                return Objects.nonNull(integer) ? integer / 4.0F : 0.0F;
-            });
-        }
-
-        @Override
         public void onInitializeClient() {
             registerParticles();
             registerRenderLayers();
             registerBlockColors();
-            registerItemColors();
-            registerItemProperties();
         }
 
     }
