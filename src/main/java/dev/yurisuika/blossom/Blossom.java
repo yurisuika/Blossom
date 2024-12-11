@@ -120,10 +120,8 @@ public class Blossom {
         @SubscribeEvent
         public static void registerCreativeModeTabs(BuildCreativeModeTabContentsEvent event) {
             if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
-                event.accept(BlossomBlocks.FRUITING_OAK_LEAVES.get());
-                event.getEntries().putAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultInstance(), BlossomItems.FRUITING_OAK_LEAVES.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-                event.accept(BlossomBlocks.FLOWERING_OAK_LEAVES.get());
-                event.getEntries().putAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultInstance(), BlossomItems.FLOWERING_OAK_LEAVES.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultInstance(), BlossomItems.FRUITING_OAK_LEAVES.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                event.insertAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultInstance(), BlossomItems.FLOWERING_OAK_LEAVES.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             }
         }
 

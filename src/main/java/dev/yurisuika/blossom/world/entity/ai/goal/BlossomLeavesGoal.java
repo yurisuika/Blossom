@@ -59,14 +59,14 @@ public class BlossomLeavesGoal extends Goal {
 
         AtomicBoolean whitelist = new AtomicBoolean(false);
         if (Option.getWhitelist()) {
-            Arrays.stream(Option.getDimensionWhitelist()).filter(entry -> entry.startsWith("#") && dimension.is(TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(entry.substring(1)))) || Objects.equals(entry, dimension.unwrapKey().get().location().toString())).map(entry -> true).forEach(whitelist::set);
-            Arrays.stream(Option.getBiomeWhitelist()).filter(entry -> entry.startsWith("#") && biome.is(TagKey.create(Registries.BIOME, new ResourceLocation(entry.substring(1)))) || Objects.equals(entry, biome.unwrapKey().get().location().toString())).map(entry -> true).forEach(whitelist::set);
+            Arrays.stream(Option.getDimensionWhitelist()).filter(entry -> entry.startsWith("#") && dimension.is(TagKey.create(Registries.DIMENSION_TYPE, ResourceLocation.tryParse(entry.substring(1)))) || Objects.equals(entry, dimension.unwrapKey().get().location().toString())).map(entry -> true).forEach(whitelist::set);
+            Arrays.stream(Option.getBiomeWhitelist()).filter(entry -> entry.startsWith("#") && biome.is(TagKey.create(Registries.BIOME, ResourceLocation.tryParse(entry.substring(1)))) || Objects.equals(entry, biome.unwrapKey().get().location().toString())).map(entry -> true).forEach(whitelist::set);
         }
 
         AtomicBoolean blacklist = new AtomicBoolean(true);
         if (Option.getBlacklist()) {
-            Arrays.stream(Option.getDimensionBlacklist()).filter(entry -> entry.startsWith("#") && dimension.is(TagKey.create(Registries.DIMENSION_TYPE, new ResourceLocation(entry.substring(1)))) || Objects.equals(entry, dimension.unwrapKey().get().location().toString())).map(entry -> false).forEach(blacklist::set);
-            Arrays.stream(Option.getBiomeBlacklist()).filter(entry -> entry.startsWith("#") && biome.is(TagKey.create(Registries.BIOME, new ResourceLocation(entry.substring(1)))) || Objects.equals(entry, biome.unwrapKey().get().location().toString())).map(entry -> false).forEach(blacklist::set);
+            Arrays.stream(Option.getDimensionBlacklist()).filter(entry -> entry.startsWith("#") && dimension.is(TagKey.create(Registries.DIMENSION_TYPE, ResourceLocation.tryParse(entry.substring(1)))) || Objects.equals(entry, dimension.unwrapKey().get().location().toString())).map(entry -> false).forEach(blacklist::set);
+            Arrays.stream(Option.getBiomeBlacklist()).filter(entry -> entry.startsWith("#") && biome.is(TagKey.create(Registries.BIOME, ResourceLocation.tryParse(entry.substring(1)))) || Objects.equals(entry, biome.unwrapKey().get().location().toString())).map(entry -> false).forEach(blacklist::set);
         }
 
         if (temperature >= Option.getTemperatureMin() && temperature <= Option.getTemperatureMax()) {
