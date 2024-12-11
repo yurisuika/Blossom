@@ -42,15 +42,6 @@ public class Option {
         Config.saveConfig();
     }
 
-    public static double getBlossomingDistance() {
-        return getBlossoming().getDistance();
-    }
-
-    public static void setBlossomingDistance(double distance) {
-        getBlossoming().setDistance(distance);
-        Config.saveConfig();
-    }
-
     public static Fruiting getFruiting() {
         return getValue().getFruiting();
     }
@@ -69,15 +60,6 @@ public class Option {
         Config.saveConfig();
     }
 
-    public static double getFruitingDistance() {
-        return getFruiting().getDistance();
-    }
-
-    public static void setFruitingDistance(double distance) {
-        getFruiting().setDistance(distance);
-        Config.saveConfig();
-    }
-
     public static Harvesting getHarvesting() {
         return getValue().getHarvesting();
     }
@@ -87,21 +69,21 @@ public class Option {
         Config.saveConfig();
     }
 
-    public static int getHarvestingBonus() {
-        return getHarvesting().getBonus();
-    }
-
-    public static void setHarvestingBonus(int bonus) {
-        getHarvesting().setBonus(bonus);
-        Config.saveConfig();
-    }
-
     public static float getHarvestingChance() {
         return getHarvesting().getChance();
     }
 
     public static void setHarvestingChance(float chance) {
         getHarvesting().setChance(chance);
+        Config.saveConfig();
+    }
+
+    public static int getHarvestingBonus() {
+        return getHarvesting().getBonus();
+    }
+
+    public static void setHarvestingBonus(int bonus) {
+        getHarvesting().setBonus(bonus);
         Config.saveConfig();
     }
 
