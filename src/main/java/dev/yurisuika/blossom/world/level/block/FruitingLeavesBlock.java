@@ -1,10 +1,13 @@
 package dev.yurisuika.blossom.world.level.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.yurisuika.blossom.mixin.world.level.biome.BiomeAccessor;
 import dev.yurisuika.blossom.util.config.Option;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -50,17 +53,30 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
 
     public final Block shearedBlock;
     public final Item shearedItem;
+    public static final MapCodec<FruitingLeavesBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("shearedBlock").forGetter(arg -> arg.shearedBlock), BuiltInRegistries.ITEM.byNameCodec().fieldOf("shearedItem").forGetter(arg -> arg.shearedItem), propertiesCodec()).apply(instance, FruitingLeavesBlock::new));
     public static final IntegerProperty DISTANCE =  BlockStateProperties.DISTANCE;
     public static final BooleanProperty PERSISTENT = BlockStateProperties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
     public static final IntegerProperty RIPENESS = IntegerProperty.create("ripeness", 0, 7);
 
+    public MapCodec<? extends FruitingLeavesBlock> codec() {
+        return CODEC;
+    }
+
     public FruitingLeavesBlock(Block shearedBlock, Item shearedItem, Properties properties) {
         super(properties);
         this.shearedBlock = shearedBlock;
         this.shearedItem = shearedItem;
         registerDefaultState(stateDefinition.any().setValue(DISTANCE, 1).setValue(PERSISTENT, false).setValue(WATERLOGGED, false).setValue(AGE, 0).setValue(RIPENESS, 0));
+    }
+
+    public Block getShearedBlock() {
+        return shearedBlock;
+    }
+
+    public Item getShearedItem() {
+        return shearedItem;
     }
 
     public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
@@ -96,10 +112,10 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
     }
 
     public int getRipeness(BlockState state) {
-        return  state.getValue(getRipenessProperty());
+        return state.getValue(getRipenessProperty());
     }
 
-    public boolean isRipe(BlockState state) {
+    public boolean isMaxRipeness(BlockState state) {
         return state.getValue(getRipenessProperty()) >= getMaxRipeness();
     }
 
@@ -108,7 +124,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
             dropResources(state, level, pos);
             level.removeBlock(pos, false);
         } else if (state.getValue(WATERLOGGED)) {
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
@@ -126,31 +142,27 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                     f = 5.0F;
                 }
                 if (random.nextInt((int) (25.0F / f) + 1) == 0) {
-                    level.setBlock(pos,  defaultBlockState().setValue(AGE, i + 1)
-                            .setValue(DISTANCE, state.getValue(DISTANCE))
-                            .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                            .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-                            .setValue(RIPENESS, state.getValue(RIPENESS)), 2);
+                    level.setBlock(pos, state.setValue(AGE, i + 1), 2);
                 }
             }
         } else if (isMaxAge(state)) {
             int i = getRipeness(state);
             if (i < getMaxRipeness()) {
-                if (random.nextInt((int)(25.0F) + 1) == 0) {
-                    level.setBlock(pos, defaultBlockState().setValue(RIPENESS, i + 1), 2);
+                if (random.nextInt(25 + 1) == 0) {
+                    level.setBlock(pos, state.setValue(RIPENESS, i + 1), 2);
                 }
             }
         }
-        if (isRipe(state)) {
-            dropFruit(level, pos, shearedItem, 0);
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+        if (isMaxRipeness(state)) {
+            dropFruit(level, pos, getShearedItem(), 0);
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
             );
         }
         if (!isMaxAge(state) && state.getValue(RIPENESS) > 0) {
-            level.setBlock(pos, defaultBlockState().setValue(RIPENESS, 0), 2);
+            level.setBlock(pos, state.setValue(RIPENESS, 0), 2);
         }
     }
 
@@ -164,11 +176,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
         if (i > j) {
             i = j;
         }
-        level.setBlock(pos, defaultBlockState().setValue(AGE, i)
-                .setValue(DISTANCE, state.getValue(DISTANCE))
-                .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-                .setValue(RIPENESS, state.getValue(RIPENESS)), 2);
+        level.setBlock(pos, state.setValue(AGE, i), 2);
     }
 
     public int getGrowthAmount(Level level) {
@@ -247,7 +255,7 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
 
     public static void dropFruit(Level level, BlockPos pos, Item item, int bonus) {
         int count = 1;
-        for(int i = 0; i < Option.getHarvestingBonus() + bonus; i++) {
+        for (int i = 0; i < Option.getHarvestingBonus() + bonus; i++) {
             if (ThreadLocalRandom.current().nextFloat() <= Option.getHarvestingChance()) {
                 count++;
             }
@@ -256,27 +264,25 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
     }
 
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (isMaxAge(state)) {
-            Item item = itemStack.getItem();
-            if (item instanceof ShearsItem) {
-                level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
-                dropFruit(level, pos, shearedItem, (itemStack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(itemStack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), itemStack) : 0);
-                itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-                if (!level.isClientSide()) {
-                    player.awardStat(Stats.ITEM_USED.get(item));
-                }
-                level.gameEvent(player, GameEvent.SHEAR, pos);
-                level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
-                        .setValue(DISTANCE, state.getValue(DISTANCE))
-                        .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                        .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-                );
+        Item item = stack.getItem();
+        if (item instanceof ShearsItem) {
+            level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
+            if (isMaxAge(state)) {
+                dropFruit(level, pos, getShearedItem(), (stack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(stack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), stack) : 0);
             }
+            stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+            if (!level.isClientSide()) {
+                player.awardStat(Stats.ITEM_USED.get(item));
+            }
+            level.gameEvent(player, GameEvent.SHEAR, pos);
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
+                    .setValue(DISTANCE, state.getValue(DISTANCE))
+                    .setValue(PERSISTENT, state.getValue(PERSISTENT))
+                    .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
+            );
             return ItemInteractionResult.SUCCESS;
-        } else {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
 }

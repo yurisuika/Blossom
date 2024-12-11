@@ -2,7 +2,6 @@ package dev.yurisuika.blossom.server.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import dev.yurisuika.blossom.config.Options;
@@ -53,58 +52,48 @@ public class BlossomCommand {
                         .then(Commands.literal("blossoming")
                                 .executes(commandContext -> {
                                     MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.blossoming.chance", Option.getBlossomingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.chance.tooltip"))));
-                                    MutableComponent distance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.blossoming.distance", Option.getBlossomingDistance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.distance.tooltip"))));
-                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.blossoming.query", chance, distance), true);
+                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.blossoming.query", chance), true);
                                     return 1;
                                 })
                                 .then(Commands.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
-                                        .then(Commands.argument("distance", DoubleArgumentType.doubleArg(0.0D))
-                                                .executes(commandContext -> {
-                                                    Option.getValue().getFruiting().setChance(FloatArgumentType.getFloat(commandContext, "chance"));
-                                                    Option.setBlossomingDistance(DoubleArgumentType.getDouble(commandContext, "distance"));
-                                                    MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.blossoming.chance", Option.getBlossomingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.chance.tooltip"))));
-                                                    MutableComponent distance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.blossoming.distance", Option.getBlossomingDistance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.distance.tooltip"))));
-                                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.blossoming.set", chance, distance), true);
-                                                    return 1;
-                                                })
-                                        )
+                                        .executes(commandContext -> {
+                                            Option.getValue().getFruiting().setChance(FloatArgumentType.getFloat(commandContext, "chance"));
+                                            MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.blossoming.chance", Option.getBlossomingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.chance.tooltip"))));
+                                            commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.blossoming.set", chance), true);
+                                            return 1;
+                                        })
                                 )
                         )
                         .then(Commands.literal("fruiting")
                                 .executes(commandContext -> {
                                     MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.fruiting.chance", Option.getFruitingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.fruiting.chance.tooltip"))));
-                                    MutableComponent distance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.fruiting.distance", Option.getFruitingDistance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.distance.tooltip"))));
-                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.fruiting.query", chance, distance), false);
+                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.fruiting.query", chance), false);
                                     return 1;
                                 })
                                 .then(Commands.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
-                                        .then(Commands.argument("distance", DoubleArgumentType.doubleArg(0.0D))
-                                                .executes(commandContext -> {
-                                                    Option.setFruitingChance(FloatArgumentType.getFloat(commandContext, "chance"));
-                                                    Option.setFruitingDistance(DoubleArgumentType.getDouble(commandContext, "distance"));
-                                                    MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.fruiting.chance", Option.getFruitingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.fruiting.chance.tooltip"))));
-                                                    MutableComponent distance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.fruiting.distance", Option.getFruitingDistance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.blossoming.distance.tooltip"))));
-                                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.fruiting.set", chance, distance), false);
-                                                    return 1;
-                                                })
-                                        )
+                                        .executes(commandContext -> {
+                                            Option.setFruitingChance(FloatArgumentType.getFloat(commandContext, "chance"));
+                                            MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.fruiting.chance", Option.getFruitingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.fruiting.chance.tooltip"))));
+                                            commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.fruiting.set", chance), false);
+                                            return 1;
+                                        })
                                 )
                         )
                         .then(Commands.literal("harvesting")
                                 .executes(commandContext -> {
-                                    MutableComponent bonus = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.harvesting.bonus", Option.getHarvestingBonus())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.harvesting.bonus.tooltip"))));
                                     MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.harvesting.chance", Option.getHarvestingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.harvesting.chance.tooltip"))));
-                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.harvesting.query", bonus, chance), true);
+                                    MutableComponent bonus = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.harvesting.bonus", Option.getHarvestingBonus())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.harvesting.bonus.tooltip"))));
+                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.harvesting.query", chance, bonus), true);
                                     return 1;
                                 })
-                                .then(Commands.argument("bonus", IntegerArgumentType.integer(0))
-                                        .then(Commands.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
+                                .then(Commands.argument("chance", FloatArgumentType.floatArg(0.0F, 1.0F))
+                                        .then(Commands.argument("bonus", IntegerArgumentType.integer(0))
                                                 .executes(commandContext -> {
-                                                    Option.setHarvestingBonus(IntegerArgumentType.getInteger(commandContext, "bonus"));
                                                     Option.setHarvestingChance( FloatArgumentType.getFloat(commandContext, "chance"));
-                                                    MutableComponent bonus = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.harvesting.bonus", Option.getHarvestingBonus())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.harvesting.bonus.tooltip"))));
+                                                    Option.setHarvestingBonus(IntegerArgumentType.getInteger(commandContext, "bonus"));
                                                     MutableComponent chance = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.harvesting.chance", Option.getHarvestingChance())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.harvesting.chance.tooltip"))));
-                                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.harvesting.set", bonus, chance), true);
+                                                    MutableComponent bonus = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.value.harvesting.bonus", Option.getHarvestingBonus())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.value.harvesting.bonus.tooltip"))));
+                                                    commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.value.harvesting.set", chance, bonus), true);
                                                     return 1;
                                                 })
                                         )
@@ -156,7 +145,7 @@ public class BlossomCommand {
                         .then(Commands.literal("dimension")
                                 .then(Commands.literal("whitelist")
                                         .executes(commandContext -> {
-                                            MutableComponent list = Component.translatable("commands.blossom.filter.dimension.whitelist.list", Arrays.toString(Option.getDimensionWhitelist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.dimension.whitelist.list.tooltip"))));
+                                            MutableComponent list = Component.literal(Arrays.toString(Option.getDimensionWhitelist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.dimension.whitelist.tooltip"))));
 
                                             commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.filter.dimension.whitelist.query", list), false);
                                             return 1;
@@ -200,7 +189,7 @@ public class BlossomCommand {
                                 )
                                 .then(Commands.literal("blacklist")
                                         .executes(commandContext -> {
-                                            MutableComponent list = Component.translatable("commands.blossom.filter.dimension.blacklist.list", Arrays.toString(Option.getDimensionBlacklist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.dimension.blacklist.list.tooltip"))));
+                                            MutableComponent list = Component.literal(Arrays.toString(Option.getDimensionBlacklist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.dimension.blacklist.tooltip"))));
 
                                             commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.filter.dimension.blacklist.query", list), false);
                                             return 1;
@@ -246,7 +235,7 @@ public class BlossomCommand {
                         .then(Commands.literal("biome")
                                 .then(Commands.literal("whitelist")
                                         .executes(commandContext -> {
-                                            MutableComponent list = Component.translatable("commands.blossom.filter.biome.whitelist.list", Arrays.toString(Option.getBiomeWhitelist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.biome.whitelist.list.tooltip"))));
+                                            MutableComponent list = Component.literal(Arrays.toString(Option.getBiomeWhitelist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.biome.whitelist.tooltip"))));
 
                                             commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.filter.biome.whitelist.query", list), false);
                                             return 1;
@@ -290,7 +279,7 @@ public class BlossomCommand {
                                 )
                                 .then(Commands.literal("blacklist")
                                         .executes(commandContext -> {
-                                            MutableComponent list = Component.translatable("commands.blossom.filter.biome.blacklist.list", Arrays.toString(Option.getBiomeBlacklist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.biome.blacklist.list.tooltip"))));
+                                            MutableComponent list = Component.literal(Arrays.toString(Option.getBiomeBlacklist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.filter.biome.blacklist.tooltip"))));
 
                                             commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.filter.biome.blacklist.query", list), false);
                                             return 1;
@@ -338,14 +327,14 @@ public class BlossomCommand {
                         .requires(source -> source.hasPermission(4))
                         .then(Commands.literal("whitelist")
                                 .executes(commandContext -> {
-                                    MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.toggle.whitelist.toggle", Option.getWhitelist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.whitelist.toggle.tooltip"))));
+                                    MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.literal(String.valueOf(Option.getWhitelist()))).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.whitelist.tooltip"))));
                                     commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.toggle.whitelist.query", toggle), false);
                                     return 1;
                                 })
                                 .then(Commands.argument("value", BoolArgumentType.bool())
                                         .executes(commandContext -> {
                                             Option.setWhitelist(BoolArgumentType.getBool(commandContext, "value"));
-                                            MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.toggle.whitelist.toggle", Option.getWhitelist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.whitelist.toggle.tooltip"))));
+                                            MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.literal(String.valueOf(Option.getWhitelist()))).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.whitelist.tooltip"))));
                                             commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.toggle.whitelist.set", toggle), false);
                                             return 1;
                                         })
@@ -353,14 +342,14 @@ public class BlossomCommand {
                         )
                         .then(Commands.literal("blacklist")
                                 .executes(commandContext -> {
-                                    MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.toggle.blacklist.toggle", Option.getBlacklist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.blacklist.toggle.tooltip"))));
+                                    MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.literal(String.valueOf(Option.getBlacklist()))).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.blacklist.tooltip"))));
                                     commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.toggle.blacklist.query", toggle), false);
                                     return 1;
                                 })
                                 .then(Commands.argument("value", BoolArgumentType.bool())
                                         .executes(commandContext -> {
                                             Option.setBlacklist(BoolArgumentType.getBool(commandContext, "value"));
-                                            MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.translatable("commands.blossom.toggle.blacklist.toggle", Option.getBlacklist())).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.blacklist.toggle.tooltip"))));
+                                            MutableComponent toggle = ComponentUtils.wrapInSquareBrackets(Component.literal(String.valueOf(Option.getBlacklist()))).withStyle(style -> style.withColor(ChatFormatting.GREEN).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("commands.blossom.toggle.blacklist.tooltip"))));
                                             commandContext.getSource().sendSuccess(() -> Component.translatable("commands.blossom.toggle.blacklist.set", toggle), false);
                                             return 1;
                                         })
