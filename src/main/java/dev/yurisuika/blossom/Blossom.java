@@ -17,18 +17,20 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -43,7 +45,7 @@ import java.util.Objects;
 @Mod("blossom")
 public class Blossom {
 
-    @Mod.EventBusSubscriber(modid = "blossom")
+    @EventBusSubscriber(modid = "blossom")
     public static class CommonForgeEvents {
 
         @SubscribeEvent
@@ -60,7 +62,7 @@ public class Blossom {
 
     }
 
-    @Mod.EventBusSubscriber(modid = "blossom", bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD)
     public static class CommonModBusEvents {
 
         @SubscribeEvent
@@ -77,7 +79,7 @@ public class Blossom {
 
     }
 
-    @Mod.EventBusSubscriber(modid = "blossom", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModBusEvents {
 
         @SubscribeEvent
@@ -94,12 +96,12 @@ public class Blossom {
         @SubscribeEvent
         public static void registerItemProperties(FMLClientSetupEvent event) {
             ItemProperties.register(BlossomItems.FRUITING_OAK_LEAVES.get(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                CompoundTag tag = stack.getTagElement("BlockStateTag");
-                return Objects.nonNull(tag) ? Integer.parseInt(tag.get(FruitingLeavesBlock.AGE.getName()).getAsString()) / 8.0F : 0.0F;
+                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
+                return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
             });
             ItemProperties.register(BlossomItems.FLOWERING_OAK_LEAVES.get(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                CompoundTag tag = stack.getTagElement("BlockStateTag");
-                return Objects.nonNull(tag) ? Integer.parseInt(tag.get(FloweringLeavesBlock.AGE.getName()).getAsString()) / 4.0F : 0.0F;
+                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
+                return Objects.nonNull(integer) ? integer / 4.0F : 0.0F;
             });
         }
 

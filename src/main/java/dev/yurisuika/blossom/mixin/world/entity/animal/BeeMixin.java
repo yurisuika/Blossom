@@ -115,9 +115,7 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
     private void injectReadAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
-        if (compound.contains("leaves_pos")) {
-            setSavedLeavesPos(NbtUtils.readBlockPos(compound.getCompound("leaves_pos")));
-        }
+        setSavedLeavesPos(NbtUtils.readBlockPos(compound, "leaves_pos").orElse(null));
     }
 
     @Inject(method = "getTravellingTicks", at = @At("RETURN"), cancellable = true)

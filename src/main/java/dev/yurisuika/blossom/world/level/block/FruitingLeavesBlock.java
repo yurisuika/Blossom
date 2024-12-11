@@ -1,10 +1,13 @@
 package dev.yurisuika.blossom.world.level.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.yurisuika.blossom.mixin.world.level.biome.BiomeAccessor;
 import dev.yurisuika.blossom.util.config.Option;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,7 +16,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,11 +52,16 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
 
     public final Block shearedBlock;
     public final Item shearedItem;
+    public static final MapCodec<FruitingLeavesBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("shearedBlock").forGetter(arg -> arg.shearedBlock), BuiltInRegistries.ITEM.byNameCodec().fieldOf("shearedItem").forGetter(arg -> arg.shearedItem), propertiesCodec()).apply(instance, FruitingLeavesBlock::new));
     public static final IntegerProperty DISTANCE =  BlockStateProperties.DISTANCE;
     public static final BooleanProperty PERSISTENT = BlockStateProperties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
     public static final IntegerProperty RIPENESS = IntegerProperty.create("ripeness", 0, 7);
+
+    public MapCodec<? extends FruitingLeavesBlock> codec() {
+        return CODEC;
+    }
 
     public FruitingLeavesBlock(Block shearedBlock, Item shearedItem, Properties properties) {
         super(properties);
@@ -253,15 +262,11 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
         popResource(level, pos, new ItemStack(item, count));
     }
 
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        Item item = itemStack.getItem();
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        Item item = stack.getItem();
         if (item instanceof ShearsItem) {
             level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
-            if (isMaxAge(state)) {
-                dropFruit(level, pos, getShearedItem(), (itemStack.isEnchanted() && EnchantmentHelper.getEnchantments(itemStack).containsKey(Enchantments.BLOCK_FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, itemStack) : 0);
-            }
-            itemStack.hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(hand));
+            stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             if (!level.isClientSide()) {
                 player.awardStat(Stats.ITEM_USED.get(item));
             }
@@ -271,9 +276,9 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
             );
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
 }
