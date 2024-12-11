@@ -1,10 +1,13 @@
 package dev.yurisuika.blossom.world.level.block;
 
-import dev.yurisuika.blossom.Blossom;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.yurisuika.blossom.core.particles.BlossomParticleTypes;
 import dev.yurisuika.blossom.mixin.world.level.biome.BiomeAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,10 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -47,17 +47,30 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
 
     public final Block shearedBlock;
     public final Block pollinatedBlock;
+    public static final MapCodec<FloweringLeavesBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("shearedBlock").forGetter(arg -> arg.shearedBlock), BuiltInRegistries.BLOCK.byNameCodec().fieldOf("pollinatedBlock").forGetter(arg -> arg.pollinatedBlock), propertiesCodec()).apply(instance, FloweringLeavesBlock::new));
     public static final IntegerProperty DISTANCE =  BlockStateProperties.DISTANCE;
     public static final BooleanProperty PERSISTENT = BlockStateProperties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final IntegerProperty RIPENESS = IntegerProperty.create("ripeness", 0, 7);
 
+    public MapCodec<? extends FloweringLeavesBlock> codec() {
+        return CODEC;
+    }
+
     public FloweringLeavesBlock(Block shearedBlock, Block pollinatedBlock, Properties properties) {
         super(properties);
         this.shearedBlock = shearedBlock;
         this.pollinatedBlock = pollinatedBlock;
         registerDefaultState(stateDefinition.any().setValue(DISTANCE, 1).setValue(PERSISTENT, false).setValue(WATERLOGGED, false).setValue(AGE, 0).setValue(RIPENESS, 0));
+    }
+
+    public Block getShearedBlock() {
+        return shearedBlock;
+    }
+
+    public Block getPollinatedBlock() {
+        return pollinatedBlock;
     }
 
     public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
@@ -93,10 +106,10 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
     }
 
     public int getRipeness(BlockState state) {
-        return  state.getValue(getRipenessProperty());
+        return state.getValue(getRipenessProperty());
     }
 
-    public boolean isRipe(BlockState state) {
+    public boolean isMaxRipeness(BlockState state) {
         return state.getValue(getRipenessProperty()) >= getMaxRipeness();
     }
 
@@ -105,7 +118,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
             dropResources(state, level, pos);
             level.removeBlock(pos, false);
         } else if (state.getValue(WATERLOGGED)) {
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
@@ -133,20 +146,20 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         } else if (isMaxAge(state)) {
             int i = getRipeness(state);
             if (i < getMaxRipeness()) {
-                if (random.nextInt((int)(25.0F) + 1) == 0) {
-                    level.setBlock(pos, defaultBlockState().setValue(RIPENESS, i + 1), 2);
+                if (random.nextInt(25 + 1) == 0) {
+                    level.setBlock(pos, state.setValue(RIPENESS, i + 1), 2);
                 }
             }
         }
-        if (isRipe(state)) {
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+        if (isMaxRipeness(state)) {
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
             );
         }
         if (!isMaxAge(state) && state.getValue(RIPENESS) > 0) {
-            level.setBlock(pos, defaultBlockState().setValue(RIPENESS, 0), 2);
+            level.setBlock(pos, state.setValue(RIPENESS, 0), 2);
         }
     }
 
@@ -160,28 +173,24 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         if (i > j) {
             i = j;
         }
-        level.setBlock(pos, defaultBlockState().setValue(AGE, i)
-                .setValue(DISTANCE, state.getValue(DISTANCE))
-                .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-                .setValue(RIPENESS, state.getValue(RIPENESS)), 2);
+        level.setBlock(pos, state.setValue(AGE, i), 2);
     }
 
     public int getGrowthAmount(Level level) {
         return Mth.nextInt(level.getRandom(), 2, 5);
     }
 
-    public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    public int getLightBlock(BlockState state) {
         return 1;
     }
 
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tick, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            tick.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
         int i = getDistanceFromLog(neighborState) + 1;
         if (i != 1 || state.getValue(DISTANCE) != i) {
-            level.scheduleTick(pos, this, 1);
+            tick.scheduleTick(pos, this, 1);
         }
         return state;
     }
@@ -219,13 +228,13 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
 
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
-        if (random.nextInt(10) != 0) {
+        if (random.nextInt(10 * (4 - getAge(state))) != 0) {
             return;
         }
         if (FloweringLeavesBlock.isFaceFull(level.getBlockState(pos.below()).getCollisionShape(level, pos.below()), Direction.UP)) {
             return;
         }
-        ParticleUtils.spawnParticleBelow(level, pos, random, Blossom.BLOSSOM);
+        ParticleUtils.spawnParticleBelow(level, pos, random, BlossomParticleTypes.FLOWERING_OAK_LEAVES);
     }
 
     public void createBlockStateDefinition(Builder<Block, BlockState> builder) {
@@ -257,15 +266,14 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
                 player.awardStat(Stats.ITEM_USED.get(item));
             }
             level.gameEvent(player, GameEvent.SHEAR, pos);
-            level.setBlockAndUpdate(pos, shearedBlock.defaultBlockState()
+            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
                     .setValue(DISTANCE, state.getValue(DISTANCE))
                     .setValue(PERSISTENT, state.getValue(PERSISTENT))
                     .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
             );
             return InteractionResult.SUCCESS;
-        } else {
-            return InteractionResult.PASS;
         }
+        return InteractionResult.PASS;
     }
 
 }
