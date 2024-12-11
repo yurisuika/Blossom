@@ -1,12 +1,23 @@
 package dev.yurisuika.blossom.mixin.world.entity.animal;
 
+import dev.yurisuika.blossom.mixin.world.entity.EntityMixin;
 import dev.yurisuika.blossom.mixin.world.entity.ai.goal.GoalInvoker;
+import dev.yurisuika.blossom.world.entity.ai.goal.BlossomLeavesGoal;
+import dev.yurisuika.blossom.world.entity.ai.goal.FruitLeavesGoal;
+import dev.yurisuika.blossom.world.entity.ai.goal.GoToKnownLeavesGoal;
+import dev.yurisuika.blossom.world.entity.animal.BeeInterface;
 import dev.yurisuika.blossom.world.level.block.FruitingLeavesBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -18,13 +29,163 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Bee.class)
-public abstract class BeeMixin {
+public abstract class BeeMixin extends EntityMixin implements BeeInterface {
+
+    @Unique
+    public BlossomLeavesGoal blossomLeavesGoal;
+    @Unique
+    public FruitLeavesGoal fruitLeavesGoal;
+    @Unique
+    public GoToKnownLeavesGoal goToKnownLeavesGoal;
+    @Unique
+    public BlockPos savedLeavesPos;
+    @Unique
+    public int remainingCooldownBeforeLocatingNewLeaves;
+
+    @Unique
+    public void registerGoals(Bee bee) {
+        blossomLeavesGoal = new BlossomLeavesGoal(bee);
+        fruitLeavesGoal = new FruitLeavesGoal(bee);
+        goToKnownLeavesGoal = new GoToKnownLeavesGoal(bee);
+        bee.getGoalSelector().addGoal(4, getBlossomLeavesGoal());
+        bee.getGoalSelector().addGoal(4, getFruitLeavesGoal());
+        bee.getGoalSelector().addGoal(6, getGoToKnownLeavesGoal());
+    }
+
+    @Unique
+    public BlossomLeavesGoal getBlossomLeavesGoal() {
+        return blossomLeavesGoal;
+    }
+
+    @Unique
+    public  FruitLeavesGoal getFruitLeavesGoal() {
+        return fruitLeavesGoal;
+    }
+
+    @Unique
+    public GoToKnownLeavesGoal getGoToKnownLeavesGoal() {
+        return goToKnownLeavesGoal;
+    }
+
+    @Unique
+    public BlockPos getSavedLeavesPos() {
+        return savedLeavesPos;
+    }
+
+    @Unique
+    public boolean hasSavedLeavesPos() {
+        return savedLeavesPos != null;
+    }
+
+    @Unique
+    public void setSavedLeavesPos(BlockPos savedLeavesPos) {
+        this.savedLeavesPos = savedLeavesPos;
+    }
+
+    @Unique
+    public void dropLeaves() {
+        setSavedLeavesPos(null);
+        remainingCooldownBeforeLocatingNewLeaves = Mth.nextInt(random, 20, 60);
+    }
+
+    @Unique
+    public boolean areLeavesValid(BlockPos pos) {
+        return level.isLoaded(pos) && level.getBlockState(getSavedLeavesPos()).is(BlockTags.LEAVES);
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void injectInit(EntityType entityType, Level level, CallbackInfo ci) {
+        remainingCooldownBeforeLocatingNewLeaves = Mth.nextInt(random, 20, 60);
+    }
+
 
     @Inject(method = "getWalkTargetValue", at = @At("HEAD"), cancellable = true)
-    private void injectGetPathfindingFavor(BlockPos pos, LevelReader level, CallbackInfoReturnable<Float> cir) {
+    private void injectGetWalkTargetValue(BlockPos pos, LevelReader level, CallbackInfoReturnable<Float> cir) {
         if (level.getBlockState(pos).getBlock() instanceof LeavesBlock) {
             cir.setReturnValue(2.0F);
         }
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+    private void injectAddAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
+        if (hasSavedLeavesPos()) {
+            compound.put("leaves_pos", NbtUtils.writeBlockPos(getSavedLeavesPos()));
+        }
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
+    private void injectReadAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
+        setSavedLeavesPos(null);
+        if (compound.contains("leaves_pos")) {
+            setSavedLeavesPos(NbtUtils.readBlockPos(compound.getCompound("leaves_pos")));
+        }
+    }
+
+    @Inject(method = "getTravellingTicks", at = @At("RETURN"), cancellable = true)
+    private void injectGetTravellingTicks(CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(Math.max(cir.getReturnValue(), getGoToKnownLeavesGoal().travellingTicks));
+    }
+
+    @Inject(method = "wantsToEnterHive", at = @At("HEAD"), cancellable = true)
+    private void injectWantsToEnterHive(CallbackInfoReturnable<Boolean> cir) {
+        if (getBlossomLeavesGoal().isBlossoming() || getFruitLeavesGoal().isBlossoming()) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "aiStep", at = @At("RETURN"))
+    private void injectAiStep(CallbackInfo ci) {
+        if (!level.isClientSide()) {
+            if (remainingCooldownBeforeLocatingNewLeaves > 0) {
+                --remainingCooldownBeforeLocatingNewLeaves;
+            }
+        }
+    }
+
+    @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Animal;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+    private void injectHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (!level.isClientSide()) {
+            getBlossomLeavesGoal().stopBlossoming();
+            getFruitLeavesGoal().stopBlossoming();
+        }
+    }
+
+    @Mixin(targets = "net.minecraft.world.entity.animal.Bee$1")
+    public abstract static class FlyingPathNavigationMixin {
+
+        @Unique
+        public Bee entity;
+
+        @Inject(method = "<init>", at = @At(value = "TAIL"))
+        private void injectInit(Bee bee, Mob mob, Level level, CallbackInfo ci) {
+            this.entity = bee;
+        }
+
+        @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/navigation/FlyingPathNavigation;tick()V"), cancellable = true)
+        private void injectTick(CallbackInfo ci) {
+            if (((BeeInterface) entity).getBlossomLeavesGoal().isBlossoming() || ((BeeInterface) entity).getFruitLeavesGoal().isBlossoming()) {
+                ci.cancel();
+            }
+        }
+
+    }
+
+    @Mixin(targets = "net.minecraft.world.entity.animal.Bee$BeeLookControl")
+    public abstract static class BeeLookControlMixin {
+
+        @Unique
+        public Bee entity;
+
+        @Inject(method = "<init>", at = @At(value = "TAIL"))
+        private void injectInit(Bee bee, Mob mob, CallbackInfo ci) {
+            this.entity = bee;
+        }
+
+        @Inject(method = "resetXRotOnTick", at = @At("RETURN"), cancellable = true)
+        private void injectResetXRotOnTick(CallbackInfoReturnable<Boolean> cir) {
+            cir.setReturnValue(cir.getReturnValue() || !((BeeInterface) entity).getBlossomLeavesGoal().isBlossoming() || !((BeeInterface) entity).getFruitLeavesGoal().isBlossoming());
+        }
+
     }
 
     @Mixin(targets = "net.minecraft.world.entity.animal.Bee$BeeGrowCropGoal")
@@ -56,24 +217,6 @@ public abstract class BeeMixin {
                     }
                 }
             }
-        }
-
-    }
-
-    @Mixin(Bee.BeeGoToKnownFlowerGoal.class)
-    public abstract static class BeeGoToKnownFlowerGoalMixin {
-
-        @Unique
-        public Bee entity;
-
-        @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(Bee bee, CallbackInfo ci) {
-            this.entity = bee;
-        }
-
-        @Inject(method = "wantsToGoToKnownFlower", at = @At("RETURN"), cancellable = true)
-        private void injectWantsToGoToKnownFlower(CallbackInfoReturnable<Boolean> cir) {
-            cir.setReturnValue(cir.getReturnValue() || (entity.getLevel().getBlockState(entity.getSavedFlowerPos()).is(Blocks.OAK_LEAVES) && entity.hasNectar()));
         }
 
     }

@@ -9,11 +9,9 @@ public class Validate {
 
     public static void checkBounds() {
         Option.setBlossomingChance(Math.max(Math.min(Option.getBlossomingChance(), 1.0F), 0.0F));
-        Option.setBlossomingDistance(Math.max(Option.getBlossomingDistance(), 0.0D));
         Option.setFruitingChance(Math.max(Math.min(Option.getFruitingChance(), 1.0F), 0.0F));
-        Option.setFruitingDistance(Math.max(Option.getFruitingDistance(), 0.0D));
-        Option.setHarvestingBonus(Math.max(Option.getHarvestingBonus(), 0));
         Option.setHarvestingChance(Math.max(Math.min(Option.getHarvestingChance(), 1.0F), 0.0F));
+        Option.setHarvestingBonus(Math.max(Option.getHarvestingBonus(), 0));
 
         float temperatureMin = Math.max(Math.min(Math.min(Option.getTemperatureMin(), 2.0F), Option.getTemperatureMax()), -2.0F);
         float temperatureMax = Math.max(Math.max(Math.min(Option.getTemperatureMax(), 2.0F), Option.getTemperatureMin()), -2.0F);
