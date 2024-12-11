@@ -6,13 +6,14 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "world.entity.EntityAccessor",
+    "world.entity.EntityMixin",
     "world.entity.MobAccessor",
     "world.entity.ai.goal.GoalInvoker",
-    "world.entity.animal.BeeAccessor",
     "world.entity.animal.BeeInvoker",
     "world.entity.animal.BeeMixin",
-    "world.entity.animal.BeeMixin$BeeGoToKnownFlowerGoalMixin",
     "world.entity.animal.BeeMixin$BeeGrowCropGoalMixin",
+    "world.entity.animal.BeeMixin$BeeLookControlMixin",
+    "world.entity.animal.BeeMixin$FlyingPathNavigationMixin",
     "world.level.biome.BiomeAccessor",
     "world.level.block.state.BlockBehaviourMixin"
   ],
