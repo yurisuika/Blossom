@@ -9,22 +9,15 @@ import dev.yurisuika.blossom.util.Validate;
 import dev.yurisuika.blossom.util.config.Config;
 import dev.yurisuika.blossom.world.entity.animal.BeeInterface;
 import dev.yurisuika.blossom.world.level.block.BlossomBlocks;
-import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
-import dev.yurisuika.blossom.world.level.block.FruitingLeavesBlock;
 import dev.yurisuika.blossom.world.level.item.BlossomItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
@@ -39,8 +32,6 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-
-import java.util.Objects;
 
 @Mod("blossom")
 public class Blossom {
@@ -94,27 +85,9 @@ public class Blossom {
         }
 
         @SubscribeEvent
-        public static void registerItemProperties(FMLClientSetupEvent event) {
-            ItemProperties.register(BlossomItems.FRUITING_OAK_LEAVES.get(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
-                return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
-            });
-            ItemProperties.register(BlossomItems.FLOWERING_OAK_LEAVES.get(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
-                return Objects.nonNull(integer) ? integer / 4.0F : 0.0F;
-            });
-        }
-
-        @SubscribeEvent
         public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
             event.getBlockColors().register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FRUITING_OAK_LEAVES.get());
             event.getBlockColors().register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FLOWERING_OAK_LEAVES.get());
-        }
-
-        @SubscribeEvent
-        public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FRUITING_OAK_LEAVES.get());
-            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FLOWERING_OAK_LEAVES.get());
         }
 
         @SubscribeEvent
