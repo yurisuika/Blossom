@@ -40,13 +40,7 @@
                 {
                   "condition": "minecraft:match_tool",
                   "predicate": {
-                    "items": [
-                      "minecraft:shears"
-                    ],
-                    "enchantment": "minecraft:silk_touch",
-                    "levels": {
-                      "max": 0
-                    }
+                    "item": "minecraft:shears"
                   }
                 }
               ],
@@ -79,20 +73,17 @@
     {
       "conditions": [
         {
-          "condition": "minecraft:alternative",
-          "terms": [
-            {
-              "condition": "minecraft:inverted",
-              "term": {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:alternative",
+            "terms": [
+              {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "item": "minecraft:shears"
                 }
-              }
-            },
-            {
-              "condition": "minecraft:inverted",
-              "term": {
+              },
+              {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "enchantments": [
@@ -105,8 +96,8 @@
                   ]
                 }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "entries": [

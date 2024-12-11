@@ -6,18 +6,20 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "world.entity.EntityAccessor",
+    "world.entity.EntityMixin",
     "world.entity.MobAccessor",
-    "world.entity.animal.BeeAccessor",
     "world.entity.animal.BeeInvoker",
     "world.entity.animal.BeeMixin",
     "world.entity.animal.BeeMixin$BeeGrowCropGoalMixin",
-    "world.entity.animal.BeeMixin$BeeGoToKnownFlowerGoalMixin",
+    "world.entity.animal.BeeMixin$BeeLookControlMixin",
+    "world.entity.animal.BeeMixin$BeePollinateGoalMixin",
+    "world.entity.animal.BeeMixin$FlyingPathNavigationMixin",
     "world.level.block.BlocksInvoker",
     "world.level.block.ComposterBlockInvoker",
     "world.level.block.FireBlockInvoker",
-    "world.level.block.EntityCollisionContextMixin",
     "world.level.block.LeavesBlockMixin",
-    "world.level.block.state.BlockBehaviourMixin"
+    "world.level.block.state.BlockBehaviourMixin",
+    "world.phys.shapes.EntityCollisionContextMixin"
   ],
   "client": [
   ],

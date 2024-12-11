@@ -4,18 +4,18 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 
-public class BlossomParticle extends TextureSheetParticle {
+public class FallingPetalsParticle extends TextureSheetParticle {
 
     public float rotSpeed;
     public final float particleRandom;
     public final float spinAcceleration;
 
-    public BlossomParticle(ClientLevel level, double x, double y, double z, SpriteSet spriteSet) {
+    public FallingPetalsParticle(ClientLevel level, double x, double y, double z, SpriteSet spriteSet) {
         super(level, x, y, z);
         this.setSprite(spriteSet.get(random.nextInt(12), 12));
-        this.rotSpeed = (float)Math.toRadians(random.nextBoolean() ? -30.0F : 30.0F);
+        this.rotSpeed = (float) Math.toRadians(random.nextBoolean() ? -30.0F : 30.0F);
         this.particleRandom = random.nextFloat();
-        this.spinAcceleration = (float)Math.toRadians(random.nextBoolean() ? -5.0F : 5.0F);
+        this.spinAcceleration = (float) Math.toRadians(random.nextBoolean() ? -5.0F : 5.0F);
         this.lifetime = 300;
         this.gravity = 7.5E-4F;
         float f = this.random.nextBoolean() ? 0.05F : 0.075F;
@@ -27,16 +27,16 @@ public class BlossomParticle extends TextureSheetParticle {
         return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
-    public static class Factory implements ParticleProvider<SimpleParticleType> {
+    public static class FloweringOakProvider implements ParticleProvider<SimpleParticleType> {
 
         public final SpriteSet spriteSet;
 
-        public Factory(SpriteSet spriteSet) {
+        public FloweringOakProvider(SpriteSet spriteSet) {
             this.spriteSet = spriteSet;
         }
 
         public Particle createParticle(SimpleParticleType parameters, ClientLevel level, double x, double y, double z, double r, double g, double b) {
-            return new BlossomParticle(level, x, y, z, spriteSet);
+            return new FallingPetalsParticle(level, x, y, z, spriteSet);
         }
 
     }

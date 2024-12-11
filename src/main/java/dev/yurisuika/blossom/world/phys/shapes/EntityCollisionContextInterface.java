@@ -1,4 +1,4 @@
-package dev.yurisuika.blossom.world.level.block;
+package dev.yurisuika.blossom.world.phys.shapes;
 
 
 import net.minecraft.world.entity.Entity;
