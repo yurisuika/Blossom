@@ -2,12 +2,13 @@ package dev.yurisuika.blossom.world.level.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.yurisuika.blossom.core.particles.BlossomParticleTypes;
 import dev.yurisuika.blossom.mixin.world.level.biome.BiomeAccessor;
+import dev.yurisuika.blossom.registry.ShearableLeavesRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,9 +49,8 @@ import java.util.OptionalInt;
 
 public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlock {
 
-    public final Block shearedBlock;
-    public final Block pollinatedBlock;
-    public static final MapCodec<FloweringLeavesBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("shearedBlock").forGetter(arg -> arg.shearedBlock), BuiltInRegistries.BLOCK.byNameCodec().fieldOf("pollinatedBlock").forGetter(arg -> arg.pollinatedBlock), propertiesCodec()).apply(instance, FloweringLeavesBlock::new));
+    public final ParticleOptions particle;
+    public static final MapCodec<FloweringLeavesBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(ParticleTypes.CODEC.fieldOf("particle").forGetter(arg -> arg.particle), propertiesCodec()).apply(instance, FloweringLeavesBlock::new));
     public static final IntegerProperty DISTANCE =  BlockStateProperties.DISTANCE;
     public static final BooleanProperty PERSISTENT = BlockStateProperties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -61,19 +61,14 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         return CODEC;
     }
 
-    public FloweringLeavesBlock(Block shearedBlock, Block pollinatedBlock, Properties properties) {
+    public FloweringLeavesBlock(ParticleOptions particle, Properties properties) {
         super(properties);
-        this.shearedBlock = shearedBlock;
-        this.pollinatedBlock = pollinatedBlock;
+        this.particle = particle;
         registerDefaultState(stateDefinition.any().setValue(DISTANCE, 1).setValue(PERSISTENT, false).setValue(WATERLOGGED, false).setValue(AGE, 0).setValue(RIPENESS, 0));
     }
 
-    public Block getShearedBlock() {
-        return shearedBlock;
-    }
-
-    public Block getPollinatedBlock() {
-        return pollinatedBlock;
+    public ParticleOptions getParticle() {
+        return particle;
     }
 
     public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
@@ -117,15 +112,15 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
     }
 
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!state.getValue(PERSISTENT) && state.getValue(DISTANCE) == 7) {
-            dropResources(state, level, pos);
-            level.removeBlock(pos, false);
-        } else if (state.getValue(WATERLOGGED)) {
-            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
-                    .setValue(DISTANCE, state.getValue(DISTANCE))
-                    .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                    .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-            );
+        super.randomTick(state, level, pos, random);
+        if (state.getValue(WATERLOGGED)) {
+            if (ShearableLeavesRegistry.SHEARABLES.containsKey(state.getBlock())) {
+                level.setBlockAndUpdate(pos, ShearableLeavesRegistry.SHEARABLES.get(state.getBlock()).defaultBlockState()
+                        .setValue(DISTANCE, state.getValue(DISTANCE))
+                        .setValue(PERSISTENT, state.getValue(PERSISTENT))
+                        .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
+                );
+            }
         } else if (!isMaxAge(state) && level.getRawBrightness(pos, 0) >= 9) {
             int i = getAge(state);
             if (i < getMaxAge()) {
@@ -139,11 +134,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
                     f = 5.0F;
                 }
                 if (random.nextInt((int) (25.0F / f) + 1) == 0) {
-                    level.setBlock(pos, defaultBlockState().setValue(AGE, i + 1)
-                            .setValue(DISTANCE, state.getValue(DISTANCE))
-                            .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                            .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-                            .setValue(RIPENESS, state.getValue(RIPENESS)), 2);
+                    level.setBlock(pos, state.setValue(AGE, i + 1), 2);
                 }
             }
         } else if (isMaxAge(state)) {
@@ -155,11 +146,13 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
             }
         }
         if (isMaxRipeness(state)) {
-            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
-                    .setValue(DISTANCE, state.getValue(DISTANCE))
-                    .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                    .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-            );
+            if (ShearableLeavesRegistry.SHEARABLES.containsKey(state.getBlock())) {
+                level.setBlockAndUpdate(pos, ShearableLeavesRegistry.SHEARABLES.get(state.getBlock()).defaultBlockState()
+                        .setValue(DISTANCE, state.getValue(DISTANCE))
+                        .setValue(PERSISTENT, state.getValue(PERSISTENT))
+                        .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
+                );
+            }
         }
         if (!isMaxAge(state) && state.getValue(RIPENESS) > 0) {
             level.setBlock(pos, state.setValue(RIPENESS, 0), 2);
@@ -237,7 +230,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
         if (FloweringLeavesBlock.isFaceFull(level.getBlockState(pos.below()).getCollisionShape(level, pos.below()), Direction.UP)) {
             return;
         }
-        ParticleUtils.spawnParticleBelow(level, pos, random, BlossomParticleTypes.FLOWERING_OAK_LEAVES.get());
+        ParticleUtils.spawnParticleBelow(level, pos, random, getParticle());
     }
 
     public void createBlockStateDefinition(Builder<Block, BlockState> builder) {
@@ -263,18 +256,20 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         Item item = stack.getItem();
         if (item instanceof ShearsItem) {
-            level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
-            stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-            if (!level.isClientSide()) {
-                player.awardStat(Stats.ITEM_USED.get(item));
+            if (ShearableLeavesRegistry.SHEARABLES.containsKey(state.getBlock())) {
+                level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
+                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                if (!level.isClientSide()) {
+                    player.awardStat(Stats.ITEM_USED.get(item));
+                }
+                level.gameEvent(player, GameEvent.SHEAR, pos);
+                level.setBlockAndUpdate(pos, ShearableLeavesRegistry.SHEARABLES.get(state.getBlock()).defaultBlockState()
+                        .setValue(DISTANCE, state.getValue(DISTANCE))
+                        .setValue(PERSISTENT, state.getValue(PERSISTENT))
+                        .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
+                );
+                return ItemInteractionResult.SUCCESS;
             }
-            level.gameEvent(player, GameEvent.SHEAR, pos);
-            level.setBlockAndUpdate(pos, getShearedBlock().defaultBlockState()
-                    .setValue(DISTANCE, state.getValue(DISTANCE))
-                    .setValue(PERSISTENT, state.getValue(PERSISTENT))
-                    .setValue(WATERLOGGED, state.getValue(WATERLOGGED))
-            );
-            return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
