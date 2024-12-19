@@ -2,6 +2,10 @@ package dev.yurisuika.blossom;
 
 import dev.yurisuika.blossom.client.particle.FallingPetalsParticle;
 import dev.yurisuika.blossom.core.particles.BlossomParticleTypes;
+import dev.yurisuika.blossom.registry.BlossomableLeavesRegistry;
+import dev.yurisuika.blossom.registry.FruitableLeavesRegistry;
+import dev.yurisuika.blossom.registry.HarvestableFruitRegistry;
+import dev.yurisuika.blossom.registry.ShearableLeavesRegistry;
 import dev.yurisuika.blossom.server.commands.BlossomCommand;
 import dev.yurisuika.blossom.util.Validate;
 import dev.yurisuika.blossom.util.config.Config;
@@ -27,11 +31,30 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.FoliageColor;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Objects;
 
 public class Blossom implements ModInitializer {
+
+    public static void registerBlossmables() {
+        BlossomableLeavesRegistry.add(Blocks.OAK_LEAVES, BlossomBlocks.FLOWERING_OAK_LEAVES);
+    }
+
+    public static void registerFruitables() {
+        FruitableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES, BlossomBlocks.FRUITING_OAK_LEAVES);
+    }
+    
+    public static void registerHarvestables() {
+        HarvestableFruitRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Items.APPLE);
+    }
+
+    public static void registerShearables() {
+        ShearableLeavesRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Blocks.OAK_LEAVES);
+        ShearableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES, Blocks.OAK_LEAVES);
+    }
 
     public static void registerCompostables() {
         CompostingChanceRegistry.INSTANCE.add(BlossomBlocks.FRUITING_OAK_LEAVES, 0.3F);
@@ -63,6 +86,10 @@ public class Blossom implements ModInitializer {
         BlossomBlocks.register();
         BlossomItems.register();
         BlossomParticleTypes.register();
+        registerBlossmables();
+        registerFruitables();
+        registerHarvestables();
+        registerShearables();
         registerFlammables();
         registerCompostables();
         registerCommands();
