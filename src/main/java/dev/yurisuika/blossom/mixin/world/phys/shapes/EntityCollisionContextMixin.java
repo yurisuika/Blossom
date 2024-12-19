@@ -21,7 +21,7 @@ public abstract class EntityCollisionContextMixin implements EntityCollisionCont
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
-    private void injectInit(Entity entity, CallbackInfo ci) {
+    private void assignEntity(Entity entity, CallbackInfo ci) {
         this.entity = entity;
     }
 
