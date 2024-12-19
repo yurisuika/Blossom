@@ -35,6 +35,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BeeMixin extends EntityMixin implements BeeInterface {
 
     @Unique
+    public ValidateLeavesGoal validateLeavesGoal;
+    @Unique
     public BlossomLeavesGoal blossomLeavesGoal;
     @Unique
     public FruitLeavesGoal fruitLeavesGoal;
@@ -47,13 +49,19 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
 
     @Unique
     public void registerGoals(Bee bee) {
+        validateLeavesGoal = new ValidateLeavesGoal(bee);
         blossomLeavesGoal = new BlossomLeavesGoal(bee);
         fruitLeavesGoal = new FruitLeavesGoal(bee);
         goToKnownLeavesGoal = new GoToKnownLeavesGoal(bee);
-        bee.getGoalSelector().addGoal(3, new ValidateLeavesGoal(bee));
+        bee.getGoalSelector().addGoal(3, getValidateLeavesGoal());
         bee.getGoalSelector().addGoal(4, getBlossomLeavesGoal());
         bee.getGoalSelector().addGoal(4, getFruitLeavesGoal());
         bee.getGoalSelector().addGoal(6, getGoToKnownLeavesGoal());
+    }
+
+    @Unique
+    public ValidateLeavesGoal getValidateLeavesGoal() {
+        return validateLeavesGoal;
     }
 
     @Unique
@@ -61,7 +69,6 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         return blossomLeavesGoal;
     }
 
-    @Unique
     public  FruitLeavesGoal getFruitLeavesGoal() {
         return fruitLeavesGoal;
     }
@@ -93,43 +100,43 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void injectInit(EntityType entityType, Level level, CallbackInfo ci) {
+    private void assignEntity(EntityType entityType, Level level, CallbackInfo ci) {
         remainingCooldownBeforeLocatingNewLeaves = Mth.nextInt(random, 20, 60);
     }
 
     @Inject(method = "getWalkTargetValue", at = @At("HEAD"), cancellable = true)
-    private void injectGetWalkTargetValue(BlockPos pos, LevelReader level, CallbackInfoReturnable<Float> cir) {
+    private void allowMovementThroughLeaves(BlockPos pos, LevelReader level, CallbackInfoReturnable<Float> cir) {
         if (level.getBlockState(pos).getBlock() instanceof LeavesBlock) {
             cir.setReturnValue(2.0F);
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
-    private void injectAddAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
+    private void saveLeavesPos(CompoundTag compound, CallbackInfo ci) {
         if (hasSavedLeavesPos()) {
             compound.put("leaves_pos", NbtUtils.writeBlockPos(getSavedLeavesPos()));
         }
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
-    private void injectReadAdditionalSaveData(CompoundTag compound, CallbackInfo ci) {
+    private void readLeavesPos(CompoundTag compound, CallbackInfo ci) {
         setSavedLeavesPos(NbtUtils.readBlockPos(compound, "leaves_pos").orElse(null));
     }
 
     @Inject(method = "getTravellingTicks", at = @At("RETURN"), cancellable = true)
-    private void injectGetTravellingTicks(CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(Math.max(cir.getReturnValue(), getGoToKnownLeavesGoal().travellingTicks));
+    private void adjustTravellingTicks(CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(Math.max(cir.getReturnValue(), getGoToKnownLeavesGoal().getTravellingTicks()));
     }
 
     @Inject(method = "wantsToEnterHive", at = @At("HEAD"), cancellable = true)
-    private void injectWantsToEnterHive(CallbackInfoReturnable<Boolean> cir) {
-        if (getBlossomLeavesGoal().isBlossoming() || getFruitLeavesGoal().isBlossoming()) {
+    private void disallowEnteringHiveIfFruiting(CallbackInfoReturnable<Boolean> cir) {
+        if (getFruitLeavesGoal().isFruiting()) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "aiStep", at = @At("RETURN"))
-    private void injectAiStep(CallbackInfo ci) {
+    private void reduceCooldown(CallbackInfo ci) {
         if (!level().isClientSide()) {
             if (remainingCooldownBeforeLocatingNewLeaves > 0) {
                 --remainingCooldownBeforeLocatingNewLeaves;
@@ -138,10 +145,9 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
     }
 
     @Inject(method = "hurtServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Animal;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
-    private void injectHurt(ServerLevel level, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void stopFruitingUponHurt(ServerLevel level, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!level().isClientSide()) {
-            getBlossomLeavesGoal().stopBlossoming();
-            getFruitLeavesGoal().stopBlossoming();
+            getFruitLeavesGoal().stopFruiting();
         }
     }
 
@@ -152,13 +158,13 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         public Bee entity;
 
         @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(Bee bee, Mob mob, Level level, CallbackInfo ci) {
+        private void assignEntity(Bee bee, Mob mob, Level level, CallbackInfo ci) {
             this.entity = bee;
         }
 
         @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/navigation/FlyingPathNavigation;tick()V"), cancellable = true)
-        private void injectTick(CallbackInfo ci) {
-            if (((BeeInterface) entity).getBlossomLeavesGoal().isBlossoming() || ((BeeInterface) entity).getFruitLeavesGoal().isBlossoming()) {
+        private void cancelTickIfFruiting(CallbackInfo ci) {
+            if (((BeeInterface) entity).getFruitLeavesGoal().isFruiting()) {
                 ci.cancel();
             }
         }
@@ -172,13 +178,13 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         public Bee entity;
 
         @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(Bee bee, Mob mob, CallbackInfo ci) {
+        private void assignEntity(Bee bee, Mob mob, CallbackInfo ci) {
             this.entity = bee;
         }
 
         @Inject(method = "resetXRotOnTick", at = @At("RETURN"), cancellable = true)
-        private void injectResetXRotOnTick(CallbackInfoReturnable<Boolean> cir) {
-            cir.setReturnValue(cir.getReturnValue() || !((BeeInterface) entity).getBlossomLeavesGoal().isBlossoming() || !((BeeInterface) entity).getFruitLeavesGoal().isBlossoming());
+        private void resetLookIfFruiting(CallbackInfoReturnable<Boolean> cir) {
+            cir.setReturnValue(cir.getReturnValue() || !((BeeInterface) entity).getFruitLeavesGoal().isFruiting());
         }
 
     }
@@ -190,12 +196,12 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         public Bee entity;
 
         @Inject(method = "<init>", at = @At(value = "TAIL"))
-        private void injectInit(Bee bee, CallbackInfo ci) {
+        private void assignEntity(Bee bee, CallbackInfo ci) {
             this.entity = bee;
         }
 
         @Inject(method = "tick", at = @At(value = "HEAD"))
-        private void injectTick(CallbackInfo ci) {
+        private void growFruitingLeaves(CallbackInfo ci) {
             if (entity.getRandom().nextInt(((GoalInvoker) this).invokeAdjustedTickDelay(30)) != 0) {
                 for (int i = 1; i <= 2; ++i) {
                     BlockPos blockPos = entity.blockPosition().below(i);
@@ -220,7 +226,7 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
     public abstract static class BeeWanderGoalMixin {
 
         @Redirect(method = "getWanderThreshold", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Bee;hasSavedFlowerPos()Z"))
-        private boolean redirectHasSavedFlowerPos(Bee bee) {
+        private boolean increaseWanderThresholdIfHasSavedLeaves(Bee bee) {
             return !(bee.hasSavedFlowerPos() || ((BeeInterface) bee).hasSavedLeavesPos());
         }
 
