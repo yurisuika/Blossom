@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BlockBehaviourMixin {
 
     @Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
-    private void injectGetCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
+    private void allowBeeToPassThroughLeaves(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
         if (context instanceof EntityCollisionContext) {
             if (((EntityCollisionContextInterface) context).getEntity() instanceof Bee) {
                 if (state.getBlock() instanceof LeavesBlock) {
