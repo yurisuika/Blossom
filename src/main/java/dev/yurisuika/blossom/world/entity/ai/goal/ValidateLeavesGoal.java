@@ -30,7 +30,7 @@ public class ValidateLeavesGoal extends Goal {
     }
 
     public void start() {
-        if (((BeeInterface) entity).getSavedLeavesPos() != null && entity.level().isLoaded(((BeeInterface) entity).getSavedLeavesPos()) && !this.isLeaves(((BeeInterface) entity).getSavedLeavesPos())) {
+        if (((BeeInterface) entity).getSavedLeavesPos() != null && entity.level().isLoaded(((BeeInterface) entity).getSavedLeavesPos()) && !isLeaves(((BeeInterface) entity).getSavedLeavesPos())) {
             ((BeeInterface) entity).dropLeaves();
         }
         lastValidateTick = entity.level().getGameTime();

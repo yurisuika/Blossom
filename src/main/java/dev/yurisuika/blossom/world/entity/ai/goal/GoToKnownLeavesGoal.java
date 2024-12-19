@@ -20,6 +20,10 @@ public class GoToKnownLeavesGoal extends Goal {
         this.travellingTicks = ((EntityAccessor) entity).getRandom().nextInt(10);
         this.setFlags(EnumSet.of(Flag.MOVE));
     }
+    
+    public int getTravellingTicks() {
+        return travellingTicks;
+    }
 
     public boolean canUse() {
         return ((BeeInterface) entity).getSavedLeavesPos() != null && !entity.hasRestriction() && entity.hasNectar() && !((BeeInvoker) entity).invokeCloserThan(((BeeInterface) entity).getSavedLeavesPos(), 2) && !entity.isAngry();
