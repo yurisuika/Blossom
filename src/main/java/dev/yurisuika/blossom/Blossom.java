@@ -4,6 +4,10 @@ import dev.yurisuika.blossom.client.particle.FallingPetalsParticle;
 import dev.yurisuika.blossom.core.particles.BlossomParticleTypes;
 import dev.yurisuika.blossom.mixin.world.level.block.ComposterBlockInvoker;
 import dev.yurisuika.blossom.mixin.world.level.block.FireBlockInvoker;
+import dev.yurisuika.blossom.registry.BlossomableLeavesRegistry;
+import dev.yurisuika.blossom.registry.FruitableLeavesRegistry;
+import dev.yurisuika.blossom.registry.HarvestableFruitRegistry;
+import dev.yurisuika.blossom.registry.ShearableLeavesRegistry;
 import dev.yurisuika.blossom.server.commands.BlossomCommand;
 import dev.yurisuika.blossom.util.Validate;
 import dev.yurisuika.blossom.util.config.Config;
@@ -64,6 +68,27 @@ public class Blossom {
 
     @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD)
     public static class CommonModBusEvents {
+
+        @SubscribeEvent
+        public static void registerBlossmables(FMLCommonSetupEvent event) {
+            BlossomableLeavesRegistry.add(Blocks.OAK_LEAVES, BlossomBlocks.FLOWERING_OAK_LEAVES.get());
+        }
+
+        @SubscribeEvent
+        public static void registerFruitables(FMLCommonSetupEvent event) {
+            FruitableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES.get(), BlossomBlocks.FRUITING_OAK_LEAVES.get());
+        }
+
+        @SubscribeEvent
+        public static void registerHarvestables(FMLCommonSetupEvent event) {
+            HarvestableFruitRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES.get(), Items.APPLE);
+        }
+
+        @SubscribeEvent
+        public static void registerShearables(FMLCommonSetupEvent event) {
+            ShearableLeavesRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES.get(), Blocks.OAK_LEAVES);
+            ShearableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES.get(), Blocks.OAK_LEAVES);
+        }
 
         @SubscribeEvent
         public static void registerCompostables(FMLCommonSetupEvent event) {
