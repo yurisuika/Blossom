@@ -143,7 +143,8 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
         }
         if (isMaxRipeness(state)) {
             if (HarvestableFruitRegistry.HARVESTABLES.containsKey(state.getBlock())) {
-                dropFruit(level, pos, HarvestableFruitRegistry.HARVESTABLES.get(state.getBlock()), 0);
+                HarvestableFruitRegistry.Entry entry = HarvestableFruitRegistry.HARVESTABLES.get(state.getBlock());
+                dropFruit(level, pos, entry.getFruit(), entry.getChance(), entry.getBonus(), 0);
             }
             if (ShearableLeavesRegistry.SHEARABLES.containsKey(state.getBlock())) {
                 level.setBlockAndUpdate(pos, ShearableLeavesRegistry.SHEARABLES.get(state.getBlock()).defaultBlockState()
@@ -245,10 +246,10 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
         applyGrowth(level, pos, state);
     }
 
-    public static void dropFruit(Level level, BlockPos pos, Item item, int bonus) {
+    public static void dropFruit(Level level, BlockPos pos, Item item, float chance, int bonus, int fortune) {
         int count = 1;
-        for (int i = 0; i < 3 + bonus; i++) {
-            if (ThreadLocalRandom.current().nextFloat() <= 0.5714286F) {
+        for (int i = 0; i < bonus + fortune; i++) {
+            if (ThreadLocalRandom.current().nextFloat() <= chance) {
                 count++;
             }
         }
@@ -262,7 +263,8 @@ public class FruitingLeavesBlock extends LeavesBlock implements BonemealableBloc
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.CROP_BREAK, SoundSource.NEUTRAL, 1.0F, 1.0F);
                 if (isMaxAge(state)) {
                     if (HarvestableFruitRegistry.HARVESTABLES.containsKey(state.getBlock())) {
-                        dropFruit(level, pos, HarvestableFruitRegistry.HARVESTABLES.get(state.getBlock()), (stack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(stack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), stack) : 0);
+                        HarvestableFruitRegistry.Entry entry = HarvestableFruitRegistry.HARVESTABLES.get(state.getBlock());
+                        dropFruit(level, pos, entry.getFruit(), entry.getChance(), entry.getBonus(), (stack.isEnchanted() && EnchantmentHelper.getEnchantmentsForCrafting(stack).entrySet().contains(Enchantments.FORTUNE)) ? EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), stack) : 0);
                     }
                 }
                 stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
