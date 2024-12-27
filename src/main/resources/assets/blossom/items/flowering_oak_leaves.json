@@ -13,14 +13,13 @@
               "value": -12012264
             }
           ]
-
         },
         "when": "0"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "blossom:block/flowering_oak_leaves_stage1a",
+          "model": "blossom:block/flowering_oak_leaves_stage1",
           "tints": [
             {
               "type": "minecraft:constant",
@@ -33,7 +32,7 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "blossom:block/flowering_oak_leaves_stage2b",
+          "model": "blossom:block/flowering_oak_leaves_stage2",
           "tints": [
             {
               "type": "minecraft:constant",
@@ -55,6 +54,58 @@
           ]
         },
         "when": "3"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_oak_leaves_stage4",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "4"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_oak_leaves_stage5",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "5"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_oak_leaves_stage6",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "6"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_oak_leaves_stage7",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "7"
       }
     ],
     "fallback": {
