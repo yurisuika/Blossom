@@ -47,7 +47,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
     public static final IntegerProperty DISTANCE =  BlockStateProperties.DISTANCE;
     public static final BooleanProperty PERSISTENT = BlockStateProperties.PERSISTENT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
     public static final IntegerProperty RIPENESS = IntegerProperty.create("ripeness", 0, 7);
 
     public FloweringLeavesBlock(ParticleOptions particle, Properties properties) {
@@ -73,7 +73,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
     }
 
     public int getMaxAge() {
-        return 3;
+        return 7;
     }
 
     public int getAge(BlockState state) {
@@ -213,7 +213,7 @@ public class FloweringLeavesBlock extends LeavesBlock implements BonemealableBlo
 
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
-        if (random.nextInt(10 * (4 - getAge(state))) != 0) {
+        if (random.nextInt(10 * (8 - getAge(state))) != 0) {
             return;
         }
         if (FloweringLeavesBlock.isFaceFull(level.getBlockState(pos.below()).getCollisionShape(level, pos.below()), Direction.UP)) {
