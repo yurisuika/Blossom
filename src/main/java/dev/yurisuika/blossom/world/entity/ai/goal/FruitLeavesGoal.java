@@ -35,7 +35,7 @@ public class FruitLeavesGoal extends Goal {
         super();
         this.entity = bee;
         this.setFlags(EnumSet.of(Flag.MOVE));
-        this.validBlocks = state -> FruitableLeavesRegistry.FRUITABLES.containsKey(state.getBlock()) && state.getValue(BlockStateProperties.AGE_3) >= 3;
+        this.validBlocks = state -> FruitableLeavesRegistry.FRUITABLES.containsKey(state.getBlock()) && state.getValue(BlockStateProperties.AGE_7) >= 7;
     }
 
     public boolean canBeeUse() {
@@ -113,7 +113,7 @@ public class FruitLeavesGoal extends Goal {
             if (blockPos != null) {
                 BlockState blockState = entity.getCommandSenderWorld().getBlockState(blockPos);
                 if (validBlocks.test(blockState)) {
-                    if (blockState.getValue(BlockStateProperties.AGE_3) >= 3) {
+                    if (blockState.getValue(BlockStateProperties.AGE_7) >= 7) {
                         entity.getCommandSenderWorld().levelEvent(2005, blockPos, 0);
                         entity.getCommandSenderWorld().setBlockAndUpdate(blockPos, FruitableLeavesRegistry.FRUITABLES.get(blockState.getBlock()).defaultBlockState()
                                 .setValue(FruitingLeavesBlock.DISTANCE, blockState.getValue(FloweringLeavesBlock.DISTANCE))
