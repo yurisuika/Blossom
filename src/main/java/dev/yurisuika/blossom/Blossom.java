@@ -24,6 +24,9 @@ import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Items;
@@ -31,6 +34,19 @@ import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Blocks;
 
 public class Blossom implements ModInitializer {
+
+    public static void registerBlocks() {
+        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), BlossomBlocks.FLOWERING_OAK_LEAVES);
+        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"), BlossomBlocks.FRUITING_OAK_LEAVES);
+    }
+    public static void registerItems() {
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), BlossomItems.FLOWERING_OAK_LEAVES);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"), BlossomItems.FRUITING_OAK_LEAVES);
+    }
+
+    public static void registerParticles() {
+        Registry.register(BuiltInRegistries.PARTICLE_TYPE, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), BlossomParticleTypes.FLOWERING_OAK_LEAVES);
+    }
 
     public static void registerBlossmables() {
         BlossomableLeavesRegistry.add(Blocks.OAK_LEAVES, BlossomBlocks.FLOWERING_OAK_LEAVES);
@@ -41,26 +57,27 @@ public class Blossom implements ModInitializer {
     }
     
     public static void registerHarvestables() {
-        HarvestableFruitRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Items.APPLE);
+        HarvestableFruitRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Items.APPLE, 0.5714286F, 3);
     }
 
     public static void registerShearables() {
-        ShearableLeavesRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Blocks.OAK_LEAVES);
         ShearableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES, Blocks.OAK_LEAVES);
+        ShearableLeavesRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Blocks.OAK_LEAVES);
     }
 
     public static void registerCompostables() {
-        CompostingChanceRegistry.INSTANCE.add(BlossomBlocks.FRUITING_OAK_LEAVES, 0.3F);
         CompostingChanceRegistry.INSTANCE.add(BlossomBlocks.FLOWERING_OAK_LEAVES, 0.3F);
+        CompostingChanceRegistry.INSTANCE.add(BlossomBlocks.FRUITING_OAK_LEAVES, 0.3F);
     }
 
     public static void registerFlammables() {
-        FlammableBlockRegistry.getDefaultInstance().add(BlossomBlocks.FRUITING_OAK_LEAVES, 30, 60);
         FlammableBlockRegistry.getDefaultInstance().add(BlossomBlocks.FLOWERING_OAK_LEAVES, 30, 60);
+        FlammableBlockRegistry.getDefaultInstance().add(BlossomBlocks.FRUITING_OAK_LEAVES, 30, 60);
     }
 
     public static void registerCreativeModeTabs() {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.NATURAL_BLOCKS).register(content -> content.addAfter(Items.FLOWERING_AZALEA_LEAVES, BlossomBlocks.FLOWERING_OAK_LEAVES.asItem(), BlossomBlocks.FRUITING_OAK_LEAVES.asItem()));
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.NATURAL_BLOCKS).register(content -> content.accept(BlossomItems.FLOWERING_OAK_LEAVES));
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.NATURAL_BLOCKS).register(content -> content.accept(BlossomItems.FRUITING_OAK_LEAVES));
     }
 
     public static void registerCommands() {
@@ -79,9 +96,9 @@ public class Blossom implements ModInitializer {
         Config.loadConfig();
         Validate.checkBounds();
 
-        BlossomBlocks.register();
-        BlossomItems.register();
-        BlossomParticleTypes.register();
+        registerBlocks();
+        registerItems();
+        registerParticles();
         registerBlossmables();
         registerFruitables();
         registerHarvestables();
@@ -95,22 +112,22 @@ public class Blossom implements ModInitializer {
 
     public static class Client implements ClientModInitializer {
 
-        public static void registerParticles() {
+        public static void registerParticleProviders() {
             ParticleFactoryRegistry.getInstance().register(BlossomParticleTypes.FLOWERING_OAK_LEAVES, FallingPetalsParticle.FloweringOakProvider::new);
         }
 
         public static void registerRenderLayers() {
-            BlockRenderLayerMap.INSTANCE.putBlock(BlossomBlocks.FRUITING_OAK_LEAVES, RenderType.cutout());
             BlockRenderLayerMap.INSTANCE.putBlock(BlossomBlocks.FLOWERING_OAK_LEAVES, RenderType.cutout());
+            BlockRenderLayerMap.INSTANCE.putBlock(BlossomBlocks.FRUITING_OAK_LEAVES, RenderType.cutout());
         }
 
         public static void registerBlockColors() {
-            ColorProviderRegistry.BLOCK.register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FRUITING_OAK_LEAVES);
             ColorProviderRegistry.BLOCK.register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FLOWERING_OAK_LEAVES);
+            ColorProviderRegistry.BLOCK.register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FRUITING_OAK_LEAVES);
         }
 
         public void onInitializeClient() {
-            registerParticles();
+            registerParticleProviders();
             registerRenderLayers();
             registerBlockColors();
         }
