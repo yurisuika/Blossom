@@ -7,16 +7,10 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 public class BlossomBlocks {
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "blossom");
-
-    public static final RegistryObject<Block> FRUITING_OAK_LEAVES = BLOCKS.register("fruiting_oak_leaves", () -> new FruitingLeavesBlock(BlockBehaviour.Properties.of()
+    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(BlossomParticleTypes.FLOWERING_OAK_LEAVES, BlockBehaviour.Properties.of()
             .mapColor(MapColor.PLANT)
             .strength(0.2F)
             .randomTicks()
@@ -27,8 +21,8 @@ public class BlossomBlocks {
             .isViewBlocking(BlocksInvoker::invokeNever)
             .ignitedByLava()
             .pushReaction(PushReaction.DESTROY)
-            .isRedstoneConductor(BlocksInvoker::invokeNever)));
-    public static final RegistryObject<Block> FLOWERING_OAK_LEAVES = BLOCKS.register("flowering_oak_leaves", () -> new FloweringLeavesBlock(BlossomParticleTypes.FLOWERING_OAK_LEAVES.get(), BlockBehaviour.Properties.of()
+            .isRedstoneConductor(BlocksInvoker::invokeNever));
+    public static final Block FRUITING_OAK_LEAVES = new FruitingLeavesBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.PLANT)
             .strength(0.2F)
             .randomTicks()
@@ -39,10 +33,6 @@ public class BlossomBlocks {
             .isViewBlocking(BlocksInvoker::invokeNever)
             .ignitedByLava()
             .pushReaction(PushReaction.DESTROY)
-            .isRedstoneConductor(BlocksInvoker::invokeNever)));
-
-    public static void register(IEventBus eventBus) {
-        BLOCKS.register(eventBus);
-    }
+            .isRedstoneConductor(BlocksInvoker::invokeNever));
 
 }

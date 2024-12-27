@@ -7,38 +7,37 @@
     ],
     "age=1": [
       {
-        "model": "blossom:block/flowering_oak_leaves_stage1a"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage1b"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage1c"
+        "model": "blossom:block/flowering_oak_leaves_stage1"
       }
     ],
     "age=2": [
       {
-        "model": "blossom:block/flowering_oak_leaves_stage2a"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage2b"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage2c"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage2c"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage2a"
-      },
-      {
-        "model": "blossom:block/flowering_oak_leaves_stage2b"
+        "model": "blossom:block/flowering_oak_leaves_stage2"
       }
     ],
     "age=3": [
       {
         "model": "blossom:block/flowering_oak_leaves_stage3"
+      }
+    ],
+    "age=4": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage4"
+      }
+    ],
+    "age=5": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage5"
+      }
+    ],
+    "age=6": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage6"
+      }
+    ],
+    "age=7": [
+      {
+        "model": "blossom:block/flowering_oak_leaves_stage7"
       }
     ]
   }
