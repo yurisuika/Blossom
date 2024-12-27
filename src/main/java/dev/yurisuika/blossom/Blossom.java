@@ -22,10 +22,10 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BlockItemStateProperties;
@@ -33,7 +33,6 @@ import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -43,14 +42,15 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.Objects;
 
 @Mod("blossom")
 public class Blossom {
 
-    @EventBusSubscriber(modid = "blossom")
-    public static class CommonForgeEvents {
+    @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.GAME)
+    public static class GameEvents {
 
         @SubscribeEvent
         public static void registerCommands(RegisterCommandsEvent event) {
@@ -67,98 +67,116 @@ public class Blossom {
     }
 
     @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD)
-    public static class CommonModBusEvents {
+    public static class ModEvents {
+
+        @SubscribeEvent
+        public static void registerBlocks(RegisterEvent event) {
+            event.register(BuiltInRegistries.BLOCK.key(), helper -> helper.register(ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), BlossomBlocks.FLOWERING_OAK_LEAVES));
+            event.register(BuiltInRegistries.BLOCK.key(), helper -> helper.register(ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"), BlossomBlocks.FRUITING_OAK_LEAVES));
+        }
+
+        @SubscribeEvent
+        public static void registerItems(RegisterEvent event) {
+            event.register(BuiltInRegistries.ITEM.key(), helper -> helper.register(ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), BlossomItems.FLOWERING_OAK_LEAVES));
+            event.register(BuiltInRegistries.ITEM.key(), helper -> helper.register(ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"), BlossomItems.FRUITING_OAK_LEAVES));
+        }
+
+        @SubscribeEvent
+        public static void registerParticles(RegisterEvent event) {
+            event.register(BuiltInRegistries.PARTICLE_TYPE.key(), helper -> helper.register(ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"), BlossomParticleTypes.FLOWERING_OAK_LEAVES));
+        }
 
         @SubscribeEvent
         public static void registerBlossmables(FMLCommonSetupEvent event) {
-            BlossomableLeavesRegistry.add(Blocks.OAK_LEAVES, BlossomBlocks.FLOWERING_OAK_LEAVES.get());
+            BlossomableLeavesRegistry.add(Blocks.OAK_LEAVES, BlossomBlocks.FLOWERING_OAK_LEAVES);
         }
 
         @SubscribeEvent
         public static void registerFruitables(FMLCommonSetupEvent event) {
-            FruitableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES.get(), BlossomBlocks.FRUITING_OAK_LEAVES.get());
+            FruitableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES, BlossomBlocks.FRUITING_OAK_LEAVES);
         }
 
         @SubscribeEvent
         public static void registerHarvestables(FMLCommonSetupEvent event) {
-            HarvestableFruitRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES.get(), Items.APPLE);
+            HarvestableFruitRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Items.APPLE, 0.5714286F, 3);
         }
 
         @SubscribeEvent
         public static void registerShearables(FMLCommonSetupEvent event) {
-            ShearableLeavesRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES.get(), Blocks.OAK_LEAVES);
-            ShearableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES.get(), Blocks.OAK_LEAVES);
+            ShearableLeavesRegistry.add(BlossomBlocks.FLOWERING_OAK_LEAVES, Blocks.OAK_LEAVES);
+            ShearableLeavesRegistry.add(BlossomBlocks.FRUITING_OAK_LEAVES, Blocks.OAK_LEAVES);
         }
 
         @SubscribeEvent
         public static void registerCompostables(FMLCommonSetupEvent event) {
-            ComposterBlockInvoker.invokeAdd(0.3F, BlossomBlocks.FRUITING_OAK_LEAVES.get());
-            ComposterBlockInvoker.invokeAdd(0.3F, BlossomBlocks.FLOWERING_OAK_LEAVES.get());
+            ComposterBlockInvoker.invokeAdd(0.3F, BlossomBlocks.FLOWERING_OAK_LEAVES);
+            ComposterBlockInvoker.invokeAdd(0.3F, BlossomBlocks.FRUITING_OAK_LEAVES);
         }
 
         @SubscribeEvent
         public static void registerFlammables(FMLCommonSetupEvent event) {
-            ((FireBlockInvoker) Blocks.FIRE).invokeSetFlammable(BlossomBlocks.FRUITING_OAK_LEAVES.get(), 30, 60);
-            ((FireBlockInvoker) Blocks.FIRE).invokeSetFlammable(BlossomBlocks.FLOWERING_OAK_LEAVES.get(), 30, 60);
+            ((FireBlockInvoker) Blocks.FIRE).invokeSetFlammable(BlossomBlocks.FLOWERING_OAK_LEAVES, 30, 60);
+            ((FireBlockInvoker) Blocks.FIRE).invokeSetFlammable(BlossomBlocks.FRUITING_OAK_LEAVES, 30, 60);
         }
 
     }
 
-    @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModBusEvents {
-
-        @SubscribeEvent
-        public static void registerParticles(RegisterParticleProvidersEvent event) {
-            Minecraft.getInstance().particleEngine.register(BlossomParticleTypes.FLOWERING_OAK_LEAVES.get(), FallingPetalsParticle.FloweringOakProvider::new);
-        }
-
-        @SubscribeEvent
-        public static void registerRenderLayers(FMLClientSetupEvent event) {
-            ItemBlockRenderTypes.setRenderLayer(BlossomBlocks.FRUITING_OAK_LEAVES.get(), RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(BlossomBlocks.FLOWERING_OAK_LEAVES.get(), RenderType.cutout());
-        }
-
-        @SubscribeEvent
-        public static void registerItemProperties(FMLClientSetupEvent event) {
-            ItemProperties.register(BlossomItems.FRUITING_OAK_LEAVES.get(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
-                return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
-            });
-            ItemProperties.register(BlossomItems.FLOWERING_OAK_LEAVES.get(), ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
-                Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
-                return Objects.nonNull(integer) ? integer / 4.0F : 0.0F;
-            });
-        }
-
-        @SubscribeEvent
-        public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
-            event.getBlockColors().register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FRUITING_OAK_LEAVES.get());
-            event.getBlockColors().register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FLOWERING_OAK_LEAVES.get());
-        }
-
-        @SubscribeEvent
-        public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FRUITING_OAK_LEAVES.get());
-            event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FLOWERING_OAK_LEAVES.get());
-        }
-
-        @SubscribeEvent
-        public static void registerCreativeModeTabs(BuildCreativeModeTabContentsEvent event) {
-            if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
-                event.insertAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultInstance(), BlossomItems.FRUITING_OAK_LEAVES.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-                event.insertAfter(Items.FLOWERING_AZALEA_LEAVES.getDefaultInstance(), BlossomItems.FLOWERING_OAK_LEAVES.get().getDefaultInstance(), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            }
-        }
-
-    }
-
-    public Blossom(ModLoadingContext context) {
+    public Blossom() {
         Config.loadConfig();
         Validate.checkBounds();
+    }
 
-        BlossomBlocks.register(context.getActiveContainer().getEventBus());
-        BlossomItems.register(context.getActiveContainer().getEventBus());
-        BlossomParticleTypes.register(context.getActiveContainer().getEventBus());
+    @Mod(value = "blossom", dist = Dist.CLIENT)
+    public static class Client {
+
+        @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+        public static class ModEvents {
+
+            @SubscribeEvent
+            public static void registerParticles(RegisterParticleProvidersEvent event) {
+                Minecraft.getInstance().particleEngine.register(BlossomParticleTypes.FLOWERING_OAK_LEAVES, FallingPetalsParticle.FloweringOakProvider::new);
+            }
+
+            @SubscribeEvent
+            public static void registerRenderLayers(FMLClientSetupEvent event) {
+                ItemBlockRenderTypes.setRenderLayer(BlossomBlocks.FLOWERING_OAK_LEAVES, RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(BlossomBlocks.FRUITING_OAK_LEAVES, RenderType.cutout());
+            }
+
+            @SubscribeEvent
+            public static void registerItemProperties(FMLClientSetupEvent event) {
+                ItemProperties.register(BlossomItems.FLOWERING_OAK_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+                    Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
+                    return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
+                });
+                ItemProperties.register(BlossomItems.FRUITING_OAK_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+                    Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
+                    return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
+                });
+            }
+
+            @SubscribeEvent
+            public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+                event.getBlockColors().register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FLOWERING_OAK_LEAVES);
+                event.getBlockColors().register((state, level, pos, tintIndex) -> level != null && pos != null ? BiomeColors.getAverageFoliageColor(level, pos) : FoliageColor.get(0.5F, 1.0F), BlossomBlocks.FRUITING_OAK_LEAVES);
+            }
+
+            @SubscribeEvent
+            public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+                event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FLOWERING_OAK_LEAVES);
+                event.getItemColors().register((stack, tintIndex) -> tintIndex > 0 ? -1 : Minecraft.getInstance().getBlockColors().getColor(((BlockItem) stack.getItem()).getBlock().defaultBlockState(), null, null, tintIndex), BlossomBlocks.FRUITING_OAK_LEAVES);
+            }
+
+            @SubscribeEvent
+            public static void registerCreativeModeTabs(BuildCreativeModeTabContentsEvent event) {
+                if (CreativeModeTabs.NATURAL_BLOCKS.equals(event.getTabKey())) {
+                    event.accept(BlossomItems.FLOWERING_OAK_LEAVES);
+                    event.accept(BlossomItems.FRUITING_OAK_LEAVES);
+                }
+            }
+
+        }
+
     }
 
 }
