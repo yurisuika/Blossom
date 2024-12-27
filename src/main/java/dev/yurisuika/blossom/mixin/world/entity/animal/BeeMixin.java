@@ -5,6 +5,7 @@ import dev.yurisuika.blossom.world.entity.ai.goal.BlossomLeavesGoal;
 import dev.yurisuika.blossom.world.entity.ai.goal.FruitLeavesGoal;
 import dev.yurisuika.blossom.world.entity.ai.goal.GoToKnownLeavesGoal;
 import dev.yurisuika.blossom.world.entity.animal.BeeInterface;
+import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
 import dev.yurisuika.blossom.world.level.block.FruitingLeavesBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -181,6 +182,27 @@ public abstract class BeeMixin extends EntityMixin implements BeeInterface {
         @Inject(method = "resetXRotOnTick", at = @At("RETURN"), cancellable = true)
         private void resetLookIfFruiting(CallbackInfoReturnable<Boolean> cir) {
             cir.setReturnValue(cir.getReturnValue() || !((BeeInterface) entity).getFruitLeavesGoal().isFruiting());
+        }
+
+    }
+
+    @Mixin(targets = "net.minecraft.world.entity.animal.Bee$BeePollinateGoal")
+    public abstract static class BeePollinateGoalMixin {
+
+        @Unique
+        public Bee entity;
+
+        @Inject(method = "<init>", at = @At(value = "TAIL"))
+        private void assignEntity(Bee bee, CallbackInfo ci) {
+            this.entity = bee;
+        }
+
+        @Inject(method = "canBeeUse", at = @At(value = "INVOKE", target = "Ljava/util/Optional;get()Ljava/lang/Object;", shift = At.Shift.AFTER), cancellable = true)
+        private void cancelPollinationIfNotMaxAge(CallbackInfoReturnable<Boolean> cir) {
+            BlockState blockState = entity.getCommandSenderWorld().getBlockState(entity.getSavedFlowerPos());
+            if (blockState.getBlock() instanceof FloweringLeavesBlock floweringLeavesBlock && !floweringLeavesBlock.isMaxAge(blockState)) {
+                cir.setReturnValue(false);
+            }
         }
 
     }

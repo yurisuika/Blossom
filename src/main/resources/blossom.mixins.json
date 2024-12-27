@@ -12,6 +12,7 @@
     "world.entity.animal.BeeMixin",
     "world.entity.animal.BeeMixin$BeeGrowCropGoalMixin",
     "world.entity.animal.BeeMixin$BeeLookControlMixin",
+    "world.entity.animal.BeeMixin$BeePollinateGoalMixin",
     "world.entity.animal.BeeMixin$FlyingPathNavigationMixin",
     "world.level.block.BlocksInvoker",
     "world.level.block.ComposterBlockInvoker",
