@@ -124,7 +124,7 @@ public class Blossom {
         Validate.checkBounds();
     }
 
-    @Mod(value = "blossom")
+    @Mod("blossom")
     public static class Client {
 
         @Mod.EventBusSubscriber(modid = "blossom", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
