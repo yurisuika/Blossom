@@ -10,15 +10,10 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BlossomBlocks {
 
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks("blossom");
-
-    public static final DeferredBlock<Block> FRUITING_OAK_LEAVES = BLOCKS.register("fruiting_oak_leaves", () -> new FruitingLeavesBlock(BlockBehaviour.Properties.of()
+    public static final Block FLOWERING_OAK_LEAVES = new FloweringLeavesBlock(BlossomParticleTypes.FLOWERING_OAK_LEAVES, BlockBehaviour.Properties.of()
             .mapColor(MapColor.PLANT)
             .strength(0.2F)
             .randomTicks()
@@ -30,8 +25,8 @@ public class BlossomBlocks {
             .ignitedByLava()
             .pushReaction(PushReaction.DESTROY)
             .isRedstoneConductor(BlocksInvoker::invokeNever)
-            .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves")))));
-    public static final DeferredBlock<Block> FLOWERING_OAK_LEAVES = BLOCKS.register("flowering_oak_leaves", () -> new FloweringLeavesBlock(BlossomParticleTypes.FLOWERING_OAK_LEAVES.get(), BlockBehaviour.Properties.of()
+            .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves"))));
+    public static final Block FRUITING_OAK_LEAVES = new FruitingLeavesBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.PLANT)
             .strength(0.2F)
             .randomTicks()
@@ -43,10 +38,6 @@ public class BlossomBlocks {
             .ignitedByLava()
             .pushReaction(PushReaction.DESTROY)
             .isRedstoneConductor(BlocksInvoker::invokeNever)
-            .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "flowering_oak_leaves")))));
-
-    public static void register(IEventBus eventBus) {
-        BLOCKS.register(eventBus);
-    }
+            .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("blossom", "fruiting_oak_leaves"))));
 
 }
