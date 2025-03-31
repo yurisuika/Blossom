@@ -1,0 +1,13 @@
+{
+  "block.blossom.flowering_oak_leaves": "Hojas de roble florecientes",
+
+  "commands.blossom.config.reload": "Configuración de Blossom recargada",
+  "commands.blossom.config.reset": "Configuración de Blossom restablecida a los valores predeterminados",
+
+  "commands.blossom.query.exposed": "La opción 'Exposed' está actualmente configurada en: %s",
+  "commands.blossom.query.rate": "La opción 'Rate' está actualmente configurada en: %s",
+  "commands.blossom.query.count": "La opción 'Count' está actualmente configurada en: %s-%s",
+  "commands.blossom.set.exposed": "La opción 'Exposed' ahora está configurada en: %s",
+  "commands.blossom.set.rate": "La opción 'Rate' ahora está configurada en: %s",
+  "commands.blossom.set.count": "La opción 'Count' ahora está configurada en: %s-%s"
+}
