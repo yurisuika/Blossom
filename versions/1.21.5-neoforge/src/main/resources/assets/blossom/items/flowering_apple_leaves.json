@@ -1,0 +1,123 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "block_state_property": "age",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage0",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "0"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage1",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "1"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage2",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "2"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage3",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "3"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage4",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "4"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage5",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "5"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage6",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "6"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "blossom:block/flowering_apple_leaves_stage7",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12012264
+            }
+          ]
+        },
+        "when": "7"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "blossom:block/flowering_apple_leaves_stage7",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -12012264
+        }
+      ]
+    },
+    "property": "minecraft:block_state"
+  }
+}

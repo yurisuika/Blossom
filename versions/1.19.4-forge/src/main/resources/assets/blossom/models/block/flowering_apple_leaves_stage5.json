@@ -1,0 +1,7 @@
+{
+  "parent": "blossom:block/flowering_leaves",
+  "textures": {
+    "all": "blossom:block/apple_leaves",
+    "flowers": "blossom:block/flowering_apple_leaves_stage5"
+  }
+}

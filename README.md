@@ -1,29 +1,29 @@
-**Blossom** is a Fabric mod for Minecraft that makes oak leaves blossom and bear fruit! No longer do you have to destroy your tree to get those apples, now you can simply shear them off when they are grown! Flowering oak leaves will bloom from any oak leaves when pollinated by bees. Watch as bees nurture your apples from bud to pome! You can help speed up their growth with bone meal, if you so choose.
+*Apples blossom upon leaves by the pollen from bees!*
 
-#### Compiling
+### Give apples leaves to rest upon!
+Blossom takes the humble apple and gives it its own tree. More than just that, apples will grow from the leaves with the help of bees. No longer do you have to destroy your tree to get those apples, now you can simply shear them off when they are grown! 
 
-To build from source you will need have JDK 17 to compile and, optionally, Git to clone the repository. Otherwise, download the archive and just run `./gradlew build` from the root project folder.
+### Let nature take its course!
+Apples are more than just a simple food that drop out of nowhere, they are a part of the tree and the surrounding ecosystem. Apple trees that have bees around will start to blossom flowers. When these flowers unfurl, bees may pollinate them, allowing them to grow into fruit! Fully grown fruit can be harvested by shears or may drop to the ground if left unharvested for too long (watch your head)!
 
-When using Git, just choose a directory you wish to keep the project root folder in, decide which branch you wish to compile, and then run these commands:
+Watch as bees nurture your apples from bud to pome! Just as bees may fertilize your apples, you may do the same with bone meal.
 
-```shell script
-git clone --branch <branch> --recursive https://github.com/yurisuika/blossom.git
+### Blossom more than just apples!
+Blossom adds several registries for handling the process of Blossom's multi-block growth behavior. Modders may use these to add fruiting trees beyond just apples! Please take care to note that some of these registries require the use of Blossom's leaves blocks to function.
 
-cd ./blossom
+### Get the goods!
+You can find releases of Blossom on both *[Modrinth]* and *[CurseForge]* and also access development builds on *[GitHub]*!
 
-./gradlew build
-```
+Blossom supports Fabric 1.16+, Forge 1.16+, and NeoForge 1.20.2+.
 
-Afterwards, your compiled JAR will be in `./build/libs`.
+### Figure it all out!
+You can delve into the *[wiki]* for details or submit a *[bug report]* if something isn't quite right!
 
-#### Releases
+Still need help? Drop into the *[Discord]* for quick support.
 
-Don't want to bother building from source? Get the releases *[right here](https://github.com/yurisuika/Blossom/releases)* now!
-
-#### Repositories
-
-You can find Blossom on both *[CurseForge](https://www.curseforge.com/minecraft/mc-mods/blossom)* and *[Modrinth](https://modrinth.com/mod/blossom)*!
-
-#### Community
-
-The one and only! Join the *[Discord](https://discord.gg/0zdNEkQle7Qg9C1H)* for the latest discussion on our server, resource pack, mods, or just to chat!
+[Modrinth]: https://modrinth.com/mod/blossom
+[CurseForge]: https://www.curseforge.com/minecraft/mc-mods/blossom
+[GitHub]: https://github.com/yurisuika/blossom
+[wiki]: https://github.com/yurisuika/blossom/wiki
+[bug report]: https://github.com/yurisuika/blossom/issues
+[Discord]: https://discord.gg/0zdNEkQle7Qg9C1H

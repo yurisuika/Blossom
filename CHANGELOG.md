@@ -1,0 +1,5 @@
+- Added complete block, item, feature, and entity set for "Apple" wood type.
+- Added API for registering blossoming leaves behavior.
+- Added petal particles to flowering leaves.
+- Added `BlossomLeavesGoal` for bees to replace blossoming during pollination goal.
+- Added support for displaying age property in flowering and fruiting apple leaves item models.

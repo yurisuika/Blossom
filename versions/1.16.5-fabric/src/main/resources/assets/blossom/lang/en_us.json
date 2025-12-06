@@ -1,0 +1,43 @@
+{
+  "block.blossom.apple_planks": "Apple Planks",
+  "block.blossom.apple_sapling": "Apple Sapling",
+  "block.blossom.apple_log": "Apple Log",
+  "block.blossom.stripped_apple_log": "Stripped Apple Log",
+  "block.blossom.apple_wood": "Apple Wood",
+  "block.blossom.stripped_apple_wood": "Stripped Apple Wood",
+  "block.blossom.apple_leaves": "Apple Leaves",
+  "block.blossom.flowering_apple_leaves": "Flowering Apple Leaves",
+  "block.blossom.fruiting_apple_leaves": "Fruiting Apple Leaves",
+  "block.blossom.apple_sign": "Apple Sign",
+  "block.blossom.apple_pressure_plate": "Apple Pressure Plate",
+  "block.blossom.apple_trapdoor": "Apple Trapdoor",
+  "block.blossom.apple_button": "Apple Button",
+  "block.blossom.apple_stairs": "Apple Stairs",
+  "block.blossom.apple_slab": "Apple Slab",
+  "block.blossom.apple_fence_gate": "Apple Fence Gate",
+  "block.blossom.apple_fence": "Apple Fence",
+  "block.blossom.apple_door": "Apple Door",
+
+  "commands.blossom.config.reload": "Blossom config reloaded",
+  "commands.blossom.config.reset": "Blossom config reset to defaults",
+
+  "commands.blossom.filter.temperature.query": "Temperature is currently set to: %s %s",
+  "commands.blossom.filter.temperature.set": "Temperature is now set to: %s %s",
+  "commands.blossom.filter.temperature.min": "Min: %s",
+  "commands.blossom.filter.temperature.min.tooltip": "Minimum temperature to allow blossoming.\n(min: -2.0, max: 2.0)",
+  "commands.blossom.filter.temperature.max": "Max: %s",
+  "commands.blossom.filter.temperature.max.tooltip": "Maximum temperature to allow blossoming.\n(min: -2.0, max: 2.0)",
+
+  "commands.blossom.filter.downfall.query": "Downfall is currently set to: %s %s",
+  "commands.blossom.filter.downfall.set": "Downfall is now set to: %s %s",
+  "commands.blossom.filter.downfall.min": "Min: %s",
+  "commands.blossom.filter.downfall.min.tooltip": "Minimum downfall to allow blossoming.\n(min: 0.0, max: 1.0)",
+  "commands.blossom.filter.downfall.max": "Max: %s",
+  "commands.blossom.filter.downfall.max.tooltip": "Maximum downfall to allow blossoming.\n(min: 0.0, max: 1.0)",
+
+  "entity.blossom.apple_boat": "Apple Boat",
+
+  "item.blossom.apple_boat": "Apple Boat",
+
+  "itemGroup.blossom.blossom": "Blossom"
+}

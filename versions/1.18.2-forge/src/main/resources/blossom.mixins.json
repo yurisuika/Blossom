@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.yurisuika.blossom.mixin",
+  "refmap": "blossom.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "minecraft.world.entity.EntityAccessor",
+    "minecraft.world.entity.ai.goal.GoalInvoker",
+    "minecraft.world.entity.animal.BeeInvoker",
+    "minecraft.world.entity.animal.BeeMixin",
+    "minecraft.world.entity.animal.BeeMixin$BeeGrowCropGoalMixin",
+    "minecraft.world.entity.animal.BeeMixin$BeePollinateGoalMixin",
+    "minecraft.world.entity.vehicle.BoatInvoker$TypeInvoker",
+    "minecraft.world.entity.vehicle.BoatMixin",
+    "minecraft.world.entity.vehicle.BoatMixin$TypeMixin",
+    "minecraft.world.item.CreativeModeTabMixin",
+    "minecraft.world.level.block.ComposterBlockInvoker",
+    "minecraft.world.level.block.FireBlockInvoker",
+    "minecraft.world.level.block.LeavesBlockMixin",
+    "minecraft.world.level.block.entity.BlockEntityTypeMixin",
+    "minecraft.world.level.block.state.BlockBehaviourMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

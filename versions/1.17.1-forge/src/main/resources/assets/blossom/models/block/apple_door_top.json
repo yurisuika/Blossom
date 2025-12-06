@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top",
+  "textures": {
+    "top": "blossom:block/apple_door_top",
+    "bottom": "blossom:block/apple_door_bottom"
+  }
+}

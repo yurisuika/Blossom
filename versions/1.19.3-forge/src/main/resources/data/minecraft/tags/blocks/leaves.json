@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "blossom:apple_leaves",
+    "blossom:flowering_apple_leaves",
+    "blossom:fruiting_apple_leaves"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "parent": "blossom:block/fruiting_apple_leaves_stage7",
+  "overrides": [
+    {
+      "predicate": {
+        "age": 0.0000
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage0"
+    },
+    {
+      "predicate": {
+        "age": 0.1250
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage1"
+    },
+    {
+      "predicate": {
+        "age": 0.2500
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage2"
+    },
+    {
+      "predicate": {
+        "age": 0.3750
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage3"
+    },
+    {
+      "predicate": {
+        "age": 0.5000
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage4"
+    },
+    {
+      "predicate": {
+        "age": 0.6250
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage5"
+    },
+    {
+      "predicate": {
+        "age": 0.7500
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage6"
+    },
+    {
+      "predicate": {
+        "age": 0.8750
+      },
+      "model": "blossom:block/fruiting_apple_leaves_stage7"
+    }
+  ]
+}

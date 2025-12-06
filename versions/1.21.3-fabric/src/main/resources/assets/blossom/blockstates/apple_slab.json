@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "blossom:block/apple_slab"
+    },
+    "type=double": {
+      "model": "blossom:block/apple_planks"
+    },
+    "type=top": {
+      "model": "blossom:block/apple_slab_top"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "wooden_pressure_plate",
+  "key": {
+    "#": {
+      "item": "blossom:apple_planks"
+    }
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "id": "blossom:apple_pressure_plate"
+  },
+  "show_notification": true
+}
