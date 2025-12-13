@@ -1,6 +1,7 @@
 package dev.yurisuika.blossom.data.worldgen.features;
 
 import com.google.common.collect.ImmutableList;
+import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.world.level.block.BlossomBlocks;
 import dev.yurisuika.blossom.world.level.block.FloweringLeavesBlock;
 import net.minecraft.core.Direction;
@@ -33,13 +34,13 @@ import java.util.List;
 
 public class BlossomTreeFeatures {
 
-    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "apple"));
-    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_0002 = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_bees_0002"));
-    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_002 = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_bees_002"));
-    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_005 = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_bees_005"));
-    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_LEAF_LITTER = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_leaf_litter"));
-    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_0002_LEAF_LITTER = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_bees_0002_leaf_litter"));
-    public static final ResourceKey<ConfiguredFeature<?, ?>> FALLEN_APPLE_TREE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath("blossom", "fallen_apple_tree"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_0002 = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_bees_0002"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_002 = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_bees_002"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_005 = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_bees_005"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_LEAF_LITTER = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_leaf_litter"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> APPLE_BEES_0002_LEAF_LITTER = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_bees_0002_leaf_litter"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> FALLEN_APPLE_TREE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "fallen_apple_tree"));
 
     public static TreeConfiguration.TreeConfigurationBuilder createApple() {
         return new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(BlossomBlocks.APPLE_LOG), new StraightTrunkPlacer(3, 1, 0), new RandomizedIntStateProvider(new WeightedStateProvider(WeightedList.of(new Weighted<>(BlossomBlocks.APPLE_LEAVES.defaultBlockState(), 1), new Weighted<>(BlossomBlocks.FLOWERING_APPLE_LEAVES.defaultBlockState(), 1))), FloweringLeavesBlock.AGE, UniformInt.of(0, 7)), new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 3), new TwoLayersFeatureSize(1, 0, 1))

@@ -57,11 +57,11 @@ public class BlossomClient implements ClientModInitializer {
     }
 
     public static void registerItemProperties() {
-        ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+        ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "age"), (stack, world, entity, seed) -> {
             Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
             return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
         });
-        ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+        ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "age"), (stack, world, entity, seed) -> {
             Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
             return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
         });

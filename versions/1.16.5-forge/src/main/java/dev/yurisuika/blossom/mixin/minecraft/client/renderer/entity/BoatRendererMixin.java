@@ -26,7 +26,7 @@ public class BoatRendererMixin {
         ResourceLocation[] original = BOAT_TEXTURE_LOCATIONS;
         BOAT_TEXTURE_LOCATIONS = new ResourceLocation[BOAT_TEXTURE_LOCATIONS.length + 1];
         System.arraycopy(original, 0, BOAT_TEXTURE_LOCATIONS, 0, original.length);
-        Array.set(BOAT_TEXTURE_LOCATIONS, BOAT_TEXTURE_LOCATIONS.length - 1, ResourceLocation.tryParse("textures/entity/boat/apple.png"));
+        Array.set(BOAT_TEXTURE_LOCATIONS, BOAT_TEXTURE_LOCATIONS.length - 1, new ResourceLocation("textures/entity/boat/apple.png"));
     }
 
 }

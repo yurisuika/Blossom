@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom.world.level.block;
 
+import dev.yurisuika.blossom.Blossom;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,7 @@ public class BlossomCeilingHangingSignBlock extends CeilingHangingSignBlock {
 
     @Override
     public ResourceKey<LootTable> getLootTable() {
-        return ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.tryParse("blossom:blocks/" + type().name() + "_hanging_sign"));
+        return ResourceKey.create(Registries.LOOT_TABLE, new ResourceLocation(Blossom.MOD_ID, "blocks/" + type().name() + "_hanging_sign"));
     }
 
 }

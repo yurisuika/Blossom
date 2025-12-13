@@ -26,10 +26,10 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 import java.util.Objects;
 
-@Mod(value = "blossom", dist = Dist.CLIENT)
+@Mod(value = Blossom.MOD_ID, dist = Dist.CLIENT)
 public class BlossomClient {
 
-    @EventBusSubscriber(modid = "blossom", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Blossom.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ModEvents {
 
         @SubscribeEvent
@@ -50,11 +50,11 @@ public class BlossomClient {
 
         @SubscribeEvent
         public static void registerItemProperties(FMLClientSetupEvent event) {
-            ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+            ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "age"), (stack, world, entity, seed) -> {
                 Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FloweringLeavesBlock.AGE);
                 return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
             });
-            ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+            ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "age"), (stack, world, entity, seed) -> {
                 Integer integer = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(FruitingLeavesBlock.AGE);
                 return Objects.nonNull(integer) ? integer / 8.0F : 0.0F;
             });

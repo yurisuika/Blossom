@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom.world.level.block;
 
+import dev.yurisuika.blossom.Blossom;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -12,7 +13,7 @@ public class BlossomWallHangingSignBlock extends WallHangingSignBlock {
 
     @Override
     public final ResourceLocation getLootTable() {
-        return ResourceLocation.tryParse("blossom:blocks/" + type().name() + "_wall_hanging_sign");
+        return new ResourceLocation(Blossom.MOD_ID, "blocks/" + type().name() + "_wall_hanging_sign");
     }
 
 }

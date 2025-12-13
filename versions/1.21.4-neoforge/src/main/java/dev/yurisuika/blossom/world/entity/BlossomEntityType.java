@@ -1,5 +1,6 @@
 package dev.yurisuika.blossom.world.entity;
 
+import dev.yurisuika.blossom.Blossom;
 import dev.yurisuika.blossom.mixin.minecraft.world.entity.EntityTypeInvoker;
 import dev.yurisuika.blossom.world.level.item.BlossomItems;
 import net.minecraft.core.registries.Registries;
@@ -17,12 +18,12 @@ public class BlossomEntityType {
             .sized(1.375F, 0.5625F)
             .eyeHeight(0.5625F)
             .clientTrackingRange(10)
-            .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_boat")));
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_boat")));
     public static final EntityType<ChestBoat> APPLE_CHEST_BOAT = EntityType.Builder.of(EntityTypeInvoker.invokeChestBoatFactory(() -> BlossomItems.APPLE_CHEST_BOAT), MobCategory.MISC)
             .noLootTable()
             .sized(1.375F, 0.5625F)
             .eyeHeight(0.5625F)
             .clientTrackingRange(10)
-            .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("blossom", "apple_chest_boat")));
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Blossom.MOD_ID, "apple_chest_boat")));
 
 }

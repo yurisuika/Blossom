@@ -33,10 +33,11 @@ import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod("blossom")
+@Mod(Blossom.MOD_ID)
 public class Blossom {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("blossom");
+    public static final String MOD_ID = "blossom";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Mod.EventBusSubscriber(modid = "blossom", bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class GameEvents {
@@ -76,58 +77,58 @@ public class Blossom {
 
         @SubscribeEvent
         public static void registerBlocks(RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_planks"), BlossomBlocks.APPLE_PLANKS));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_sapling"), BlossomBlocks.APPLE_SAPLING));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_log"), BlossomBlocks.APPLE_LOG));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:stripped_apple_log"), BlossomBlocks.STRIPPED_APPLE_LOG));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_wood"), BlossomBlocks.APPLE_WOOD));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:stripped_apple_wood"), BlossomBlocks.STRIPPED_APPLE_WOOD));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_leaves"), BlossomBlocks.APPLE_LEAVES));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:flowering_apple_leaves"), BlossomBlocks.FLOWERING_APPLE_LEAVES));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:fruiting_apple_leaves"), BlossomBlocks.FRUITING_APPLE_LEAVES));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_sign"), BlossomBlocks.APPLE_SIGN));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_wall_sign"), BlossomBlocks.APPLE_WALL_SIGN));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_hanging_sign"), BlossomBlocks.APPLE_HANGING_SIGN));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_wall_hanging_sign"), BlossomBlocks.APPLE_WALL_HANGING_SIGN));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_pressure_plate"), BlossomBlocks.APPLE_PRESSURE_PLATE));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_trapdoor"), BlossomBlocks.APPLE_TRAPDOOR));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:potted_apple_sapling"), BlossomBlocks.POTTED_APPLE_SAPLING));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_button"), BlossomBlocks.APPLE_BUTTON));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_stairs"), BlossomBlocks.APPLE_STAIRS));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_slab"), BlossomBlocks.APPLE_SLAB));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_fence_gate"), BlossomBlocks.APPLE_FENCE_GATE));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_fence"), BlossomBlocks.APPLE_FENCE));
-            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_door"), BlossomBlocks.APPLE_DOOR));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_planks"), BlossomBlocks.APPLE_PLANKS));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_sapling"), BlossomBlocks.APPLE_SAPLING));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_log"), BlossomBlocks.APPLE_LOG));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "stripped_apple_log"), BlossomBlocks.STRIPPED_APPLE_LOG));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_wood"), BlossomBlocks.APPLE_WOOD));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "stripped_apple_wood"), BlossomBlocks.STRIPPED_APPLE_WOOD));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_leaves"), BlossomBlocks.APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "flowering_apple_leaves"), BlossomBlocks.FLOWERING_APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "fruiting_apple_leaves"), BlossomBlocks.FRUITING_APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_sign"), BlossomBlocks.APPLE_SIGN));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_wall_sign"), BlossomBlocks.APPLE_WALL_SIGN));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_hanging_sign"), BlossomBlocks.APPLE_HANGING_SIGN));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_wall_hanging_sign"), BlossomBlocks.APPLE_WALL_HANGING_SIGN));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_pressure_plate"), BlossomBlocks.APPLE_PRESSURE_PLATE));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_trapdoor"), BlossomBlocks.APPLE_TRAPDOOR));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "potted_apple_sapling"), BlossomBlocks.POTTED_APPLE_SAPLING));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_button"), BlossomBlocks.APPLE_BUTTON));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_stairs"), BlossomBlocks.APPLE_STAIRS));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_slab"), BlossomBlocks.APPLE_SLAB));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_fence_gate"), BlossomBlocks.APPLE_FENCE_GATE));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_fence"), BlossomBlocks.APPLE_FENCE));
+            event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_door"), BlossomBlocks.APPLE_DOOR));
         }
 
         @SubscribeEvent
         public static void registerItems(RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_planks"), BlossomItems.APPLE_PLANKS));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_sapling"), BlossomItems.APPLE_SAPLING));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_log"), BlossomItems.APPLE_LOG));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:stripped_apple_log"), BlossomItems.STRIPPED_APPLE_LOG));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_wood"), BlossomItems.APPLE_WOOD));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:stripped_apple_wood"), BlossomItems.STRIPPED_APPLE_WOOD));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_leaves"), BlossomItems.APPLE_LEAVES));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:flowering_apple_leaves"), BlossomItems.FLOWERING_APPLE_LEAVES));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:fruiting_apple_leaves"), BlossomItems.FRUITING_APPLE_LEAVES));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_sign"), BlossomItems.APPLE_SIGN));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_hanging_sign"), BlossomItems.APPLE_HANGING_SIGN));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_pressure_plate"), BlossomItems.APPLE_PRESSURE_PLATE));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_trapdoor"), BlossomItems.APPLE_TRAPDOOR));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_button"), BlossomItems.APPLE_BUTTON));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_stairs"), BlossomItems.APPLE_STAIRS));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_slab"), BlossomItems.APPLE_SLAB));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_fence_gate"), BlossomItems.APPLE_FENCE_GATE));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_fence"), BlossomItems.APPLE_FENCE));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_door"), BlossomItems.APPLE_DOOR));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_boat"), BlossomItems.APPLE_BOAT));
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(ResourceLocation.tryParse("blossom:apple_chest_boat"), BlossomItems.APPLE_CHEST_BOAT));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_planks"), BlossomItems.APPLE_PLANKS));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_sapling"), BlossomItems.APPLE_SAPLING));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_log"), BlossomItems.APPLE_LOG));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "stripped_apple_log"), BlossomItems.STRIPPED_APPLE_LOG));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_wood"), BlossomItems.APPLE_WOOD));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "stripped_apple_wood"), BlossomItems.STRIPPED_APPLE_WOOD));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_leaves"), BlossomItems.APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "flowering_apple_leaves"), BlossomItems.FLOWERING_APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "fruiting_apple_leaves"), BlossomItems.FRUITING_APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_sign"), BlossomItems.APPLE_SIGN));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_hanging_sign"), BlossomItems.APPLE_HANGING_SIGN));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_pressure_plate"), BlossomItems.APPLE_PRESSURE_PLATE));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_trapdoor"), BlossomItems.APPLE_TRAPDOOR));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_button"), BlossomItems.APPLE_BUTTON));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_stairs"), BlossomItems.APPLE_STAIRS));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_slab"), BlossomItems.APPLE_SLAB));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_fence_gate"), BlossomItems.APPLE_FENCE_GATE));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_fence"), BlossomItems.APPLE_FENCE));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_door"), BlossomItems.APPLE_DOOR));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_boat"), BlossomItems.APPLE_BOAT));
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(MOD_ID, "apple_chest_boat"), BlossomItems.APPLE_CHEST_BOAT));
         }
 
         @SubscribeEvent
         public static void registerParticles(RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> helper.register(ResourceLocation.tryParse("blossom:flowering_apple_leaves"), BlossomParticleTypes.FLOWERING_APPLE_LEAVES));
+            event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> helper.register(new ResourceLocation(MOD_ID, "flowering_apple_leaves"), BlossomParticleTypes.FLOWERING_APPLE_LEAVES));
         }
 
         @SubscribeEvent
@@ -176,7 +177,7 @@ public class Blossom {
 
         @SubscribeEvent
         public static void registerCreativeModeTabs(RegisterEvent event) {
-            event.register(BuiltInRegistries.CREATIVE_MODE_TAB.key(), helper -> helper.register(ResourceLocation.tryParse("blossom:blossom"), BlossomCreativeModeTabs.BLOSSOM));
+            event.register(BuiltInRegistries.CREATIVE_MODE_TAB.key(), helper -> helper.register(new ResourceLocation(MOD_ID, "blossom"), BlossomCreativeModeTabs.BLOSSOM));
         }
 
     }

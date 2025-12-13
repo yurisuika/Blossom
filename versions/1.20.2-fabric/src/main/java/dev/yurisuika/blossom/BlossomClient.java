@@ -50,11 +50,11 @@ public class BlossomClient implements ClientModInitializer {
     }
 
     public static void registerItemProperties() {
-        ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+        ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, new ResourceLocation(Blossom.MOD_ID, "age"), (stack, world, entity, seed) -> {
             CompoundTag tag = stack.getTagElement("BlockStateTag");
             return Objects.nonNull(tag) ? Integer.parseInt(tag.get(FloweringLeavesBlock.AGE.getName()).getAsString()) / 8.0F : 0.0F;
         });
-        ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity, seed) -> {
+        ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, new ResourceLocation(Blossom.MOD_ID, "age"), (stack, world, entity, seed) -> {
             CompoundTag tag = stack.getTagElement("BlockStateTag");
             return Objects.nonNull(tag) ? Integer.parseInt(tag.get(FruitingLeavesBlock.AGE.getName()).getAsString()) / 8.0F : 0.0F;
         });

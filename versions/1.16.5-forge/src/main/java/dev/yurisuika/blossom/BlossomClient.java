@@ -24,10 +24,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import java.util.Objects;
 
-@Mod("blossom")
+@Mod(Blossom.MOD_ID)
 public class BlossomClient {
 
-    @Mod.EventBusSubscriber(modid = "blossom", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = Blossom.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ModEvents {
 
         @SubscribeEvent
@@ -48,11 +48,11 @@ public class BlossomClient {
 
         @SubscribeEvent
         public static void registerItemProperties(FMLClientSetupEvent event) {
-            ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity) -> {
+            ItemProperties.register(BlossomItems.FLOWERING_APPLE_LEAVES, new ResourceLocation(Blossom.MOD_ID, "age"), (stack, world, entity) -> {
                 CompoundTag tag = stack.getTagElement("BlockStateTag");
                 return Objects.nonNull(tag) ? Integer.parseInt(tag.get(FloweringLeavesBlock.AGE.getName()).getAsString()) / 8.0F : 0.0F;
             });
-            ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, ResourceLocation.tryParse("age"), (stack, world, entity) -> {
+            ItemProperties.register(BlossomItems.FRUITING_APPLE_LEAVES, new ResourceLocation(Blossom.MOD_ID, "age"), (stack, world, entity) -> {
                 CompoundTag tag = stack.getTagElement("BlockStateTag");
                 return Objects.nonNull(tag) ? Integer.parseInt(tag.get(FruitingLeavesBlock.AGE.getName()).getAsString()) / 8.0F : 0.0F;
             });

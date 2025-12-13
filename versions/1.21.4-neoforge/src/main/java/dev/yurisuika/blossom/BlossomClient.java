@@ -21,10 +21,10 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
-@Mod(value = "blossom", dist = Dist.CLIENT)
+@Mod(value = Blossom.MOD_ID, dist = Dist.CLIENT)
 public class BlossomClient {
 
-    @EventBusSubscriber(modid = "blossom", value = Dist.CLIENT)
+    @EventBusSubscriber(modid = Blossom.MOD_ID, value = Dist.CLIENT)
     public static class ModEvents {
 
         @SubscribeEvent

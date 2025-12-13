@@ -30,7 +30,8 @@ import org.apache.logging.log4j.Logger;
 
 public class Blossom implements ModInitializer {
 
-    public static final Logger LOGGER = LogManager.getLogger("blossom");
+    public static final String MOD_ID = "blossom";
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public static void loadConfiguration() {
         Config.loadConfig();
@@ -42,59 +43,59 @@ public class Blossom implements ModInitializer {
     }
 
     public static void registerBlocks() {
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_planks"), BlossomBlocks.APPLE_PLANKS);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_sapling"), BlossomBlocks.APPLE_SAPLING);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_log"), BlossomBlocks.APPLE_LOG);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:stripped_apple_log"), BlossomBlocks.STRIPPED_APPLE_LOG);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_wood"), BlossomBlocks.APPLE_WOOD);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:stripped_apple_wood"), BlossomBlocks.STRIPPED_APPLE_WOOD);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_leaves"), BlossomBlocks.APPLE_LEAVES);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:flowering_apple_leaves"), BlossomBlocks.FLOWERING_APPLE_LEAVES);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:fruiting_apple_leaves"), BlossomBlocks.FRUITING_APPLE_LEAVES);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_sign"), BlossomBlocks.APPLE_SIGN);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_wall_sign"), BlossomBlocks.APPLE_WALL_SIGN);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_pressure_plate"), BlossomBlocks.APPLE_PRESSURE_PLATE);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_trapdoor"), BlossomBlocks.APPLE_TRAPDOOR);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:potted_apple_sapling"), BlossomBlocks.POTTED_APPLE_SAPLING);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_button"), BlossomBlocks.APPLE_BUTTON);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_stairs"), BlossomBlocks.APPLE_STAIRS);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_slab"), BlossomBlocks.APPLE_SLAB);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_fence_gate"), BlossomBlocks.APPLE_FENCE_GATE);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_fence"), BlossomBlocks.APPLE_FENCE);
-        Registry.register(Registry.BLOCK, ResourceLocation.tryParse("blossom:apple_door"), BlossomBlocks.APPLE_DOOR);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_planks"), BlossomBlocks.APPLE_PLANKS);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_sapling"), BlossomBlocks.APPLE_SAPLING);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_log"), BlossomBlocks.APPLE_LOG);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "stripped_apple_log"), BlossomBlocks.STRIPPED_APPLE_LOG);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_wood"), BlossomBlocks.APPLE_WOOD);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "stripped_apple_wood"), BlossomBlocks.STRIPPED_APPLE_WOOD);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_leaves"), BlossomBlocks.APPLE_LEAVES);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "flowering_apple_leaves"), BlossomBlocks.FLOWERING_APPLE_LEAVES);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "fruiting_apple_leaves"), BlossomBlocks.FRUITING_APPLE_LEAVES);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_sign"), BlossomBlocks.APPLE_SIGN);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_wall_sign"), BlossomBlocks.APPLE_WALL_SIGN);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_pressure_plate"), BlossomBlocks.APPLE_PRESSURE_PLATE);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_trapdoor"), BlossomBlocks.APPLE_TRAPDOOR);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "potted_apple_sapling"), BlossomBlocks.POTTED_APPLE_SAPLING);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_button"), BlossomBlocks.APPLE_BUTTON);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_stairs"), BlossomBlocks.APPLE_STAIRS);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_slab"), BlossomBlocks.APPLE_SLAB);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_fence_gate"), BlossomBlocks.APPLE_FENCE_GATE);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_fence"), BlossomBlocks.APPLE_FENCE);
+        Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "apple_door"), BlossomBlocks.APPLE_DOOR);
     }
 
     public static void registerItems() {
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_planks"), BlossomItems.APPLE_PLANKS);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_sapling"), BlossomItems.APPLE_SAPLING);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_log"), BlossomItems.APPLE_LOG);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:stripped_apple_log"), BlossomItems.STRIPPED_APPLE_LOG);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_wood"), BlossomItems.APPLE_WOOD);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:stripped_apple_wood"), BlossomItems.STRIPPED_APPLE_WOOD);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_leaves"), BlossomItems.APPLE_LEAVES);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:flowering_apple_leaves"), BlossomItems.FLOWERING_APPLE_LEAVES);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:fruiting_apple_leaves"), BlossomItems.FRUITING_APPLE_LEAVES);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_sign"), BlossomItems.APPLE_SIGN);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_pressure_plate"), BlossomItems.APPLE_PRESSURE_PLATE);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_trapdoor"), BlossomItems.APPLE_TRAPDOOR);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_button"), BlossomItems.APPLE_BUTTON);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_stairs"), BlossomItems.APPLE_STAIRS);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_slab"), BlossomItems.APPLE_SLAB);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_fence_gate"), BlossomItems.APPLE_FENCE_GATE);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_fence"), BlossomItems.APPLE_FENCE);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_door"), BlossomItems.APPLE_DOOR);
-        Registry.register(Registry.ITEM, ResourceLocation.tryParse("blossom:apple_boat"), BlossomItems.APPLE_BOAT);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_planks"), BlossomItems.APPLE_PLANKS);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_sapling"), BlossomItems.APPLE_SAPLING);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_log"), BlossomItems.APPLE_LOG);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "stripped_apple_log"), BlossomItems.STRIPPED_APPLE_LOG);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_wood"), BlossomItems.APPLE_WOOD);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "stripped_apple_wood"), BlossomItems.STRIPPED_APPLE_WOOD);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_leaves"), BlossomItems.APPLE_LEAVES);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "flowering_apple_leaves"), BlossomItems.FLOWERING_APPLE_LEAVES);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "fruiting_apple_leaves"), BlossomItems.FRUITING_APPLE_LEAVES);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_sign"), BlossomItems.APPLE_SIGN);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_pressure_plate"), BlossomItems.APPLE_PRESSURE_PLATE);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_trapdoor"), BlossomItems.APPLE_TRAPDOOR);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_button"), BlossomItems.APPLE_BUTTON);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_stairs"), BlossomItems.APPLE_STAIRS);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_slab"), BlossomItems.APPLE_SLAB);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_fence_gate"), BlossomItems.APPLE_FENCE_GATE);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_fence"), BlossomItems.APPLE_FENCE);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_door"), BlossomItems.APPLE_DOOR);
+        Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "apple_boat"), BlossomItems.APPLE_BOAT);
     }
 
     public static void registerParticles() {
-        Registry.register(Registry.PARTICLE_TYPE, ResourceLocation.tryParse("blossom:flowering_apple_leaves"), BlossomParticleTypes.FLOWERING_APPLE_LEAVES);
+        Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(MOD_ID, "flowering_apple_leaves"), BlossomParticleTypes.FLOWERING_APPLE_LEAVES);
     }
 
     public static void registerConfiguredFeatures() {
-        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple"), BlossomTreeFeatures.APPLE);
-        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple_bees_0002"), BlossomTreeFeatures.APPLE_BEES_0002);
-        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple_bees_002"), BlossomTreeFeatures.APPLE_BEES_002);
-        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple_bees_005"), BlossomTreeFeatures.APPLE_BEES_005);
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple"), BlossomTreeFeatures.APPLE);
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple_bees_0002"), BlossomTreeFeatures.APPLE_BEES_0002);
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple_bees_002"), BlossomTreeFeatures.APPLE_BEES_002);
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple_bees_005"), BlossomTreeFeatures.APPLE_BEES_005);
     }
 
     public static void registerBlossmableLeaves() {

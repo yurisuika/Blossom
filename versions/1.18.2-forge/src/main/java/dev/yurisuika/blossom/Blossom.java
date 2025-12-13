@@ -34,10 +34,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod("blossom")
+@Mod(Blossom.MOD_ID)
 public class Blossom {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("blossom");
+    public static final String MOD_ID = "blossom";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Mod.EventBusSubscriber(modid = "blossom", bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class GameEvents {
@@ -72,62 +73,62 @@ public class Blossom {
 
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event) {
-            event.getRegistry().register(BlossomBlocks.APPLE_PLANKS.setRegistryName(ResourceLocation.tryParse("blossom:apple_planks")));
-            event.getRegistry().register(BlossomBlocks.APPLE_SAPLING.setRegistryName(ResourceLocation.tryParse("blossom:apple_sapling")));
-            event.getRegistry().register(BlossomBlocks.APPLE_LOG.setRegistryName(ResourceLocation.tryParse("blossom:apple_log")));
-            event.getRegistry().register(BlossomBlocks.STRIPPED_APPLE_LOG.setRegistryName(ResourceLocation.tryParse("blossom:stripped_apple_log")));
-            event.getRegistry().register(BlossomBlocks.APPLE_WOOD.setRegistryName(ResourceLocation.tryParse("blossom:apple_wood")));
-            event.getRegistry().register(BlossomBlocks.STRIPPED_APPLE_WOOD.setRegistryName(ResourceLocation.tryParse("blossom:stripped_apple_wood")));
-            event.getRegistry().register(BlossomBlocks.APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:apple_leaves")));
-            event.getRegistry().register(BlossomBlocks.FLOWERING_APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:flowering_apple_leaves")));
-            event.getRegistry().register(BlossomBlocks.FRUITING_APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:fruiting_apple_leaves")));
-            event.getRegistry().register(BlossomBlocks.APPLE_SIGN.setRegistryName(ResourceLocation.tryParse("blossom:apple_sign")));
-            event.getRegistry().register(BlossomBlocks.APPLE_WALL_SIGN.setRegistryName(ResourceLocation.tryParse("blossom:apple_wall_sign")));
-            event.getRegistry().register(BlossomBlocks.APPLE_PRESSURE_PLATE.setRegistryName(ResourceLocation.tryParse("blossom:apple_pressure_plate")));
-            event.getRegistry().register(BlossomBlocks.APPLE_TRAPDOOR.setRegistryName(ResourceLocation.tryParse("blossom:apple_trapdoor")));
-            event.getRegistry().register(BlossomBlocks.POTTED_APPLE_SAPLING.setRegistryName(ResourceLocation.tryParse("blossom:potted_apple_sapling")));
-            event.getRegistry().register(BlossomBlocks.APPLE_BUTTON.setRegistryName(ResourceLocation.tryParse("blossom:apple_button")));
-            event.getRegistry().register(BlossomBlocks.APPLE_STAIRS.setRegistryName(ResourceLocation.tryParse("blossom:apple_stairs")));
-            event.getRegistry().register(BlossomBlocks.APPLE_SLAB.setRegistryName(ResourceLocation.tryParse("blossom:apple_slab")));
-            event.getRegistry().register(BlossomBlocks.APPLE_FENCE_GATE.setRegistryName(ResourceLocation.tryParse("blossom:apple_fence_gate")));
-            event.getRegistry().register(BlossomBlocks.APPLE_FENCE.setRegistryName(ResourceLocation.tryParse("blossom:apple_fence")));
-            event.getRegistry().register(BlossomBlocks.APPLE_DOOR.setRegistryName(ResourceLocation.tryParse("blossom:apple_door")));
+            event.getRegistry().register(BlossomBlocks.APPLE_PLANKS.setRegistryName(new ResourceLocation(MOD_ID, "apple_planks")));
+            event.getRegistry().register(BlossomBlocks.APPLE_SAPLING.setRegistryName(new ResourceLocation(MOD_ID, "apple_sapling")));
+            event.getRegistry().register(BlossomBlocks.APPLE_LOG.setRegistryName(new ResourceLocation(MOD_ID, "apple_log")));
+            event.getRegistry().register(BlossomBlocks.STRIPPED_APPLE_LOG.setRegistryName(new ResourceLocation(MOD_ID, "stripped_apple_log")));
+            event.getRegistry().register(BlossomBlocks.APPLE_WOOD.setRegistryName(new ResourceLocation(MOD_ID, "apple_wood")));
+            event.getRegistry().register(BlossomBlocks.STRIPPED_APPLE_WOOD.setRegistryName(new ResourceLocation(MOD_ID, "stripped_apple_wood")));
+            event.getRegistry().register(BlossomBlocks.APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "apple_leaves")));
+            event.getRegistry().register(BlossomBlocks.FLOWERING_APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "flowering_apple_leaves")));
+            event.getRegistry().register(BlossomBlocks.FRUITING_APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "fruiting_apple_leaves")));
+            event.getRegistry().register(BlossomBlocks.APPLE_SIGN.setRegistryName(new ResourceLocation(MOD_ID, "apple_sign")));
+            event.getRegistry().register(BlossomBlocks.APPLE_WALL_SIGN.setRegistryName(new ResourceLocation(MOD_ID, "apple_wall_sign")));
+            event.getRegistry().register(BlossomBlocks.APPLE_PRESSURE_PLATE.setRegistryName(new ResourceLocation(MOD_ID, "apple_pressure_plate")));
+            event.getRegistry().register(BlossomBlocks.APPLE_TRAPDOOR.setRegistryName(new ResourceLocation(MOD_ID, "apple_trapdoor")));
+            event.getRegistry().register(BlossomBlocks.POTTED_APPLE_SAPLING.setRegistryName(new ResourceLocation(MOD_ID, "potted_apple_sapling")));
+            event.getRegistry().register(BlossomBlocks.APPLE_BUTTON.setRegistryName(new ResourceLocation(MOD_ID, "apple_button")));
+            event.getRegistry().register(BlossomBlocks.APPLE_STAIRS.setRegistryName(new ResourceLocation(MOD_ID, "apple_stairs")));
+            event.getRegistry().register(BlossomBlocks.APPLE_SLAB.setRegistryName(new ResourceLocation(MOD_ID, "apple_slab")));
+            event.getRegistry().register(BlossomBlocks.APPLE_FENCE_GATE.setRegistryName(new ResourceLocation(MOD_ID, "apple_fence_gate")));
+            event.getRegistry().register(BlossomBlocks.APPLE_FENCE.setRegistryName(new ResourceLocation(MOD_ID, "apple_fence")));
+            event.getRegistry().register(BlossomBlocks.APPLE_DOOR.setRegistryName(new ResourceLocation(MOD_ID, "apple_door")));
         }
 
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(BlossomItems.APPLE_PLANKS.setRegistryName(ResourceLocation.tryParse("blossom:apple_planks")));
-            event.getRegistry().register(BlossomItems.APPLE_SAPLING.setRegistryName(ResourceLocation.tryParse("blossom:apple_sapling")));
-            event.getRegistry().register(BlossomItems.APPLE_LOG.setRegistryName(ResourceLocation.tryParse("blossom:apple_log")));
-            event.getRegistry().register(BlossomItems.STRIPPED_APPLE_LOG.setRegistryName(ResourceLocation.tryParse("blossom:stripped_apple_log")));
-            event.getRegistry().register(BlossomItems.APPLE_WOOD.setRegistryName(ResourceLocation.tryParse("blossom:apple_wood")));
-            event.getRegistry().register(BlossomItems.STRIPPED_APPLE_WOOD.setRegistryName(ResourceLocation.tryParse("blossom:stripped_apple_wood")));
-            event.getRegistry().register(BlossomItems.APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:apple_leaves")));
-            event.getRegistry().register(BlossomItems.FLOWERING_APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:flowering_apple_leaves")));
-            event.getRegistry().register(BlossomItems.FRUITING_APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:fruiting_apple_leaves")));
-            event.getRegistry().register(BlossomItems.APPLE_SIGN.setRegistryName(ResourceLocation.tryParse("blossom:apple_sign")));
-            event.getRegistry().register(BlossomItems.APPLE_PRESSURE_PLATE.setRegistryName(ResourceLocation.tryParse("blossom:apple_pressure_plate")));
-            event.getRegistry().register(BlossomItems.APPLE_TRAPDOOR.setRegistryName(ResourceLocation.tryParse("blossom:apple_trapdoor")));
-            event.getRegistry().register(BlossomItems.APPLE_BUTTON.setRegistryName(ResourceLocation.tryParse("blossom:apple_button")));
-            event.getRegistry().register(BlossomItems.APPLE_STAIRS.setRegistryName(ResourceLocation.tryParse("blossom:apple_stairs")));
-            event.getRegistry().register(BlossomItems.APPLE_SLAB.setRegistryName(ResourceLocation.tryParse("blossom:apple_slab")));
-            event.getRegistry().register(BlossomItems.APPLE_FENCE_GATE.setRegistryName(ResourceLocation.tryParse("blossom:apple_fence_gate")));
-            event.getRegistry().register(BlossomItems.APPLE_FENCE.setRegistryName(ResourceLocation.tryParse("blossom:apple_fence")));
-            event.getRegistry().register(BlossomItems.APPLE_DOOR.setRegistryName(ResourceLocation.tryParse("blossom:apple_door")));
-            event.getRegistry().register(BlossomItems.APPLE_BOAT.setRegistryName(ResourceLocation.tryParse("blossom:apple_boat")));
+            event.getRegistry().register(BlossomItems.APPLE_PLANKS.setRegistryName(new ResourceLocation(MOD_ID, "apple_planks")));
+            event.getRegistry().register(BlossomItems.APPLE_SAPLING.setRegistryName(new ResourceLocation(MOD_ID, "apple_sapling")));
+            event.getRegistry().register(BlossomItems.APPLE_LOG.setRegistryName(new ResourceLocation(MOD_ID, "apple_log")));
+            event.getRegistry().register(BlossomItems.STRIPPED_APPLE_LOG.setRegistryName(new ResourceLocation(MOD_ID, "stripped_apple_log")));
+            event.getRegistry().register(BlossomItems.APPLE_WOOD.setRegistryName(new ResourceLocation(MOD_ID, "apple_wood")));
+            event.getRegistry().register(BlossomItems.STRIPPED_APPLE_WOOD.setRegistryName(new ResourceLocation(MOD_ID, "stripped_apple_wood")));
+            event.getRegistry().register(BlossomItems.APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "apple_leaves")));
+            event.getRegistry().register(BlossomItems.FLOWERING_APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "flowering_apple_leaves")));
+            event.getRegistry().register(BlossomItems.FRUITING_APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "fruiting_apple_leaves")));
+            event.getRegistry().register(BlossomItems.APPLE_SIGN.setRegistryName(new ResourceLocation(MOD_ID, "apple_sign")));
+            event.getRegistry().register(BlossomItems.APPLE_PRESSURE_PLATE.setRegistryName(new ResourceLocation(MOD_ID, "apple_pressure_plate")));
+            event.getRegistry().register(BlossomItems.APPLE_TRAPDOOR.setRegistryName(new ResourceLocation(MOD_ID, "apple_trapdoor")));
+            event.getRegistry().register(BlossomItems.APPLE_BUTTON.setRegistryName(new ResourceLocation(MOD_ID, "apple_button")));
+            event.getRegistry().register(BlossomItems.APPLE_STAIRS.setRegistryName(new ResourceLocation(MOD_ID, "apple_stairs")));
+            event.getRegistry().register(BlossomItems.APPLE_SLAB.setRegistryName(new ResourceLocation(MOD_ID, "apple_slab")));
+            event.getRegistry().register(BlossomItems.APPLE_FENCE_GATE.setRegistryName(new ResourceLocation(MOD_ID, "apple_fence_gate")));
+            event.getRegistry().register(BlossomItems.APPLE_FENCE.setRegistryName(new ResourceLocation(MOD_ID, "apple_fence")));
+            event.getRegistry().register(BlossomItems.APPLE_DOOR.setRegistryName(new ResourceLocation(MOD_ID, "apple_door")));
+            event.getRegistry().register(BlossomItems.APPLE_BOAT.setRegistryName(new ResourceLocation(MOD_ID, "apple_boat")));
         }
 
         @SubscribeEvent
         public static void registerParticles(RegistryEvent.Register<ParticleType<?>> event) {
-            event.getRegistry().register(BlossomParticleTypes.FLOWERING_APPLE_LEAVES.setRegistryName(ResourceLocation.tryParse("blossom:flowering_apple_leaves")));
+            event.getRegistry().register(BlossomParticleTypes.FLOWERING_APPLE_LEAVES.setRegistryName(new ResourceLocation(MOD_ID, "flowering_apple_leaves")));
         }
 
         @SubscribeEvent
         public static void registerConfiguredFeatures(FMLCommonSetupEvent event) {
-            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple"), BlossomTreeFeatures.APPLE);
-            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple_bees_0002"), BlossomTreeFeatures.APPLE_BEES_0002);
-            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple_bees_002"), BlossomTreeFeatures.APPLE_BEES_002);
-            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, ResourceLocation.tryParse("blossom:apple_bees_005"), BlossomTreeFeatures.APPLE_BEES_005);
+            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple"), BlossomTreeFeatures.APPLE);
+            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple_bees_0002"), BlossomTreeFeatures.APPLE_BEES_0002);
+            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple_bees_002"), BlossomTreeFeatures.APPLE_BEES_002);
+            Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, new ResourceLocation(Blossom.MOD_ID, "apple_bees_005"), BlossomTreeFeatures.APPLE_BEES_005);
         }
 
         @SubscribeEvent
