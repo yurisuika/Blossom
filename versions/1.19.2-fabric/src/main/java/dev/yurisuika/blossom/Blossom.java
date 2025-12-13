@@ -25,8 +25,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Blossom implements ModInitializer {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger("blossom");
 
     public static void loadConfiguration() {
         Config.loadConfig();
