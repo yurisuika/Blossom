@@ -20,7 +20,6 @@ import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod(Blossom.MOD_ID)
 public class BlossomClient {
 
     @Mod.EventBusSubscriber(modid = Blossom.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
