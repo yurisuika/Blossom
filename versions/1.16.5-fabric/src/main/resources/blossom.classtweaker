@@ -1,4 +1,4 @@
-accessWidener v2 named
+classTweaker v1 named
 
 accessible method net/minecraft/world/level/block/Blocks never (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z
 accessible method net/minecraft/world/level/block/Blocks never (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/EntityType;)Ljava/lang/Boolean;

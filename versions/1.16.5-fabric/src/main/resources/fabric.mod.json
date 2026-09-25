@@ -31,7 +31,7 @@
     "blossom.mixins.json"
   ],
 
-  "accessWidener": "blossom.accesswidener",
+  "accessWidener": "blossom.classtweaker",
 
   "depends": {
     "fabricloader": "${loader_version_range}",

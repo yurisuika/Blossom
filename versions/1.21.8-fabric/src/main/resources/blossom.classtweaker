@@ -1,4 +1,4 @@
-accessWidener v2 named
+classTweaker v1 named
 
 accessible class net/minecraft/world/entity/animal/Bee$BeePollinateGoal
 accessible class net/minecraft/world/level/biome/Biome$ClimateSettings
@@ -7,4 +7,4 @@ accessible class net/minecraft/world/level/block/state/BlockBehaviour$BlockState
 accessible method net/minecraft/world/level/block/Blocks never (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z
 accessible method net/minecraft/world/level/block/Blocks never (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/EntityType;)Ljava/lang/Boolean;
 accessible method net/minecraft/world/level/block/Blocks ocelotOrParrot (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/EntityType;)Ljava/lang/Boolean;
-extendable method net/minecraft/world/level/block/state/BlockBehaviour getLootTable ()Lnet/minecraft/resources/ResourceLocation;
+extendable method net/minecraft/world/level/block/state/BlockBehaviour getLootTable ()Ljava/util/Optional;
